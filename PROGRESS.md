@@ -18,15 +18,21 @@
 - **Local model for the online A/B: `phi4-mini`**, a safety override of the pre-set rule,
   which picked `llama3.2:3b` (DESIGN.md 6.2). On two wrong-fee cases (`make fee-cases`) it
   **still gave a wrong fee on one**, so the override rests only on benchmark hand-off and
-  refusal behaviour.
+  refusal behaviour. Alphin agreed to keep it on that narrow basis. Pushed.
 
 ## What's next
-1. Alphin: approve the push of the commits made after `cec459b`.
-2. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`, and
-   confirm `phi4-mini` still stands given the remaining wrong fee.
+1. Alphin: say whether the "Failed tasks" table was read before or during round 2 (the answer
+   sent was an unfilled "did not / did" template). Then record it with the round 2 notes.
+2. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
 3. Alphin: Phase 1 and Phase 2 quiz answers (correct them when sent).
 4. Alphin: review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
 5. Alphin: "go" for Phase 3 (data loop, A/B testing, Docker, CI). **Not started.**
+
+## Phase 3 main goal: fee accuracy (set by Alphin, 2026-11-25)
+- Improve the number check so each number must match what it describes in the article: fee,
+  minimum or limit, and which card type.
+- Test it on the two wrong-fee cases.
+- Show before and after on the eval set.
 
 ## Carry forward to Phase 3
 - `retrieval_v1` test questions have been seen and were used for the BM25 decision. The fresh
