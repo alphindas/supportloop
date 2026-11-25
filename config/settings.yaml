@@ -28,8 +28,8 @@ messages_version: v1                     # fixed refusal and handoff texts
 prompts_dir: app/prompts
 
 # --- Retrieval ---------------------------------------------------------------
-embedding_model: Qwen/Qwen3-Embedding-0.6B    # confirmed or replaced by the benchmark
-reranker_model: Qwen/Qwen3-Reranker-0.6B      # "none" switches reranking off
+embedding_model: BAAI/bge-small-en-v1.5       # chosen by make benchmark-retrieval (DESIGN.md section 6)
+reranker_model: BAAI/bge-reranker-v2-m3       # "none" switches reranking off
 retrieval_device: cuda                        # cuda | cpu
 kb_dir: data/kb
 index_dir: data/index
