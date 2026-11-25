@@ -3,18 +3,21 @@
 You give YOUR pass/fail without seeing the judge's verdict. Seeing it first would pull
 your answer towards it and inflate agreement.
 
-There are two rounds, reported separately and never pooled:
+There are three rounds, reported separately and never pooled:
 - Round 1: 30 random judge decisions. The judge's verdict was shown after each answer.
 - Round 2: 30 tasks that were not in round 1, one decision each. The screen shows the
   same rubric text the judge gets, and no judge verdict is shown during the round.
+- Round 3: the same screen as round 2, on 30 tasks used in neither earlier round. Each
+  session starts by asking you to confirm you are a person using no AI help; that
+  declaration is saved with every verdict. The tool cannot check it.
 The reason for round 2 is recorded in evals/human_review/<run>.notes.yaml.
 
 Keys: y = pass, n = fail, s = skip for now, q = quit. Progress is saved after each one.
 
-Usage: uv run python -m evals.human_review --round 2
+Usage: uv run python -m evals.human_review --round 3
 Only a person should run this. Its whole point is to be independent of any model.
 
-The two rounds already recorded in evals/human_review/ did NOT meet that rule: their
+Rounds 1 and 2 recorded in evals/human_review/ did NOT meet that rule: their
 verdicts came from a second-AI reviewer (ChatGPT). See the README in that folder.
 """
 
@@ -28,11 +31,28 @@ from random import Random
 from app.config import PROJECT_ROOT, get_settings
 from app.prompts.loader import load_template
 from evals.benchmark_retrieval import load_benchmark_config
-from evals.eval_report import Rates, load_human_review, review_path, write_report
+from evals.eval_report import (
+    PERSON_DECLARATION,
+    Rates,
+    load_human_review,
+    review_path,
+    write_report,
+)
 from evals.run_eval import HUMAN_SAMPLE_SIZE
 
 # One fixed seed per round, so quitting and restarting keeps the same sample.
-SEEDS = {1: 20261125, 2: 20261126}
+SEEDS = {1: 20261125, 2: 20261126, 3: 20261127}
+# Unused tasks whose judge verdict is discussed in the README or interview notes, so a
+# reviewer cannot judge them blind. Left out of round 3.
+DISCUSSED_IN_DOCS = {"v1-035"}
+
+BEFORE_ROUND_3 = """
+ROUND 3 is meant to be a real human check. Until you have finished all 30:
+- Give every verdict yourself. Do not ask ChatGPT, Claude or any other AI.
+- Do not open the eval report, reports/raw/, evals/human_review/, the README or the
+  interview notes. They contain judge verdicts or earlier reviews.
+- A verdict cannot be changed once entered. Use s to skip, or q to stop and resume later.
+"""
 
 QUESTIONS = {
     "faithful": "Is EVERY factual statement in the bot's answer supported by the articles?",
@@ -77,6 +97,22 @@ def sample_new_tasks(
     return list(picked.items())
 
 
+def sample_for_round(rows: list[dict], config_name: str, number: int) -> list[tuple[str, str]]:
+    """The sample for round 2 or 3: tasks that no earlier round used."""
+    used: set[str] = set()
+    for earlier in range(1, number):
+        reviews = load_human_review(config_name, earlier)
+        if len(reviews) < HUMAN_SAMPLE_SIZE:
+            raise SystemExit(f"Finish round {earlier} first: later rounds use other tasks.")
+        used |= {r["id"] for r in reviews}
+    if number == 3:
+        used |= DISCUSSED_IN_DOCS
+    sample = sample_new_tasks(rows, used, HUMAN_SAMPLE_SIZE, SEEDS[number])
+    if len(sample) < HUMAN_SAMPLE_SIZE:
+        raise SystemExit(f"Only {len(sample)} unused tasks are left; need {HUMAN_SAMPLE_SIZE}.")
+    return sample
+
+
 def rubric_guidance(rubric_file: Path) -> dict[str, str]:
     """The definition of each verdict, cut from the rubric file the judge was given."""
     system = load_template(rubric_file, rubric_file.stem).system
@@ -117,6 +153,13 @@ def recorded(output: Path) -> list[dict]:
     return [json.loads(line) for line in output.read_text().splitlines() if line.strip()]
 
 
+def confirm_person(ask: Callable[[str], str] = input, say: Callable[[str], None] = print) -> bool:
+    """Show the round 3 rules and ask the reviewer to declare who is reviewing."""
+    say(BEFORE_ROUND_3)
+    reply = ask("Are you a person who will give these verdicts with no AI help? [type yes] ")
+    return reply.strip().lower() == "yes"
+
+
 def review(
     rows: list[dict],
     output: Path,
@@ -125,6 +168,7 @@ def review(
     say: Callable[[str], None] = print,
     reveal: bool = True,
     guidance: dict[str, str] | None = None,
+    declaration: str | None = None,
 ) -> None:
     """Walk through the unreviewed part of a sample. Earlier verdicts are never changed:
     new ones are only appended."""
@@ -160,6 +204,8 @@ def review(
             "judge": judge,
             "reviewed_on": date.today().isoformat(),
         }
+        if declaration:
+            record["reviewer"] = declaration
         with output.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record) + "\n")
 
@@ -181,12 +227,21 @@ def main() -> None:
     if args.round == 1:
         review(rows, output, sample_decisions(rows, HUMAN_SAMPLE_SIZE, SEEDS[1]))
     else:
-        first = load_human_review(name, 1)
-        if len(first) < HUMAN_SAMPLE_SIZE:
-            raise SystemExit("Finish round 1 first: round 2 uses only tasks it did not use.")
-        sample = sample_new_tasks(rows, {r["id"] for r in first}, HUMAN_SAMPLE_SIZE, SEEDS[2])
+        sample = sample_for_round(rows, name, args.round)
         rubric = PROJECT_ROOT / saved["meta"]["models"]["Judge rubric"]
-        review(rows, output, sample, reveal=False, guidance=rubric_guidance(rubric))
+        declaration = None
+        if args.round == 3 and len(recorded(output)) < len(sample):
+            if not confirm_person():
+                raise SystemExit("Not confirmed. Nothing was recorded.")
+            declaration = PERSON_DECLARATION
+        review(
+            rows,
+            output,
+            sample,
+            reveal=False,
+            guidance=rubric_guidance(rubric),
+            declaration=declaration,
+        )
 
     boot = load_benchmark_config()["bootstrap"]
     report = PROJECT_ROOT / "reports" / f"{candidates[0].stem}.md"

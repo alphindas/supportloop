@@ -16,10 +16,13 @@ from app.storage.repository import Repository
 from evals import eval_report
 from evals.eval_report import Rates
 from evals.human_review import (
+    DISCUSSED_IN_DOCS,
+    confirm_person,
     decisions,
     review,
     rubric_guidance,
     sample_decisions,
+    sample_for_round,
     sample_new_tasks,
 )
 from evals.judge_live import is_sampled, judge_turns
@@ -114,7 +117,7 @@ def saved(task_ids: list[str], human: bool, judge: bool) -> str:
 def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(eval_report, "HUMAN_DIR", tmp_path)
     (tmp_path / "run.notes.yaml").write_text(
-        "reviewer: some AI\nshort_label: AI\nrounds:\n  1: first note\n  2: why again\n"
+        "reviewers:\n  1: some AI\n  2: some AI\nrounds:\n  1: first note\n  2: why again\n"
     )
     rows = [{"id": "a", "passed": False}, {"id": "b", "passed": True}]
     (tmp_path / "run.jsonl").write_text(saved(["x", "y"], human=True, judge=True))
@@ -132,8 +135,8 @@ def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypat
     assert "**2/2 (100%)**" in first and "**0/2 (0%)**" in second
     assert "/4" not in done  # never pooled
     assert "1 of the 2 tasks in this round failed" in second
-    assert "## Judge versus some AI" in done and "| AI: pass |" in done
-    assert "Human" not in done
+    assert "### Round 1: some AI" in done and "| some AI: pass |" in done
+    assert "not validated by a human yet" in done and "Person" not in done
 
 
 def test_report_never_assumes_the_reviewer_was_a_person(tmp_path, monkeypatch) -> None:
@@ -142,15 +145,66 @@ def test_report_never_assumes_the_reviewer_was_a_person(tmp_path, monkeypatch) -
 
     section = "\n".join(eval_report.human_section("run", [], wanted=1))
 
-    assert "## Judge versus reviewer not recorded" in section
-    assert "| Reviewer: pass |" in section and "Human" not in section
+    assert "### Round 1: Reviewer not recorded" in section
+    assert "not validated by a human yet" in section and "Person" not in section
 
 
 def test_published_rounds_are_labelled_as_a_second_ai() -> None:
     notes = eval_report.load_review_notes("groq-openai-gpt-oss-20b_prompt-v1")
 
-    assert notes["reviewer"] == "second-AI reviewer (ChatGPT)"
-    assert "not validated by a human yet" in notes["summary"]
+    assert notes["reviewers"] == {
+        1: "second-AI reviewer (ChatGPT)",
+        2: "second-AI reviewer (ChatGPT)",
+    }  # round 3 must never get a label from the notes file
+    assert "were not human review" in notes["summary"]
+
+
+@pytest.mark.parametrize(("reply", "confirmed"), [("yes", True), (" YES ", True), ("y", False)])
+def test_round_three_needs_the_reviewer_to_type_yes(reply: str, confirmed: bool) -> None:
+    assert confirm_person(ask=lambda _: reply, say=lambda _: None) is confirmed
+
+
+def test_declaration_is_saved_with_each_verdict_only_when_given(tmp_path) -> None:
+    declared, plain = tmp_path / "declared.jsonl", tmp_path / "plain.jsonl"
+    for output, declaration in ((declared, eval_report.PERSON_DECLARATION), (plain, None)):
+        review(
+            ROWS, output, SAMPLE, ask=lambda _: "y", say=lambda _: None,
+            reveal=False, declaration=declaration,
+        )  # fmt: skip
+    assert eval_report.declared_person([json.loads(x) for x in declared.read_text().splitlines()])
+    assert "reviewer" not in plain.read_text()
+
+
+@pytest.mark.parametrize(("count", "declared", "counted"), [(2, True, True), (1, True, False),
+                                                            (2, False, False)])  # fmt: skip
+def test_only_a_complete_declared_round_changes_the_judge_status(
+    tmp_path, monkeypatch, count: int, declared: bool, counted: bool
+) -> None:
+    monkeypatch.setattr(eval_report, "HUMAN_DIR", tmp_path)
+    (tmp_path / "run.jsonl").write_text(saved(["x", "y"], human=True, judge=True))
+    extra = {"reviewer": eval_report.PERSON_DECLARATION} if declared else {}
+    record = {"dimension": "faithful", "human": True, "judge": True, **extra}
+    (tmp_path / "run.round3.jsonl").write_text(
+        "".join(json.dumps({"id": f"t{i}", **record}) + "\n" for i in range(count))
+    )
+
+    section = "\n".join(eval_report.human_section("run", [], wanted=2))
+
+    assert ("One person has checked the judge (round 3" in section) is counted
+    assert ("not validated by a human yet" in section) is not counted
+    assert ("### Round 3: Person (self-declared)" in section) is counted
+
+
+def test_round_three_has_thirty_unused_tasks() -> None:
+    name = "groq-openai-gpt-oss-20b_prompt-v1"
+    raw = PROJECT_ROOT / "reports" / "raw" / f"eval_v1_{name}.json"
+    rows = json.loads(raw.read_text())["rows"]
+    used = {r["id"] for n in (1, 2) for r in eval_report.load_human_review(name, n)}
+
+    tasks = [task_id for task_id, _ in sample_for_round(rows, name, 3)]
+
+    assert len(tasks) == len(set(tasks)) == 30
+    assert not set(tasks) & (used | DISCUSSED_IN_DOCS)
 
 
 @pytest.mark.parametrize(

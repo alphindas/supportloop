@@ -20,13 +20,17 @@
   refusal behaviour. Alphin agreed to keep it on that narrow basis. Pushed.
 
 ## What's next
-1. Alphin: approve the push of the correction.
-2. Human review of the judge is **still not done**. It needs a person, on tasks not used in
-   either round. The tool only supports rounds 1 and 2, both used, so it needs a round 3.
+1. Alphin (planned for 2026-11-26): round 3, the first human check of the judge:
+   `make human-review ROUND=3`. **Only Alphin runs it; never fill in or preview verdicts.**
+   Do not show Alphin judge verdicts or the sampled task list before all 30 are done.
+2. After round 3: commit the verdict file unedited, pin its hash in the test, add the
+   numbers to the README, DESIGN.md and Phase 2 notes, and ask before pushing.
 3. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
 4. Alphin: Phase 1 and Phase 2 quiz answers (correct them when sent).
 5. Alphin: review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
-6. Alphin: "go" for Phase 3 (data loop, A/B testing, Docker, CI). **Not started; on hold.**
+6. Alphin: "go" for Phase 3 (data loop, A/B testing, Docker, CI). **Not started. Wait for "go".**
+
+ChatGPT details for rounds 1 and 2 stay "not recorded" unless Alphin supplies them.
 
 ## Phase 3 main goal: fee accuracy (set by Alphin, 2026-11-25)
 - Improve the number check so each number must match what it describes in the article: fee,

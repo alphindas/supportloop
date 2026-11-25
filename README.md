@@ -56,7 +56,7 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make retrieval-eval` | Write `reports/retrieval_v1.md` | index |
 | `make eval` | Run eval set v1 through the app and judge it. Cached and resumable (`uv run python -m evals.run_eval --limit 40` runs a small batch) | index, Groq key |
 | `make fee-cases` | Replay two wrong-fee questions on both local models | Ollama |
-| `make human-review` | Review tool for judge decisions, meant for a person (`ROUND=2` by default, or `ROUND=1`); rebuilds the eval report. [Both recorded rounds were done by a second AI](evals/human_review/README.md) | a finished eval run |
+| `make human-review` | Review tool for judge decisions, for a person only (round 3 by default); rebuilds the eval report. [Rounds 1 and 2 were done by a second AI](evals/human_review/README.md) | a finished eval run |
 | `make simulate` | Replay 200 real customer messages through the API | `make run` |
 | `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
 | `make traffic-report` | Summarise stored production signals | stored turns |

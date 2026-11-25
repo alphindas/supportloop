@@ -1,9 +1,11 @@
 # Explanations shown in the eval report. Verdict files are never edited.
-reviewer: second-AI reviewer (ChatGPT)
-short_label: Second AI (ChatGPT)
+# Reviewers are listed only for rounds that are not a person's own declared review.
+reviewers:
+  1: second-AI reviewer (ChatGPT)
+  2: second-AI reviewer (ChatGPT)
 summary: >-
-  **The judge is not validated by a human yet.** The verdicts in both rounds came from a
-  second-AI reviewer (ChatGPT), not from a person. The numbers below are AI-versus-AI
+  **Rounds 1 and 2 were not human review.** Their verdicts came from a second-AI
+  reviewer (ChatGPT), not from a person, so their numbers are AI-versus-AI
   agreement. Two models can share the same mistakes, so agreement does not show that
   either is right. Not recorded: the ChatGPT model version, the prompt, what it was
   shown and how its conversations were split. So these verdicts cannot be reproduced,
@@ -30,3 +32,13 @@ rounds:
     whether it got the rubric and whether it had seen any judge output, such as that of
     round 1. So the reason for the higher agreement is unknown. This round does not
     replace round 1.
+  3: >-
+    The first round meant for a person. It uses 30 tasks that were in neither round 1 nor
+    round 2, one verdict each, chosen with a fixed seed. `v1-035` was left out because
+    the project documents discuss the judge's verdict on it. The screen shows the rubric
+    text the judge gets and no judge verdict. At the start of each session the reviewer
+    must confirm they are a person using no AI help; the tool saves that declaration
+    with each verdict and cannot check it. Limits known before the round: there is one
+    reviewer, who is the project owner. They have had access to this report and to the
+    earlier rounds' results. Whether they had read anything about these 30 tasks is not
+    recorded.

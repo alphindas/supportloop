@@ -11,6 +11,8 @@ from evals.report_header import report_header
 from evals.stats import bootstrap_percentile, bootstrap_ratio, cohens_kappa
 
 HUMAN_DIR = PROJECT_ROOT / "evals" / "human_review"
+# Saved with each verdict when the reviewer confirms this at the start of a session.
+PERSON_DECLARATION = "a person (self-declared), with no AI help"
 
 
 class Rates:
@@ -58,6 +60,9 @@ def auc(positive: list[float], negative: list[float]) -> float | None:
     return wins / (len(positive) * len(negative))
 
 
+ROUNDS = (1, 2, 3)
+
+
 def review_path(config_name: str, round_number: int) -> Path:
     """Where one round's verdicts are saved. Round 1 keeps the plain file name."""
     suffix = "" if round_number == 1 else f".round{round_number}"
@@ -74,22 +79,24 @@ def load_human_review(config_name: str, round_number: int = 1) -> list[dict]:
 
 
 def load_review_notes(config_name: str) -> dict:
-    """Who reviewed, and written explanations for each round.
-
-    Without a notes file the report says the reviewer is not recorded. It never assumes
-    the reviewer was a person.
-    """
-    notes = {
-        "reviewer": "reviewer not recorded",
-        "short_label": "Reviewer",
-        "summary": "Who gave these verdicts is not recorded, so do not read them as human "
-        "validation of the judge.",
-        "rounds": {},
-    }
+    """Written explanations: an overall summary, and per round the reviewer and notes."""
+    notes = {"summary": "", "reviewers": {}, "rounds": {}}
     path = HUMAN_DIR / f"{config_name}.notes.yaml"
     if path.exists():
         notes.update(yaml.safe_load(path.read_text(encoding="utf-8")))
     return notes
+
+
+def declared_person(reviews: list[dict]) -> bool:
+    """True only if every verdict carries the reviewer's declaration."""
+    return bool(reviews) and all(r.get("reviewer") == PERSON_DECLARATION for r in reviews)
+
+
+def reviewer_label(number: int, reviews: list[dict], notes: dict) -> str:
+    """Who gave a round's verdicts. Never assumes it was a person."""
+    if number in notes["reviewers"]:
+        return notes["reviewers"][number]
+    return "Person (self-declared)" if declared_person(reviews) else "Reviewer not recorded"
 
 
 def agreement_table(reviews: list[dict], label: str) -> list[str]:
@@ -138,26 +145,41 @@ def human_section(config_name: str, rows: list[dict], wanted: int) -> list[str]:
         ]
     notes = load_review_notes(config_name)
     rounds = notes["rounds"]
-    lines = [
-        f"## Judge versus {notes['reviewer']}",
-        "",
-        notes["summary"].strip(),
+    by_round = {number: load_human_review(config_name, number) for number in ROUNDS}
+    checked = [
+        number
+        for number, reviews in by_round.items()
+        if number not in notes["reviewers"] and len(reviews) >= wanted and declared_person(reviews)
+    ]
+    if checked:
+        status = (
+            f"**One person has checked the judge (round {checked[0]}; self-declared, which "
+            "the tool cannot verify). One reviewer and one round of this size cannot by "
+            "themselves validate the judge.**"
+        )
+    else:
+        status = "**The judge is not validated by a human yet.**"
+    lines = ["## Judge review", "", status]
+    if notes["summary"]:
+        lines += ["", notes["summary"].strip()]
+    lines += [
         "",
         "**Rounds are reported separately and not pooled.** 30 items is a small sample: "
         "treat kappa as rough.",
     ]
     failed = {r["id"] for r in rows if r["passed"] is False}
-    for number in (1, 2):
-        reviews = load_human_review(config_name, number)
-        if number == 2 and not reviews and 2 not in rounds:
+    for number, reviews in by_round.items():
+        if number > 1 and not reviews and number not in rounds:
             continue
-        lines += ["", f"### Round {number}", ""]
+        label = reviewer_label(number, reviews, notes)
+        pending = number > 1 and len(reviews) < wanted
+        lines += ["", f"### Round {number}" + ("" if pending else f": {label}"), ""]
         if rounds.get(number):
             lines += [rounds[number].strip(), ""]
         if number == 1:
             if len(reviews) < wanted:
                 lines += [f"**Incomplete: {len(reviews)}/{wanted}.**", ""]
-            lines += agreement_table(reviews, notes["short_label"])
+            lines += agreement_table(reviews, label)
         elif len(reviews) < wanted:
             # Showing partial results would tell the reviewer how the judge is voting.
             lines.append(
@@ -166,7 +188,7 @@ def human_section(config_name: str, rows: list[dict], wanted: int) -> list[str]:
                 "tasks' table below: it quotes the judge."
             )
         else:
-            lines += agreement_table(reviews, notes["short_label"])
+            lines += agreement_table(reviews, label)
             listed = len({r["id"] for r in reviews} & failed)
             lines += [
                 "",

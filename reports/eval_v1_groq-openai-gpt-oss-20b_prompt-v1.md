@@ -109,13 +109,15 @@ Each failed task is counted once. Reasons involving the judge are only as good a
 - Paired difference, dense minus hybrid, Recall@5: +0.010 [-0.021, +0.041] (no clear difference)
 - Paired difference, dense minus hybrid, MRR: +0.004 [-0.007, +0.018] (no clear difference)
 
-## Judge versus second-AI reviewer (ChatGPT)
+## Judge review
 
-**The judge is not validated by a human yet.** The verdicts in both rounds came from a second-AI reviewer (ChatGPT), not from a person. The numbers below are AI-versus-AI agreement. Two models can share the same mistakes, so agreement does not show that either is right. Not recorded: the ChatGPT model version, the prompt, what it was shown and how its conversations were split. So these verdicts cannot be reproduced, and neither round can be called blind or independent. **Correction (2026-11-25):** both rounds were first published as human review. That was wrong. Earlier versions of this report and some commit messages still say so. The verdict files are unedited, so their field named `human` holds ChatGPT's verdict.
+**The judge is not validated by a human yet.**
+
+**Rounds 1 and 2 were not human review.** Their verdicts came from a second-AI reviewer (ChatGPT), not from a person, so their numbers are AI-versus-AI agreement. Two models can share the same mistakes, so agreement does not show that either is right. Not recorded: the ChatGPT model version, the prompt, what it was shown and how its conversations were split. So these verdicts cannot be reproduced, and neither round can be called blind or independent. **Correction (2026-11-25):** both rounds were first published as human review. That was wrong. Earlier versions of this report and some commit messages still say so. The verdict files are unedited, so their field named `human` holds ChatGPT's verdict.
 
 **Rounds are reported separately and not pooled.** 30 items is a small sample: treat kappa as rough.
 
-### Round 1
+### Round 1: second-AI reviewer (ChatGPT)
 
 When this round was published, the rubric was reported as misapplied on some items: mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. It was described then as a person's own mistake, but the verdicts are ChatGPT's. No item-by-item check of that report is recorded. The verdicts are published unedited. This round cannot separate judge errors from second-reviewer errors. About the review tool in this round: its screen showed a one-line question for each verdict, not the full rubric (which says to ignore helpfulness when judging faithfulness), and showed the judge's verdict and reason after each answer. How much of that reached ChatGPT is not recorded.
 
@@ -126,10 +128,10 @@ When this round was published, the rubric was reported as misapplied on some ite
 
 | | Judge: pass | Judge: fail |
 |---|---|---|
-| Second AI (ChatGPT): pass | 19 | 3 |
-| Second AI (ChatGPT): fail | 7 | 1 |
+| second-AI reviewer (ChatGPT): pass | 19 | 3 |
+| second-AI reviewer (ChatGPT): fail | 7 | 1 |
 
-### Round 2
+### Round 2: second-AI reviewer (ChatGPT)
 
 **Why this round was added:** the rubric problem reported for round 1 (see above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed seed. The review tool's screen showed the rubric text the judge gets and no judge verdict during the round. What was passed on to ChatGPT is not recorded, including whether it got the rubric and whether it had seen any judge output, such as that of round 1. So the reason for the higher agreement is unknown. This round does not replace round 1.
 
@@ -140,10 +142,16 @@ When this round was published, the rubric was reported as misapplied on some ite
 
 | | Judge: pass | Judge: fail |
 |---|---|---|
-| Second AI (ChatGPT): pass | 22 | 0 |
-| Second AI (ChatGPT): fail | 5 | 3 |
+| second-AI reviewer (ChatGPT): pass | 22 | 0 |
+| second-AI reviewer (ChatGPT): fail | 5 | 3 |
 
 8 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. A reviewer who was shown that list first was not blind on those items.
+
+### Round 3
+
+The first round meant for a person. It uses 30 tasks that were in neither round 1 nor round 2, one verdict each, chosen with a fixed seed. `v1-035` was left out because the project documents discuss the judge's verdict on it. The screen shows the rubric text the judge gets and no judge verdict. At the start of each session the reviewer must confirm they are a person using no AI help; the tool saves that declaration with each verdict and cannot check it. Limits known before the round: there is one reviewer, who is the project owner. They have had access to this report and to the earlier rounds' results. Whether they had read anything about these 30 tasks is not recorded.
+
+**Pending: 0/30 recorded.** Results stay hidden until the round is complete. Before and during the round, do not read the 'Failed tasks' table below: it quotes the judge.
 
 ## How to read this
 
