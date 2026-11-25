@@ -111,17 +111,27 @@ Each failed task is counted once. Reasons involving the judge are only as good a
 
 ## Judge versus human
 
-30 decisions reviewed by a person, without seeing the judge's verdict first.
+One reviewer. In each round the person gave a verdict without seeing the judge's verdict on that item. **Rounds are reported separately and not pooled.** 30 items is a small sample: treat kappa as rough.
+
+### Round 1
+
+After this round the reviewer reported misapplying the rubric on some items: mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. The verdicts are published unedited. Because some may be reviewer mistakes, this round cannot separate judge errors from reviewer errors. How the round was run: the screen showed a one-line question for each verdict, not the full rubric (which says to ignore helpfulness when judging faithfulness), and showed the judge's verdict and reason after each answer.
 
 - Agreement: **20/30 (67%)**
+- Agreement expected by chance, given how often each said pass: 67%
 - Cohen's kappa: **-0.01**
+- Agreement by verdict type: faithful 14/17, correct 6/13
 
 | | Judge: pass | Judge: fail |
 |---|---|---|
 | Human: pass | 19 | 3 |
 | Human: fail | 7 | 1 |
 
-One reviewer and a small sample: treat kappa as rough.
+### Round 2
+
+**Why this round was added:** the rubric was misapplied on some items in round 1 (see above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed seed. Two changes from round 1: the screen shows the rubric text the judge gets, and no judge verdict is shown during the round. It is not a fully independent test: the reviewer saw the judge's verdicts and reasons during round 1, so higher agreement here could come from learning how the judge decides as well as from applying the rubric correctly. It does not replace round 1.
+
+**Pending: 0/30 recorded.** Results stay hidden until the round is complete. Before and during the round, do not read the 'Failed tasks' table below: it quotes the judge.
 
 ## How to read this
 
