@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -45,3 +45,6 @@ samples:              ## send 10 sample conversations to the running API (make r
 
 guardrail-check:      ## false-positive check of guardrail rules on real messages
 	uv run python -m evals.guardrail_check
+
+simulate:             ## replay 200 mining-pool messages through the running API
+	uv run python -m ab.simulate --limit 200 --run sim1
