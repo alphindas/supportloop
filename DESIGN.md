@@ -31,11 +31,8 @@ flowchart TD
     API --> PII[Redact PII]
     PII --> INJ{Prompt injection?}
     INJ -->|yes| REF[Fixed refusal]
-    INJ -->|no| BM[BM25 search]
     INJ -->|no| DE[Dense search in ChromaDB]
-    BM --> RRF[RRF fusion]
-    DE --> RRF
-    RRF --> RR[Reranker]
+    DE --> RR[Reranker]
     RR --> LLM[LLM: Groq, Ollama or Fake]
     LLM --> CHK[Output checks and escalation rules]
     CHK --> OUT[Answer, citations, confidence, escalate]
@@ -54,7 +51,7 @@ flowchart TD
 1. **Validate** the input, including a length limit.
 2. **Redact PII** first. Only the redacted text is stored, logged, traced, searched or sent to an LLM.
 3. **Injection check.** Pattern rules. If it fires: fixed refusal, no LLM call.
-4. **Retrieve.** BM25 (matches words) and dense search (matches meaning) each return 20 chunks. RRF merges the two lists using rank positions, so their different score scales do not matter. The reranker re-scores the merged top 20, and we keep 4.
+4. **Retrieve.** Dense search (matches meaning) returns 20 chunks. The reranker re-scores them, and we keep 4. BM25 plus RRF fusion was removed from the live path after Phase 1 (section 6.3). It can be switched back on with `retrieval_mode: hybrid`.
 5. **Generate.** The LLM must return JSON: `behavior` (answer, escalate or refuse), `answer`, `cited_article_ids`.
 6. **Check the output in code.** Invalid JSON, a citation that was not retrieved, an answer without a citation, or a number that no cited article supports means we escalate (an amount of money or a percentage must appear as such in a cited article). If retrieval or the LLM fails, we also hand off. When unsure, we fail safely. A top reranker score below the threshold also escalates (unless the result is a refusal). Rules also escalate risky cases, such as fraud or "I want a human".
 7. **Respond and record.**
@@ -70,8 +67,8 @@ All counts and thresholds above are starting values kept in config.
 | Decision | Why, in plain words | Rejected |
 |---|---|---|
 | No LangChain or LlamaIndex | Every step is our own code, so it can be read and explained. | Frameworks: faster to start, but hide the logic. |
-| Hybrid search plus reranker | Word search finds exact terms ("IBAN"). Meaning search finds rephrasings. The reranker reads question and chunk together. Phase 1 measures whether each part helps. | Dense only: kept as a baseline. |
-| `bm25s` for BM25 | Maintained. `rank-bm25` has had no release since 2022. | `rank-bm25`. |
+| Dense search plus reranker (was: hybrid) | Dense search finds rephrasings; the reranker reads question and chunk together. BM25 was planned and measured, then dropped because it added nothing measurable (6.3). | BM25 + RRF hybrid: kept in code for comparison. Dense without reranker: scored about the same on test, but then there is no tested score for the escalation threshold. |
+| `bm25s` for BM25 (comparison only) | Maintained. `rank-bm25` has had no release since 2022. | `rank-bm25`. |
 | ChromaDB inside the app | No extra server for a few hundred chunks. | Qdrant, pgvector: more to operate. |
 | SQLite with SQLAlchemy | One file, no server, enough for one machine. | Postgres: needed for many concurrent writers. |
 | One small LLM interface: Groq, Ollama, Fake | Swap models by config. Tests need no API key. | LiteLLM: another layer to explain. |
@@ -105,9 +102,9 @@ Candidates, all confirmed to exist on 2026-11-25. Choices are made from measurem
 - Retrieval: 90 question to article pairs. **30 (dev) for choosing** models and the threshold, **60 (test) held out** for reported numbers. Among candidates within one dev question of the best on both Recall@5 and MRR, take the fastest.
 - Local LLM: 30 tasks drawn from the dev pairs, using real retrieved context. Highest pass rate; near-ties go to the faster model.
 
-### 6.1 Results: embedder and reranker (dev split, 2026-11-25)
+### 6.1 First selection, with hybrid search (dev split, 2026-11-25)
 
-From `reports/retrieval_v1.md`. Latency changed noticeably between runs, so treat it as rough.
+From `reports/raw/benchmark_retrieval_hybrid.json`. Latency changed noticeably between runs, so treat it as rough.
 
 | Embedder | Reranker | Recall@5 | MRR | p50 ms | VRAM MiB |
 |---|---|---|---|---|---|
@@ -123,7 +120,7 @@ From `reports/retrieval_v1.md`. Latency changed noticeably between runs, so trea
 
 **Choice: `bge-small-en-v1.5` + `bge-reranker-v2-m3`.** With `bge-reranker-v2-m3`, all three embedders gave identical dev scores, and the small one used about half the VRAM. The reranker mattered more than the embedder.
 
-**What the held-out test split showed:** the chosen pipeline scored clearly lower than on dev, and it was **not measurably better than dense search alone** (see the paired comparison in the report). We kept the pre-declared choice and did not tune on test. So Phase 1 has **not** shown that BM25 plus reranking helps on unseen questions.
+**What the held-out test split showed:** the chosen pipeline scored clearly lower than on dev, and it was **not measurably better than dense search alone**.
 
 ### 6.2 Results: local LLM (30 tasks, 2026-11-25)
 
@@ -131,14 +128,46 @@ From `reports/retrieval_v1.md`, which also shows what kind of mistakes each mode
 
 | Model | Pass | p50 s | VRAM GiB |
 |---|---|---|---|
-| qwen3.5:2b | 19/30 | 1.2 | 2.19 |
-| llama3.2:3b **(chosen local)** | 24/30 | 1.5 | 2.38 |
-| phi4-mini | 20/30 | 1.7 | 2.88 |
-| openai/gpt-oss-20b (hosted reference) | 27/30 | 0.6 | hosted |
+| qwen3.5:2b | 16/30 | 1.2 | 2.19 |
+| llama3.2:3b **(chosen local)** | 21/30 | 1.5 | 2.38 |
+| phi4-mini | 20/30 | 1.8 | 2.88 |
+| openai/gpt-oss-20b (hosted reference) | 26/30 | 0.6 | hosted |
 
-**Choice: `llama3.2:3b`**, by the pre-declared rule. **Trade-off:** it twice answered when it should have handed off or refused, while the other two local models never did (they handed off too often instead). For a fintech, that risk matters. In the app the retrieval threshold runs after the model and caught all unanswerable dev questions, but the threshold was tuned on dev.
+Rerun with dense-retrieval context. One task (`ret-098`) failed for every model because retrieval no longer returns its article.
+
+**Choice: `llama3.2:3b`**, by the pre-declared rule, **now only just**: `phi4-mini` is one task behind, which the rule counts as a tie, so latency decides. **Trade-off:** `llama3.2:3b` answered 3 times when it should have handed off or refused; `phi4-mini` and `qwen3.5:2b` never did (they handed off too often instead). For a fintech that risk matters, and choosing `phi4-mini` for safety would be defensible. The app's retrieval threshold catches some such cases, not necessarily all.
 
 All three local models run fully on the GPU only with `num_gpu: 99`; Ollama's automatic placement kept part of each on the CPU.
+
+### 6.3 Dropping BM25 (after the Phase 1 review)
+
+**Question:** does BM25 earn its place? **Rule, committed before measuring:** use dense + reranker if its mean is at most 0.034 below hybrid + reranker on both Recall@5 and MRR on the test split.
+
+**Result:** on 60 test questions the gaps were Recall@5 +0.000 and MRR -0.003, both with intervals that include zero (`reports/retrieval_v1.md`). A tie, so the app now uses **dense + reranker**.
+
+- **Why drop on a tie:** with equal measured quality, fewer parts means less to explain, debug and keep in step. It does **not** make search noticeably faster: the reranker takes almost all the time.
+- **What could be lost:** BM25 is good at exact terms (codes, product names). Our questions rarely depend on them. On a larger or more technical knowledge base, measure again.
+- **Caveat:** this choice was made on the test split, so that split is no longer unseen for it, and a tie on 60 questions is not proof of equality. Phase 2's new eval questions give a fresh check.
+
+**Knock-on 1: embedder re-checked in dense mode** (dev split, same rule). Without BM25 as a second source, the embedder matters more.
+
+| Embedder | Reranker | Recall@5 | MRR | p50 ms | VRAM MiB |
+|---|---|---|---|---|---|
+| Qwen3-Embedding-0.6B | none | 0.933 | 0.878 | 59 | 1204 |
+| Qwen3-Embedding-0.6B | Qwen3-Reranker-0.6B | 0.967 | 0.834 | 502 | 2350 |
+| Qwen3-Embedding-0.6B | bge-reranker-v2-m3 | 0.967 | 0.911 | 183 | 2306 |
+| bge-m3 | none | 1.000 | 0.872 | 30 | 1140 |
+| bge-m3 | Qwen3-Reranker-0.6B | 1.000 | 0.841 | 487 | 2284 |
+| bge-m3 | bge-reranker-v2-m3 | 1.000 | 0.928 | 160 | 2232 |
+| bge-small-en-v1.5 | none | 0.933 | 0.853 | 13 | 106 |
+| bge-small-en-v1.5 | Qwen3-Reranker-0.6B | 0.933 | 0.807 | 468 | 1246 |
+| bge-small-en-v1.5 | bge-reranker-v2-m3 **(chosen)** | 0.967 | 0.894 | 145 | 1196 |
+
+The rule still picks `bge-small-en-v1.5` + `bge-reranker-v2-m3`, **but only just**: `bge-m3` with the same reranker scored higher (1.000 / 0.928 against 0.967 / 0.894). The whole difference is **one dev question** (`ret-098`), and the tie margin was defined as about one question. `bge-m3` used about twice the VRAM.
+
+**Knock-on 2: escalation threshold recalibrated** from 0.0311 to **0.0049** (a reranker score depends on which chunks it is given, and the calibration rule was re-applied). On test it now wrongly escalates 5 of 60 answerable questions and catches 8 of 10 unanswerable banking and 10 of 10 off-topic ones. Before the switch it was 7 of 60, 10 of 10 and 10 of 10. So fewer needless hand-offs, but two unanswerable banking questions now depend on the LLM to hand off. The value is fragile: it rests on one or two of the 30 dev scores.
+
+This also fixed a Phase 1 bug: the threshold was rounded to the nearest 4 decimals, which could round up past the boundary question and break the 5% limit (Phase 1 had 2 of 30 on dev instead of 1). It is now rounded down.
 
 ## 7. What counts as a failure
 

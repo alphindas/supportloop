@@ -11,7 +11,7 @@ flowchart TD
     M[POST /chat] --> PII[Redact personal data]
     PII --> INJ{Prompt injection?}
     INJ -->|yes| REF[Fixed refusal, no LLM call]
-    INJ -->|no| S[BM25 + dense search, merged with RRF]
+    INJ -->|no| S[Dense search in ChromaDB]
     S --> RR[Reranker keeps 4 chunks]
     RR --> LLM[LLM returns JSON]
     LLM --> CHK[Code checks: citations, numbers, score threshold, escalation rules]
@@ -63,27 +63,29 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 
 All numbers come from the files in [`reports/`](reports/). **No result yet measures whether the bot's answers are correct**; that is Phase 2.
 
-**Retrieval, 60 held-out questions** ([report](reports/retrieval_v1.md), 95% bootstrap intervals):
+**Retrieval, 60 test questions** ([report](reports/retrieval_v1.md), 95% bootstrap intervals):
 
 | Setup | Recall@5 | MRR |
 |---|---|---|
 | BM25 only | 0.592 [0.475, 0.708] | 0.469 [0.367, 0.571] |
 | Dense only | 0.850 [0.758, 0.925] | 0.735 [0.644, 0.820] |
-| Hybrid (RRF) | 0.808 [0.708, 0.892] | 0.673 [0.577, 0.763] |
-| Hybrid + reranker (used by the app) | 0.833 [0.742, 0.917] | 0.725 [0.629, 0.815] |
+| Hybrid (BM25 + dense) | 0.808 [0.708, 0.892] | 0.673 [0.577, 0.763] |
+| **Dense + reranker (used by the app)** | 0.833 [0.742, 0.917] | 0.722 [0.623, 0.813] |
+| Hybrid + reranker | 0.833 [0.742, 0.917] | 0.725 [0.629, 0.815] |
 
-The full pipeline is **not measurably better than dense search alone** on these questions (paired difference in Recall@5: -0.017 [-0.083, +0.050]). On the 30 dev questions used to choose models it scored 1.000, so dev numbers overstate quality.
+- **BM25 was dropped** because dense + reranker tied hybrid + reranker (rule committed before measuring). That decision used these test questions, so they are no longer unseen for it.
+- The app's pipeline is **not measurably better than dense search alone** (paired difference in Recall@5: -0.017 [-0.100, +0.067]). Dev questions used to choose models scored higher, so dev numbers overstate quality.
 
-**Escalation threshold, tuned on dev, measured on test:** it wrongly escalates 7 of 60 answerable questions and catches 20 of 20 unanswerable ones.
+**Escalation threshold, tuned on dev, measured on test:** it wrongly escalates 5 of 60 answerable questions, and catches 8 of 10 unanswerable banking and 10 of 10 off-topic ones.
 
 **Local LLM, 30 tasks** (pass = right behaviour and code checks; wording not judged):
 
 | Model | Pass |
 |---|---|
-| `llama3.2:3b` (chosen) | 24/30 |
+| `llama3.2:3b` (chosen: tie with the next, but faster) | 21/30 |
 | `phi4-mini` | 20/30 |
-| `qwen3.5:2b` | 19/30 |
-| `openai/gpt-oss-20b` on Groq (reference, the default model) | 27/30 |
+| `qwen3.5:2b` | 16/30 |
+| `openai/gpt-oss-20b` on Groq (reference, the default model) | 26/30 |
 
 **Guardrail rules on 3,080 real customer messages** ([report](reports/guardrails_v1.md)): the injection rules wrongly flagged 0. How many real attacks they catch has not been measured.
 
@@ -92,7 +94,7 @@ The full pipeline is **not measurably better than dense search alone** on these 
 - **AI-drafted data.** The articles, many retrieval questions and all labels were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet. Scores are likely optimistic.
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
 - **Refuse versus hand-off:** the model sometimes refuses a banking question that should go to a human (sample 10: savings interest). The score threshold does not catch this, because it does not override a refusal.
-- **`llama3.2:3b` trade-off:** in the benchmark it twice answered when it should not have.
+- **`llama3.2:3b` trade-off:** in the benchmark it answered 3 times when it should have handed off or refused. `phi4-mini` never did, but handed off more answerable questions.
 - **Confidence** is the reranker's top score. It is not a probability, and correct answers can score low.
 - **Number check** cannot catch numbers written as words, or a real number used for the wrong thing. Nothing checks non-numeric claims yet.
 - **PII:** names and addresses are not detected. A mistyped card number that fails the Luhn check is not treated as a card.
