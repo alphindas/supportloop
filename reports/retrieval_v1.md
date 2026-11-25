@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Generated | 2026-11-25 |
-| Git commit | bec876e |
+| Git commit | 4a45b37 |
 | Config | config/settings.yaml |
 | Prompt version | v1 |
 | Eval set | evals/sets/retrieval_v1.jsonl (0/125 rows human-reviewed) |
@@ -21,9 +21,9 @@
 | Setup | Recall@5 | MRR | p50 ms | p95 ms |
 |---|---|---|---|---|
 | BM25 only | 0.592 [0.475, 0.708] | 0.469 [0.367, 0.571] | 0 | 0 |
-| Dense only | 0.850 [0.758, 0.925] | 0.735 [0.644, 0.820] | 13 | 23 |
-| Hybrid (RRF) | 0.808 [0.708, 0.892] | 0.673 [0.577, 0.763] | 14 | 20 |
-| Hybrid + reranker (the app) | 0.833 [0.742, 0.917] | 0.725 [0.629, 0.815] | 143 | 168 |
+| Dense only | 0.850 [0.758, 0.925] | 0.735 [0.644, 0.820] | 17 | 26 |
+| Hybrid (RRF) | 0.808 [0.708, 0.892] | 0.673 [0.577, 0.763] | 17 | 23 |
+| Hybrid + reranker (the app) | 0.833 [0.742, 0.917] | 0.725 [0.629, 0.815] | 146 | 170 |
 
 **Paired comparison, app minus dense-only (test):**
 
@@ -91,6 +91,32 @@ Source: `make benchmark-retrieval`. Each row ran in its own process. VRAM is the
 | BAAI/bge-small-en-v1.5 | BAAI/bge-reranker-v2-m3 **(selected)** | 1.000 | 0.928 | 138 | 170 | 1196 |
 
 Selected pair on **CPU**: p50 4055 ms, p95 4830 ms (matters when Ollama needs the GPU).
+
+## Model selection: local LLM
+
+Source: `make benchmark-llm`, 2026-11-25. 30 tasks from the dev split, with context from the retriever above (embedder and reranker released first). 'Pass' means correct behaviour, all code checks passed and, for answers, an expected article cited. It does **not** judge whether the wording is correct. With this few tasks, small gaps are noise.
+
+| Model | Pass | Behaviour correct | Valid JSON | Code checks passed | p50 s | p95 s | Output tok/s | VRAM GiB (share on GPU) |
+|---|---|---|---|---|---|---|---|---|
+| ollama:qwen3.5:2b | 19/30 | 20/30 | 30/30 | 30/30 | 1.2 | 1.7 | 45 | 2.19 (100%) |
+| ollama:llama3.2:3b **(selected)** | 24/30 | 24/30 | 30/30 | 30/30 | 1.5 | 1.8 | 55 | 2.38 (100%) |
+| ollama:phi4-mini | 20/30 | 20/30 | 30/30 | 30/30 | 1.7 | 2.9 | 47 | 2.88 (100%) |
+| groq:openai/gpt-oss-20b | 27/30 | 28/30 | 30/30 | 30/30 | 0.6 | 1.3 | - | hosted |
+
+Hosted reference is not part of the local choice. Answerable tasks whose expected article was not retrieved: 0.
+
+An earlier run left GPU placement to Ollama (no `num_gpu` setting; saved in `benchmark_llm_auto_offload.json`): qwen3.5:2b 63% on GPU, p50 2.0 s, pass 19/30; llama3.2:3b 80% on GPU, p50 2.0 s, pass 24/30; phi4-mini 74% on GPU, p50 3.8 s, pass 20/30.
+
+**Which mistakes each model made**
+
+| Model | Answered when it should have handed off or refused | Handed off or refused an answerable question | Refused when it should have handed off |
+|---|---|---|---|
+| ollama:qwen3.5:2b | 0 | 9 | 1 |
+| ollama:llama3.2:3b | 2 | 3 | 1 |
+| ollama:phi4-mini | 0 | 7 | 3 |
+| groq:openai/gpt-oss-20b | 0 | 0 | 2 |
+
+These are the model's raw choices. In the app, the retrieval score threshold and the output checks run afterwards and can turn an answer into a hand-off.
 
 ## Limitations
 
