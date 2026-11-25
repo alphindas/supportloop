@@ -1,0 +1,18 @@
+# Guardrail rules. Matched against text that has been lower-cased and normalised.
+# These are simple patterns: they catch common phrasings, not a determined attacker.
+
+injection_patterns:
+  ignore_instructions: '\b(ignore|disregard|forget|override|bypass)\b.{0,40}\b(instruction|instructions|rules|prompt|guidelines|system message)\b'
+  reveal_prompt: '\b(reveal|show|print|repeat|output|display|tell me|what is|what are)\b.{0,40}\b(system prompt|your prompt|your instructions|initial instructions|hidden instructions)\b'
+  role_change: '\b(you are now|from now on you|pretend (to be|you are)|act as (an? )?(admin|administrator|developer|system|root|dan|unrestricted|jailbroken))'
+  jailbreak_words: '\b(jailbreak|developer mode|dan mode|do anything now)\b'
+  fake_markup: '(<\s*/?\s*(system|assistant|instructions?|article|articles)\b)|(\[\s*/?\s*(system|inst)\s*\])|(<\|[a-z_]+\|>)|(^\s*###\s*system)'
+  new_instructions: '\b(new|updated|real) (system )?instructions?\s*:'
+
+# When one of these fires, the reply is flagged for a human, even if we also answer.
+escalation_rules:
+  asks_for_human: '\b(speak|talk|chat|connect me|transfer me)\b.{0,25}\b(human|person|agent|someone|representative|advisor|adviser)\b|\b(real person|human agent|live agent)\b'
+  possible_fraud: "\\b(fraud|scam|scammed|hacked|someone (is using|used|has used|stole|accessed)|(did ?n'?t|did not|never) (make|made|authori[sz]e[d]?) (this|that|these|the|a)|unauthori[sz]ed|not (made by )?me)\\b"
+  lost_or_stolen: '\b(stolen|stole)\b|\blost\b.{0,20}\b(card|wallet|purse)\b|\b(card|wallet|purse)\b.{0,20}\b(is |got |was )?(lost|missing)\b'
+  complaint_or_legal: '\b(complaint|complain|ombudsman|lawyer|solicitor|legal action|sue you)\b'
+  vulnerable_customer: "\\b(suicid\\w*|kill myself|end my life|self[- ]harm|can'?t afford (food|to eat))\\b"

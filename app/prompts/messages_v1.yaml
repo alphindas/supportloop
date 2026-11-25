@@ -1,0 +1,12 @@
+# Fixed customer-facing messages. Using fixed text for refusals and handoffs means the
+# model cannot improvise there.
+refuse_injection: >-
+  I can't help with that request. I can answer questions about NovaPay cards, payments
+  and your account.
+refuse_out_of_scope: >-
+  Sorry, I can only help with questions about NovaPay cards, payments and your account.
+escalate: >-
+  I don't have enough information to answer that reliably, so I'm passing this to a
+  member of our support team.
+escalation_notice: >-
+  I'm also flagging this for a member of our support team.
