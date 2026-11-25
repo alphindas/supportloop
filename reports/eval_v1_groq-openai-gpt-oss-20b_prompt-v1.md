@@ -131,7 +131,17 @@ After this round the reviewer reported misapplying the rubric on some items: mix
 
 **Why this round was added:** the rubric was misapplied on some items in round 1 (see above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed seed. Two changes from round 1: the screen shows the rubric text the judge gets, and no judge verdict is shown during the round. It is not a fully independent test: the reviewer saw the judge's verdicts and reasons during round 1, so higher agreement here could come from learning how the judge decides as well as from applying the rubric correctly. It does not replace round 1.
 
-**Pending: 0/30 recorded.** Results stay hidden until the round is complete. Before and during the round, do not read the 'Failed tasks' table below: it quotes the judge.
+- Agreement: **25/30 (83%)**
+- Agreement expected by chance, given how often each said pass: 69%
+- Cohen's kappa: **0.47**
+- Agreement by verdict type: faithful 16/17, correct 9/13
+
+| | Judge: pass | Judge: fail |
+|---|---|---|
+| Human: pass | 22 | 0 |
+| Human: fail | 5 | 3 |
+
+8 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. If the reviewer had read that list earlier, those items were not fully blind.
 
 ## How to read this
 

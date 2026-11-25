@@ -4,6 +4,7 @@ import hashlib
 import json
 
 import httpx
+import pytest
 from fastapi.testclient import TestClient
 
 from app.chat.factory import build_chat_service
@@ -131,12 +132,18 @@ def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypat
     assert "1 of the 2 tasks in this round failed" in second
 
 
-def test_published_round_one_is_unchanged() -> None:
-    """Round 1 is published exactly as the reviewer gave it. Editing it must fail here."""
-    path = PROJECT_ROOT / "evals" / "human_review" / "groq-openai-gpt-oss-20b_prompt-v1.jsonl"
-    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
-        "d19fc34c149a23c40ad1b47fb079cac8de604c24ab29d5c008840b0b91eb4a0a"
-    )
+@pytest.mark.parametrize(
+    ("suffix", "digest"),
+    [
+        ("", "d19fc34c149a23c40ad1b47fb079cac8de604c24ab29d5c008840b0b91eb4a0a"),
+        (".round2", "b063088a6d84daa14602e1407ae244f7eaa4c212fb4935fe8dc47a72b143b2dd"),
+    ],
+)
+def test_published_review_rounds_are_unchanged(suffix: str, digest: str) -> None:
+    """Both rounds are published exactly as the reviewer gave them. Editing one fails here."""
+    name = f"groq-openai-gpt-oss-20b_prompt-v1{suffix}.jsonl"
+    path = PROJECT_ROOT / "evals" / "human_review" / name
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
 
 
 def test_sampling_is_stable_and_close_to_the_rate() -> None:
