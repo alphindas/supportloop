@@ -13,6 +13,9 @@ Keys: y = pass, n = fail, s = skip for now, q = quit. Progress is saved after ea
 
 Usage: uv run python -m evals.human_review --round 2
 Only a person should run this. Its whole point is to be independent of any model.
+
+The two rounds already recorded in evals/human_review/ did NOT meet that rule: their
+verdicts came from a second-AI reviewer (ChatGPT). See the README in that folder.
 """
 
 import argparse

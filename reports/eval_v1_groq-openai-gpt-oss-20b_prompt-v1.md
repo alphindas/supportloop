@@ -109,13 +109,15 @@ Each failed task is counted once. Reasons involving the judge are only as good a
 - Paired difference, dense minus hybrid, Recall@5: +0.010 [-0.021, +0.041] (no clear difference)
 - Paired difference, dense minus hybrid, MRR: +0.004 [-0.007, +0.018] (no clear difference)
 
-## Judge versus human
+## Judge versus second-AI reviewer (ChatGPT)
 
-One reviewer. In each round the person gave a verdict without seeing the judge's verdict on that item. **Rounds are reported separately and not pooled.** 30 items is a small sample: treat kappa as rough.
+**The judge is not validated by a human yet.** The verdicts in both rounds came from a second-AI reviewer (ChatGPT), not from a person. The numbers below are AI-versus-AI agreement. Two models can share the same mistakes, so agreement does not show that either is right. Not recorded: the ChatGPT model version, the prompt, what it was shown and how its conversations were split. So these verdicts cannot be reproduced, and neither round can be called blind or independent. **Correction (2026-11-25):** both rounds were first published as human review. That was wrong. Earlier versions of this report and some commit messages still say so. The verdict files are unedited, so their field named `human` holds ChatGPT's verdict.
+
+**Rounds are reported separately and not pooled.** 30 items is a small sample: treat kappa as rough.
 
 ### Round 1
 
-After this round the reviewer reported misapplying the rubric on some items: mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. The verdicts are published unedited. Because some may be reviewer mistakes, this round cannot separate judge errors from reviewer errors. How the round was run: the screen showed a one-line question for each verdict, not the full rubric (which says to ignore helpfulness when judging faithfulness), and showed the judge's verdict and reason after each answer.
+When this round was published, the rubric was reported as misapplied on some items: mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. It was described then as a person's own mistake, but the verdicts are ChatGPT's. No item-by-item check of that report is recorded. The verdicts are published unedited. This round cannot separate judge errors from second-reviewer errors. About the review tool in this round: its screen showed a one-line question for each verdict, not the full rubric (which says to ignore helpfulness when judging faithfulness), and showed the judge's verdict and reason after each answer. How much of that reached ChatGPT is not recorded.
 
 - Agreement: **20/30 (67%)**
 - Agreement expected by chance, given how often each said pass: 67%
@@ -124,12 +126,12 @@ After this round the reviewer reported misapplying the rubric on some items: mix
 
 | | Judge: pass | Judge: fail |
 |---|---|---|
-| Human: pass | 19 | 3 |
-| Human: fail | 7 | 1 |
+| Second AI (ChatGPT): pass | 19 | 3 |
+| Second AI (ChatGPT): fail | 7 | 1 |
 
 ### Round 2
 
-**Why this round was added:** the rubric was misapplied on some items in round 1 (see above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed seed. Two changes from round 1: the screen shows the rubric text the judge gets, and no judge verdict is shown during the round. It is not a fully independent test: the reviewer saw the judge's verdicts and reasons during round 1, so higher agreement here could come from learning how the judge decides as well as from applying the rubric correctly. It does not replace round 1.
+**Why this round was added:** the rubric problem reported for round 1 (see above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed seed. The review tool's screen showed the rubric text the judge gets and no judge verdict during the round. What was passed on to ChatGPT is not recorded, including whether it got the rubric and whether it had seen any judge output, such as that of round 1. So the reason for the higher agreement is unknown. This round does not replace round 1.
 
 - Agreement: **25/30 (83%)**
 - Agreement expected by chance, given how often each said pass: 69%
@@ -138,15 +140,15 @@ After this round the reviewer reported misapplying the rubric on some items: mix
 
 | | Judge: pass | Judge: fail |
 |---|---|---|
-| Human: pass | 22 | 0 |
-| Human: fail | 5 | 3 |
+| Second AI (ChatGPT): pass | 22 | 0 |
+| Second AI (ChatGPT): fail | 5 | 3 |
 
-8 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. If the reviewer had read that list earlier, those items were not fully blind.
+8 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. A reviewer who was shown that list first was not blind on those items.
 
 ## How to read this
 
 - Tasks, labels and reference answers are AI-drafted. Unless the header says rows were human-reviewed, no person has checked them.
-- The judge is itself a language model and can be wrong.
+- The judge is itself a language model and can be wrong. Check the judge review section above before relying on its scores.
 - Intervals cover the luck of which tasks are in the set. They do not cover model randomness (reruns reuse cached replies), judge mistakes or unrealistic tasks.
 - About 150 tasks can only reliably separate systems that differ a lot.
 

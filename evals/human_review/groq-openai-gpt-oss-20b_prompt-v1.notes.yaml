@@ -1,18 +1,32 @@
 # Explanations shown in the eval report. Verdict files are never edited.
+reviewer: second-AI reviewer (ChatGPT)
+short_label: Second AI (ChatGPT)
+summary: >-
+  **The judge is not validated by a human yet.** The verdicts in both rounds came from a
+  second-AI reviewer (ChatGPT), not from a person. The numbers below are AI-versus-AI
+  agreement. Two models can share the same mistakes, so agreement does not show that
+  either is right. Not recorded: the ChatGPT model version, the prompt, what it was
+  shown and how its conversations were split. So these verdicts cannot be reproduced,
+  and neither round can be called blind or independent. **Correction (2026-11-25):**
+  both rounds were first published as human review. That was wrong. Earlier versions of
+  this report and some commit messages still say so. The verdict files are unedited, so
+  their field named `human` holds ChatGPT's verdict.
 rounds:
   1: >-
-    After this round the reviewer reported misapplying the rubric on some items: mixing up
-    "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. The
-    verdicts are published unedited. Because some may be reviewer mistakes, this round
-    cannot separate judge errors from reviewer errors. How the round was run: the screen
-    showed a one-line question for each verdict, not the full rubric (which says to ignore
-    helpfulness when judging faithfulness), and showed the judge's verdict and reason
-    after each answer.
+    When this round was published, the rubric was reported as misapplied on some items:
+    mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5%
+    fee. It was described then as a person's own mistake, but the verdicts are
+    ChatGPT's. No item-by-item check of that report is recorded. The verdicts are
+    published unedited. This round cannot separate judge errors from second-reviewer
+    errors. About the review tool in this round: its screen showed a one-line question
+    for each verdict, not the full rubric (which says to ignore helpfulness when judging
+    faithfulness), and showed the judge's verdict and reason after each answer. How much
+    of that reached ChatGPT is not recorded.
   2: >-
-    **Why this round was added:** the rubric was misapplied on some items in round 1 (see
-    above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a
-    fixed seed. Two changes from round 1: the screen shows the rubric text the judge gets,
-    and no judge verdict is shown during the round. It is not a fully independent test:
-    the reviewer saw the judge's verdicts and reasons during round 1, so higher agreement
-    here could come from learning how the judge decides as well as from applying the
-    rubric correctly. It does not replace round 1.
+    **Why this round was added:** the rubric problem reported for round 1 (see above).
+    It uses 30 tasks that were not in round 1, one verdict each, chosen with a fixed
+    seed. The review tool's screen showed the rubric text the judge gets and no judge
+    verdict during the round. What was passed on to ChatGPT is not recorded, including
+    whether it got the rubric and whether it had seen any judge output, such as that of
+    round 1. So the reason for the higher agreement is unknown. This round does not
+    replace round 1.

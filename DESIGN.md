@@ -72,8 +72,8 @@ All counts and thresholds above are starting values kept in config.
 | ChromaDB inside the app | No extra server for a few hundred chunks. | Qdrant, pgvector: more to operate. |
 | SQLite with SQLAlchemy | One file, no server, enough for one machine. | Postgres: needed for many concurrent writers. |
 | One small LLM interface: Groq, Ollama, Fake | Swap models by config. Tests need no API key. | LiteLLM: another layer to explain. |
-| Custom graders, no RAGAS | We control the rubric and can check the judge against a human. | RAGAS: more dependencies and more judge calls. |
-| One judge call returns two verdicts (faithful, correct) | Uses fewer requests on the free plan. Risk: one verdict influences the other. Human review checks for this. | Two separate calls. |
+| Custom graders, no RAGAS | We control the rubric and can check the judge against a human (not done yet, see section 8). | RAGAS: more dependencies and more judge calls. |
+| One judge call returns two verdicts (faithful, correct) | Uses fewer requests on the free plan. Risk: one verdict influences the other. A human review could check for this; none has been done yet. | Two separate calls. |
 | Cache key is a hash of the **whole request** (provider, model, full prompt with retrieved text, parameters, schema) | If an article changes, the prompt changes, so we cannot get an old answer back. | Key of (model, prompt version, user message): would break the data-loop before/after test. |
 | Cache stores the first call's latency and tokens; off for live traffic | Reruns give the same numbers, and latency is never the time of a cache lookup. | Timing cached reruns. |
 | OpenTelemetry GenAI attribute names kept in one file (tracing is built in Phase 2) | These conventions are still marked "Development" and may be renamed. Message text is not put in traces. | Names scattered through the code. |
@@ -207,9 +207,18 @@ A **failure candidate** is a turn worth a human look. It becomes a **confirmed f
 | Citation accuracy | Share of answers where every citation was retrieved and at least one is an expected article. |
 | Number check | Every number in an answer appears in a cited article or in the user's message. |
 | Escalation precision / recall | Of our escalations, how many were expected / of expected escalations, how many we made. |
-| Judge-human agreement | Percent agreement and Cohen's kappa (agreement beyond chance) on 30 random verdicts. The person answers **before** seeing the judge's verdict, so it cannot sway them. If nearly all are "pass", percent agreement looks high even for a weak judge, so we show the full table. |
+| Judge-human agreement (planned, **not done yet**) | Percent agreement and Cohen's kappa (agreement beyond chance) on 30 random verdicts. The person answers **before** seeing the judge's verdict, so it cannot sway them. If nearly all are "pass", percent agreement looks high even for a weak judge, so we show the full table. |
 | Latency p50 / p95 | End to end, uncached calls only. Time spent waiting on rate limits is reported separately. |
 | Tokens per answer | Input plus output, as reported by the provider. |
+
+**Status (corrected 2026-11-25): the judge is not validated by a human yet.** Two review rounds were run, but their verdicts came from a **second-AI reviewer (ChatGPT)**, not a person. They were first published as human review, which was wrong.
+
+| Second-AI round | Agreement with the judge | Expected by chance | Cohen's kappa |
+|---|---|---|---|
+| 1 | 20/30 (67%) | 67% | -0.01 |
+| 2 (30 other tasks) | 25/30 (83%) | 69% | 0.47 |
+
+This is AI-versus-AI agreement and does not replace the planned human check: two models can share the same mistakes. The ChatGPT model version, prompt and inputs are not recorded, so the rounds cannot be reproduced or called blind. The verdict files are kept unedited ([note](evals/human_review/README.md)); the full tables are in the [eval report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md).
 
 Eval metrics get 95% bootstrap confidence intervals (resample the tasks many times and see how much the number moves), with a fixed seed.
 
@@ -281,8 +290,8 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 | GPU out of memory | Measure each model. With Groq, retrieval stays on the GPU. With Ollama, try retrieval on the CPU. If too slow, offline evals run in two stages (retrieve all, free the GPU, generate all). A live local-model API may stay slow. |
 | Groq vs Ollama is not a clean comparison | Retrieval hardware and network differ, so latency is not like for like. Make prompt v1 vs v2 the first experiment. |
 | **Observed in Phase 2:** real numbers attached to the wrong thing | The local model told simulated customers of fees that do not exist; the number check passed them. The judge on live samples caught them after the fact. Candidates for Phase 3: a prompt change, a different local model, or a check that ties each amount to its sentence in the source. |
-| KB, questions and judge are all AI-made | Scores may be too optimistic. Items are labelled `ai_drafted` until a human marks them reviewed; real Banking77 phrasing; human spot checks. |
-| One reviewer | No measure of agreement between humans. State it as a limitation. |
+| KB, questions and judge are all AI-made | Scores may be too optimistic. Items are labelled `ai_drafted` until a human marks them reviewed (none are yet); real Banking77 phrasing; human spot checks (the judge has had none: its only reviewer so far is another AI). |
+| No human review of the judge yet; one planned reviewer | The judge's scores are unvalidated. Even after one person reviews it, there will be no measure of agreement between humans. State both as limitations. |
 | PII rules miss things | Rules cover cards, IBANs, emails and phones. **Not names or addresses.** |
 | Injection rules are easy to get around | Also: no tools or secrets for the LLM to misuse, plus output checks. A model-based detector is a possible later comparison. |
 | Rules or judge fail on text inside KB or user input | Treat both as data in the prompt; include injection tasks in the eval set. |
@@ -292,5 +301,5 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 ## 12. Phases
 
 1. **Chatbot:** repo setup, KB, retrieval with model comparison, chat API with guardrails.
-2. **Measure:** storage, feedback, metrics, traffic simulator, eval set v1, graders, human review.
+2. **Measure:** storage, feedback, metrics, traffic simulator, eval set v1, graders, judge review tool (a human review has not been done yet).
 3. **Improve and ship:** data loop, A/B test, optional intent routing, Docker, CI, README.

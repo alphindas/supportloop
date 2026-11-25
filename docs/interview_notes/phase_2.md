@@ -2,9 +2,9 @@
 
 Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `reports/production_signals_simulation.md`. Written 2026-11-25.
 
-**Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code.
+**Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code. So were these notes: a sentence with "I" in it is a draft answer, not proof that a person checked something. Before you say it, make sure it is true of you.
 
-**Do not call the judge validated.** Human review round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2: 25/30 (83%), 69% expected by chance, kappa 0.47. One reviewer, 30 items per round, and round 2 is not fully independent.
+**The judge is not validated by a human yet.** The only review so far used a **second-AI reviewer (ChatGPT)**, not a person. Round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2: 25/30 (83%), 69% expected by chance, kappa 0.47. This is AI-versus-AI agreement. **Never call either round human review.** They were first published that way, which was wrong (corrected 2026-11-25).
 
 ## 1. What we built and why
 
@@ -14,7 +14,7 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 - One OpenTelemetry trace per request shows each stage, with no message text.
 - A simulator replayed 200 real customer messages through the running API.
 - An eval set of 150 tasks, graded by code rules plus an LLM judge, with confidence intervals.
-- A tool to check the judge against a person.
+- A review tool for checking the judge against a person. No person has reviewed with it yet: the two recorded rounds are a second-AI reviewer's (ChatGPT).
 - Why: Phase 3 will change the system. Without this, "better" would be a guess.
 
 ## 2. Design decisions and rejected alternatives
@@ -34,9 +34,10 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 | Own judge rubric, not RAGAS | I can read, version and test the rubric, and control quota. | RAGAS: more dependencies and more calls per task. |
 | One judge call, two verdicts, reason before verdict | Half the requests. | Two calls: more independent, twice the quota. Risk of one verdict colouring the other. |
 | Judge from a different model family, temperature 0, cached | Less self-preference; stable results. | Generator judging itself. |
-| Human answers before seeing the judge | Seeing the verdict first pulls people towards it. | Showing the verdict and asking "agree?": inflates agreement. |
-| Round 2 added, round 1 kept unedited | The rubric was misapplied on some round-1 items. Editing those verdicts after seeing the judge would make agreement meaningless. Round 2 uses 30 other tasks and is reported separately. | Fixing or deleting round-1 verdicts, or pooling the rounds. |
-| Round 2 shows the rubric and hides all judge verdicts | The round-1 screen showed only a one-line question, which was a flaw in the tool: the rule "ignore helpfulness when judging faithfulness" was not visible. | Relying on the reviewer to remember the rubric. |
+| The review tool is designed so the reviewer answers before seeing the judge | Seeing the verdict first pulls a reviewer towards it. This is about the tool's screen; what reached ChatGPT is not recorded. | Showing the verdict and asking "agree?": inflates agreement. |
+| Round 2 added, round 1 kept unedited | The rubric was reported as misapplied on some round-1 items. Editing verdicts after seeing the judge would make agreement meaningless. Round 2 uses 30 other tasks and is reported separately. | Fixing or deleting round-1 verdicts, or pooling the rounds. |
+| In round 2 the tool's screen shows the rubric and no judge verdicts | The round-1 screen showed only a one-line question, which was a flaw in the tool: the rule "ignore helpfulness when judging faithfulness" was not visible. | Relying on the reviewer to remember the rubric. |
+| Relabel both rounds as second-AI, keep the verdict files | The verdicts came from ChatGPT. The files are the record of what happened; the labels around them were wrong. | Leaving the "human" label: false. Deleting the rounds: hides the mistake. |
 | Report agreement **and** kappa | If most verdicts are "pass", agreement is high even for a lazy judge. | Agreement alone. |
 | Cache plus saved first-run latency | A rerun gives a byte-identical report. | Re-timing cached calls: reports cache speed as model speed. |
 | Stop the run on quota or outage | A hand-off caused by a rate limit is not the bot's answer. | Grading it: silently wrong results. |
@@ -44,14 +45,14 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 
 ## 3. Trade-offs, weaknesses, and what I would do with more time
 
-**The most important weakness: the judge is unvalidated.** Faithfulness 0.950 and correctness 0.670 depend on it. In human review round 1, agreement was 20/30 (67%). Given that I said "pass" 22 times and the judge 26 times, chance alone predicts 67%, so kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. I found afterwards that I had misapplied the rubric on some items: I mixed up "faithful" with "helpful", and missed omitted key facts such as the 1.5% fee. So round 1 cannot tell me how much of the disagreement is the judge's fault and how much is mine. I left every verdict unedited and added a second round on 30 other tasks: 25/30 (83%), chance 69%, kappa 0.47; faithful 16/17, correct 9/13. All 5 disagreements were the judge passing what I failed (4 of them on correctness). That is better agreement, but not validation: I had seen the judge's reasoning in round 1. The judge also has at least one verdict that breaks the rubric: on `v1-035` it called a missing detail "unfaithful".
+**The most important weakness: the judge is not validated by a human yet.** Faithfulness 0.950 and correctness 0.670 depend on it. Its only comparison is with a second-AI reviewer (ChatGPT). In second-AI round 1, agreement was 20/30 (67%). ChatGPT said "pass" 22 times and the judge 26 times, so chance alone predicts 67% and kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. The rubric was reported as misapplied on some of these items (mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee). In round 2, on 30 other tasks: 25/30 (83%), chance 69%, kappa 0.47; faithful 16/17, correct 9/13. All 5 disagreements were the judge passing what ChatGPT failed (4 of them on correctness). Higher agreement is not validation: two models can share mistakes, nobody has checked who was right, and what ChatGPT was shown is not recorded. Separately, the judge has at least one verdict that breaks the rubric, which anyone can check in the report: on `v1-035` it called a missing detail "unfaithful".
 
 **What the numbers show:**
 
 - Pass rate 0.680 [0.607, 0.753].
 - The weak spot is knowing when it cannot answer: escalation recall 0.633 on 30 tasks. 7 were answered, 4 refused.
-- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. I have not separated these causes. Round 2 gave no sign of a strict judge (it never failed an item I passed), but that is only 13 correctness verdicts. I did not edit the references or rubric after seeing results.
-- On live-style traffic with the local model, 8 of 36 sampled replies were judged unfaithful. Two that I checked against the articles are wrong statements about fees.
+- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. These causes have not been separated. In second-AI round 2 the judge never failed an item that ChatGPT passed, but that is only 13 correctness verdicts and it says nothing about what a person would decide. The references and rubric were not edited after seeing results.
+- On live-style traffic with the local model, 8 of 36 sampled replies were judged unfaithful. Two of them are wrong statements about fees. They were compared with the articles while drafting these notes with Claude Code; no check by a person is recorded.
 
 Other weaknesses:
 
@@ -63,15 +64,15 @@ Other weaknesses:
 - Live judging is a manual command, not a scheduled job.
 - No multi-turn tasks in the eval set, so follow-up questions are not measured.
 
-With more time: add a second reviewer and worked examples to the rubric, and change the rubric in a new version if agreement stays poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
+Next: a real human review of the judge on tasks not used in either round, ideally by two people who have not seen its output. With more time: add worked examples to the rubric, and change the rubric in a new version if agreement stays poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
 
 ## 4. Eight likely questions, with short answers
 
 **Q1. How do you know your judge is right?**
-I don't yet. I ran a blind review of 30 judge decisions: we agreed on 20, which is exactly what chance predicts here (kappa -0.01). I then realised I had misapplied the rubric on some items, partly mixing up "faithful" with "helpful". My review screen had not shown the rubric. I did not edit those verdicts, because changing them after seeing the judge would make the check meaningless. I added a second blind round on 30 different tasks, with the rubric on screen, and report the two separately. In round 2 we agreed on 25, chance predicts 69%, kappa 0.47. All 5 disagreements were the judge passing something I failed. This is not clean proof: I saw the judge's reasoning during round 1, I am one reviewer, and 30 items is small. So I still would not let a ship decision rest on the judge alone. Better: a written rubric with examples, two independent reviewers, and agreement between the humans measured first.
+I don't. No person has validated it yet. I built a review tool for a blind human check, but the verdicts recorded with it came from a second AI, ChatGPT. They were first published as human review; that was wrong, and I corrected the labels without editing the verdicts. As AI-versus-AI agreement: round 1 was 20/30, exactly what chance predicts (kappa -0.01), and round 2, on 30 other tasks, was 25/30 with chance at 69% (kappa 0.47). That does not tell us the judge is right: both models can make the same mistake, and what ChatGPT was shown is not recorded. So I would not let a ship decision rest on the judge. The next step is a human review on unused tasks, ideally two people who have not seen the judge's output, measuring their agreement with each other first.
 
 **Q2. Why report kappa as well as agreement?**
-My own round 1 is the example: 67% agreement sounds acceptable, but chance alone predicts 67%, so kappa is -0.01. Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.
+The first second-AI round is the example: 67% agreement between the judge and ChatGPT sounds acceptable, but chance alone predicts 67%, so kappa is -0.01. Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.
 
 **Q3. Why not just use thumbs up and down?**
 Feedback is rare, and biased towards annoyed or delighted users. A confidently wrong fee may get a thumbs-up, because the customer does not know it is wrong. So I combine signals: hand-offs, weak search, guardrail hits, ratings and sampled judging. None is ground truth; each only chooses what a person should look at.

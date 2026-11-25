@@ -2,7 +2,7 @@
 
 A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
 
-**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated:** two checks by one reviewer disagree (kappa -0.01, then 0.47), so it is still not established that it can be trusted. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated by a human yet.** It has only been compared with a second-AI reviewer (ChatGPT). The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
 
 ## How a message is handled
 
@@ -56,7 +56,7 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make retrieval-eval` | Write `reports/retrieval_v1.md` | index |
 | `make eval` | Run eval set v1 through the app and judge it. Cached and resumable (`uv run python -m evals.run_eval --limit 40` runs a small batch) | index, Groq key |
 | `make fee-cases` | Replay two wrong-fee questions on both local models | Ollama |
-| `make human-review` | **You** check judge decisions, blind (`ROUND=2` by default, or `ROUND=1`); rebuilds the eval report | a finished eval run |
+| `make human-review` | Review tool for judge decisions, meant for a person (`ROUND=2` by default, or `ROUND=1`); rebuilds the eval report. [Both recorded rounds were done by a second AI](evals/human_review/README.md) | a finished eval run |
 | `make simulate` | Replay 200 real customer messages through the API | `make run` |
 | `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
 | `make traffic-report` | Summarise stored production signals | stored turns |
@@ -81,11 +81,13 @@ All numbers come from the files in [`reports/`](reports/).
 
 ### Answer quality: 150 tasks, `gpt-oss-20b`, prompt v1
 
-[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated** (see below), and the tasks and labels are AI-drafted.
+[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated by a human yet** (see below), and the tasks and labels are AI-drafted.
 
-**Judge versus one human, round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. The reviewer reported misapplying the rubric on some items (mixing up "faithful" with "helpful", and missing omitted key facts), so this round cannot separate judge errors from reviewer errors. The verdicts are published unedited. 
+**Judge versus a second-AI reviewer (ChatGPT). The judge is not validated by a human yet.** The verdicts in both rounds came from ChatGPT, not from a person, so this is AI-versus-AI agreement. Two models can share the same mistakes. The ChatGPT model version, the prompt and what it was shown are not recorded, so the verdicts cannot be reproduced and neither round can be called blind or independent. Both rounds were first published here as human review; **that was wrong** (corrected 2026-11-25), and some commit messages still say so. The verdict files are [unedited](evals/human_review/README.md).
 
-**Round 2** (30 different tasks, rubric on screen, no judge verdict shown during the round): agreement 25/30 (83%), 69% expected by chance, kappa 0.47. By verdict type: faithful 16/17, correct 9/13 (round 1: 14/17 and 6/13). In all 5 disagreements the judge passed an answer the reviewer failed, so the judge may be too lenient; 4 of the 5 are correctness verdicts. Round 2 is not fully independent: the reviewer had seen the judge's verdicts and reasons in round 1, so the higher agreement may partly come from learning how the judge decides. It does not replace round 1, and the rounds are not pooled.
+**Second-AI round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. By verdict type: faithful 14/17, correct 6/13. The rubric was reported as misapplied on some items (mixing up "faithful" with "helpful", and missing omitted key facts).
+
+**Second-AI round 2** (30 different tasks): agreement 25/30 (83%), 69% expected by chance, kappa 0.47. By verdict type: faithful 16/17, correct 9/13. In all 5 disagreements the judge passed an answer that ChatGPT failed; which of the two was right has not been checked. The reason for the higher agreement is unknown. It does not replace round 1, and the rounds are not pooled.
 
 | Metric | Value [95% interval] |
 |---|---|
@@ -149,7 +151,7 @@ Do not compare 0.950 with 0.778: they use different questions.
 ## Known limitations
 
 - **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
-- **Unvalidated judge.** Faithfulness and correctness come from one language model. One reviewer checked it twice: kappa -0.01 (rubric misapplied on some items), then 0.47 on 30 other tasks (not fully independent).
+- **No human validation of the judge.** Faithfulness and correctness come from one language model. Its only comparison is with another AI (ChatGPT): kappa -0.01, then 0.47 on 30 other tasks. No person has checked its verdicts in a recorded review.
 - **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
 - **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).

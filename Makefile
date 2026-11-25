@@ -55,7 +55,7 @@ simulate:             ## replay 200 mining-pool messages through the running API
 eval-answers:         ## run eval set v1 through the app and write the report (uses Groq quota)
 	uv run python -m evals.run_eval
 
-human-review:         ## YOU check 30 judge decisions blind (ROUND=1 or 2), then rebuild the report
+human-review:         ## review tool for a PERSON (ROUND=1 or 2); both saved rounds were done by a second AI
 	uv run python -m evals.human_review --round $(or $(ROUND),2)
 
 judge-live:           ## judge faithfulness on a sample of stored replies (uses Groq quota)

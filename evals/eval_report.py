@@ -65,22 +65,34 @@ def review_path(config_name: str, round_number: int) -> Path:
 
 
 def load_human_review(config_name: str, round_number: int = 1) -> list[dict]:
-    """The human's verdicts for one round, if any have been recorded."""
+    """One round's verdicts, if any. Who gave them is stated in the notes file. In each
+    record, the 'human' field is that reviewer's verdict, whoever the reviewer was."""
     path = review_path(config_name, round_number)
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def load_round_notes(config_name: str) -> dict[int, str]:
-    """Written explanations for each round, such as why another one was added."""
+def load_review_notes(config_name: str) -> dict:
+    """Who reviewed, and written explanations for each round.
+
+    Without a notes file the report says the reviewer is not recorded. It never assumes
+    the reviewer was a person.
+    """
+    notes = {
+        "reviewer": "reviewer not recorded",
+        "short_label": "Reviewer",
+        "summary": "Who gave these verdicts is not recorded, so do not read them as human "
+        "validation of the judge.",
+        "rounds": {},
+    }
     path = HUMAN_DIR / f"{config_name}.notes.yaml"
-    if not path.exists():
-        return {}
-    return yaml.safe_load(path.read_text(encoding="utf-8"))["rounds"]
+    if path.exists():
+        notes.update(yaml.safe_load(path.read_text(encoding="utf-8")))
+    return notes
 
 
-def agreement_table(reviews: list[dict]) -> list[str]:
+def agreement_table(reviews: list[dict], label: str) -> list[str]:
     """Agreement, chance agreement, kappa, a split by verdict type and the 2x2 table."""
     total = len(reviews)
     human = [r["human"] for r in reviews]
@@ -108,40 +120,44 @@ def agreement_table(reviews: list[dict]) -> list[str]:
         "",
         "| | Judge: pass | Judge: fail |",
         "|---|---|---|",
-        f"| Human: pass | {cells[True, True]} | {cells[True, False]} |",
-        f"| Human: fail | {cells[False, True]} | {cells[False, False]} |",
+        f"| {label}: pass | {cells[True, True]} | {cells[True, False]} |",
+        f"| {label}: fail | {cells[False, True]} | {cells[False, False]} |",
     ]
 
 
 def human_section(config_name: str, rows: list[dict], wanted: int) -> list[str]:
     """Each review round on its own. Rounds are never pooled."""
-    lines = ["## Judge versus human", ""]
     first = load_human_review(config_name, 1)
     if not first:
         return [
-            *lines,
+            "## Judge review",
+            "",
             f"**Not done yet.** A person must review {wanted} judge decisions "
             "(`make human-review ROUND=1`). Until then the judge-based numbers above are "
             "unvalidated.",
         ]
-    notes = load_round_notes(config_name)
-    lines.append(
-        "One reviewer. In each round the person gave a verdict without seeing the judge's "
-        "verdict on that item. **Rounds are reported separately and not pooled.** 30 items "
-        "is a small sample: treat kappa as rough."
-    )
+    notes = load_review_notes(config_name)
+    rounds = notes["rounds"]
+    lines = [
+        f"## Judge versus {notes['reviewer']}",
+        "",
+        notes["summary"].strip(),
+        "",
+        "**Rounds are reported separately and not pooled.** 30 items is a small sample: "
+        "treat kappa as rough.",
+    ]
     failed = {r["id"] for r in rows if r["passed"] is False}
     for number in (1, 2):
         reviews = load_human_review(config_name, number)
-        if number == 2 and not reviews and 2 not in notes:
+        if number == 2 and not reviews and 2 not in rounds:
             continue
         lines += ["", f"### Round {number}", ""]
-        if notes.get(number):
-            lines += [notes[number].strip(), ""]
+        if rounds.get(number):
+            lines += [rounds[number].strip(), ""]
         if number == 1:
             if len(reviews) < wanted:
                 lines += [f"**Incomplete: {len(reviews)}/{wanted}.**", ""]
-            lines += agreement_table(reviews)
+            lines += agreement_table(reviews, notes["short_label"])
         elif len(reviews) < wanted:
             # Showing partial results would tell the reviewer how the judge is voting.
             lines.append(
@@ -150,13 +166,13 @@ def human_section(config_name: str, rows: list[dict], wanted: int) -> list[str]:
                 "tasks' table below: it quotes the judge."
             )
         else:
-            lines += agreement_table(reviews)
+            lines += agreement_table(reviews, notes["short_label"])
             listed = len({r["id"] for r in reviews} & failed)
             lines += [
                 "",
                 f"{listed} of the {len(reviews)} tasks in this round failed the eval, so this "
-                "report lists them under 'Failed tasks', often with the judge's reason. If "
-                "the reviewer had read that list earlier, those items were not fully blind.",
+                "report lists them under 'Failed tasks', often with the judge's reason. A "
+                "reviewer who was shown that list first was not blind on those items.",
             ]
     return lines
 
@@ -408,7 +424,8 @@ def write_report(
         "",
         "- Tasks, labels and reference answers are AI-drafted. Unless the header says rows "
         "were human-reviewed, no person has checked them.",
-        "- The judge is itself a language model and can be wrong.",
+        "- The judge is itself a language model and can be wrong. Check the judge review "
+        "section above before relying on its scores.",
         "- Intervals cover the luck of which tasks are in the set. They do not cover model "
         "randomness (reruns reuse cached replies), judge mistakes or unrealistic tasks.",
         "- About 150 tasks can only reliably separate systems that differ a lot.",

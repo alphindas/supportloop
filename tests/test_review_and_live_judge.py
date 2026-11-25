@@ -113,7 +113,9 @@ def saved(task_ids: list[str], human: bool, judge: bool) -> str:
 
 def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(eval_report, "HUMAN_DIR", tmp_path)
-    (tmp_path / "run.notes.yaml").write_text("rounds:\n  1: first note\n  2: why again\n")
+    (tmp_path / "run.notes.yaml").write_text(
+        "reviewer: some AI\nshort_label: AI\nrounds:\n  1: first note\n  2: why again\n"
+    )
     rows = [{"id": "a", "passed": False}, {"id": "b", "passed": True}]
     (tmp_path / "run.jsonl").write_text(saved(["x", "y"], human=True, judge=True))
 
@@ -130,6 +132,25 @@ def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypat
     assert "**2/2 (100%)**" in first and "**0/2 (0%)**" in second
     assert "/4" not in done  # never pooled
     assert "1 of the 2 tasks in this round failed" in second
+    assert "## Judge versus some AI" in done and "| AI: pass |" in done
+    assert "Human" not in done
+
+
+def test_report_never_assumes_the_reviewer_was_a_person(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(eval_report, "HUMAN_DIR", tmp_path)
+    (tmp_path / "run.jsonl").write_text(saved(["x"], human=True, judge=True))
+
+    section = "\n".join(eval_report.human_section("run", [], wanted=1))
+
+    assert "## Judge versus reviewer not recorded" in section
+    assert "| Reviewer: pass |" in section and "Human" not in section
+
+
+def test_published_rounds_are_labelled_as_a_second_ai() -> None:
+    notes = eval_report.load_review_notes("groq-openai-gpt-oss-20b_prompt-v1")
+
+    assert notes["reviewer"] == "second-AI reviewer (ChatGPT)"
+    assert "not validated by a human yet" in notes["summary"]
 
 
 @pytest.mark.parametrize(
@@ -140,7 +161,7 @@ def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypat
     ],
 )
 def test_published_review_rounds_are_unchanged(suffix: str, digest: str) -> None:
-    """Both rounds are published exactly as the reviewer gave them. Editing one fails here."""
+    """Both rounds stay published exactly as recorded. Editing one fails here."""
     name = f"groq-openai-gpt-oss-20b_prompt-v1{suffix}.jsonl"
     path = PROJECT_ROOT / "evals" / "human_review" / name
     assert hashlib.sha256(path.read_bytes()).hexdigest() == digest
