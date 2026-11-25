@@ -18,9 +18,9 @@ A customer-support chatbot that:
 
 | Constraint | Effect |
 |---|---|
-| Groq free plan: 30 requests/min, 8K tokens/min, 1K requests/day, 200K tokens/day for each chat model ([docs](https://console.groq.com/docs/rate-limits), read 2026-11-25) | At about 2K tokens per call (assumed, to be measured) that is about **100 calls a day** per model. A full eval takes days, so every eval run must resume where it stopped. |
-| 4 GB VRAM | Embedder, reranker and local LLM probably cannot all be on the GPU at once (to be measured). |
-| 5.8 GB RAM visible to WSL | Loading both retrieval models on the CPU is tight. |
+| Groq free plan: 30 requests/min, 8K tokens/min, 1K requests/day, 200K tokens/day for each chat model ([docs](https://console.groq.com/docs/rate-limits), read 2026-11-25) | Measured in Phase 1: `openai/gpt-oss-20b` used on average 746 input and 85 output tokens per call on 30 tasks without chat history (`reports/raw/benchmark_llm.json`), so about **240 calls a day** from the token limit. Large runs must still be resumable. (The first plan assumed 2K tokens per call.) |
+| 4 GB VRAM | Retrieval models (about 1.2 GB) plus the local LLM (about 2.4 GB plus driver overhead) leave no safe margin, so with Ollama the retrieval models run on the CPU. |
+| WSL RAM: 5.8 GB, raised to 10 GB in `.wslconfig` (applies after a WSL restart) | Phase 1 measurements were taken with 5.8 GB. |
 | Public GitHub repo | No secrets, no database, no caches in git. |
 
 ## 3. Architecture
@@ -56,7 +56,7 @@ flowchart TD
 3. **Injection check.** Pattern rules. If it fires: fixed refusal, no LLM call.
 4. **Retrieve.** BM25 (matches words) and dense search (matches meaning) each return 20 chunks. RRF merges the two lists using rank positions, so their different score scales do not matter. The reranker re-scores the merged top 20, and we keep 4.
 5. **Generate.** The LLM must return JSON: `behavior` (answer, escalate or refuse), `answer`, `cited_article_ids`.
-6. **Check the output in code.** Invalid JSON, a citation that was not retrieved, or an answer without a citation means we escalate. When unsure, we fail safely. A top reranker score below the threshold also escalates (unless the result is a refusal). Rules also escalate risky cases, such as fraud or "I want a human".
+6. **Check the output in code.** Invalid JSON, a citation that was not retrieved, an answer without a citation, or a number that no cited article supports means we escalate (an amount of money or a percentage must appear as such in a cited article). If retrieval or the LLM fails, we also hand off. When unsure, we fail safely. A top reranker score below the threshold also escalates (unless the result is a refusal). Rules also escalate risky cases, such as fraud or "I want a human".
 7. **Respond and record.**
 
 All counts and thresholds above are starting values kept in config.
@@ -79,7 +79,8 @@ All counts and thresholds above are starting values kept in config.
 | One judge call returns two verdicts (faithful, correct) | Uses fewer requests on the free plan. Risk: one verdict influences the other. Human review checks for this. | Two separate calls. |
 | Cache key is a hash of the **whole request** (provider, model, full prompt with retrieved text, parameters, schema) | If an article changes, the prompt changes, so we cannot get an old answer back. | Key of (model, prompt version, user message): would break the data-loop before/after test. |
 | Cache stores the first call's latency and tokens; off for live traffic | Reruns give the same numbers, and latency is never the time of a cache lookup. | Timing cached reruns. |
-| OpenTelemetry GenAI attribute names kept in one file | These conventions are still marked "Development" and may be renamed. Message text is not put in traces. | Names scattered through the code. |
+| OpenTelemetry GenAI attribute names kept in one file (tracing is built in Phase 2) | These conventions are still marked "Development" and may be renamed. Message text is not put in traces. | Names scattered through the code. |
+| No tool or function calling: the bot cannot act on accounts, so a single JSON reply is enough | Fewer moving parts and nothing for an injection to trigger. | Tool calling: adds risk without a use here. |
 | CI also uses a fake embedder and fake reranker | CI stays fast and downloads no models. It tests wiring, **not answer quality**. | Real models in CI. |
 
 ## 6. Models
@@ -99,10 +100,45 @@ Candidates, all confirmed to exist on 2026-11-25. Choices are made from measurem
 - Generator: `openai/gpt-oss-20b`.
 - Judge: `qwen/qwen3.8-27b`, and **every report records the judge model**. A different model family avoids a model grading its own style, and spreads calls over two daily quotas. Risk: Groq lists it as "preview", so it can be withdrawn. Fallback: `openai/gpt-oss-120b`.
 
-**How we choose**
+**How we choose** (rules written in `config/benchmark.yaml` before the first run)
 
-- Retrieval: about 90 question to article pairs. **30 for choosing** models and thresholds, **60 held out** for the reported numbers. Choosing and reporting on the same questions makes results look better than they are. If candidates are too close to separate, we call it a tie and take the faster, smaller one.
-- Local LLM: retrieval pairs cannot test text generation, so we add about 30 generation tasks. We measure valid JSON, correct behaviour, valid citations, tokens per second and VRAM.
+- Retrieval: 90 question to article pairs. **30 (dev) for choosing** models and the threshold, **60 (test) held out** for reported numbers. Among candidates within one dev question of the best on both Recall@5 and MRR, take the fastest.
+- Local LLM: 30 tasks drawn from the dev pairs, using real retrieved context. Highest pass rate; near-ties go to the faster model.
+
+### 6.1 Results: embedder and reranker (dev split, 2026-11-25)
+
+From `reports/retrieval_v1.md`. Latency changed noticeably between runs, so treat it as rough.
+
+| Embedder | Reranker | Recall@5 | MRR | p50 ms | VRAM MiB |
+|---|---|---|---|---|---|
+| Qwen3-Embedding-0.6B | none | 0.967 | 0.766 | 51 | 1204 |
+| Qwen3-Embedding-0.6B | Qwen3-Reranker-0.6B | 0.967 | 0.842 | 480 | 2350 |
+| Qwen3-Embedding-0.6B | bge-reranker-v2-m3 | 1.000 | 0.928 | 181 | 2306 |
+| bge-m3 | none | 0.967 | 0.754 | 24 | 1140 |
+| bge-m3 | Qwen3-Reranker-0.6B | 0.967 | 0.840 | 450 | 2284 |
+| bge-m3 | bge-reranker-v2-m3 | 1.000 | 0.928 | 154 | 2232 |
+| bge-small-en-v1.5 | none | 0.933 | 0.719 | 14 | 106 |
+| bge-small-en-v1.5 | Qwen3-Reranker-0.6B | 1.000 | 0.843 | 442 | 1246 |
+| bge-small-en-v1.5 | bge-reranker-v2-m3 **(chosen)** | 1.000 | 0.928 | 138 | 1196 |
+
+**Choice: `bge-small-en-v1.5` + `bge-reranker-v2-m3`.** With `bge-reranker-v2-m3`, all three embedders gave identical dev scores, and the small one used about half the VRAM. The reranker mattered more than the embedder.
+
+**What the held-out test split showed:** the chosen pipeline scored clearly lower than on dev, and it was **not measurably better than dense search alone** (see the paired comparison in the report). We kept the pre-declared choice and did not tune on test. So Phase 1 has **not** shown that BM25 plus reranking helps on unseen questions.
+
+### 6.2 Results: local LLM (30 tasks, 2026-11-25)
+
+From `reports/retrieval_v1.md`, which also shows what kind of mistakes each model made.
+
+| Model | Pass | p50 s | VRAM GiB |
+|---|---|---|---|
+| qwen3.5:2b | 19/30 | 1.2 | 2.19 |
+| llama3.2:3b **(chosen local)** | 24/30 | 1.5 | 2.38 |
+| phi4-mini | 20/30 | 1.7 | 2.88 |
+| openai/gpt-oss-20b (hosted reference) | 27/30 | 0.6 | hosted |
+
+**Choice: `llama3.2:3b`**, by the pre-declared rule. **Trade-off:** it twice answered when it should have handed off or refused, while the other two local models never did (they handed off too often instead). For a fintech, that risk matters. In the app the retrieval threshold runs after the model and caught all unanswerable dev questions, but the threshold was tuned on dev.
+
+All three local models run fully on the GPU only with `num_gpu: 99`; Ollama's automatic placement kept part of each on the CPU.
 
 ## 7. What counts as a failure
 
