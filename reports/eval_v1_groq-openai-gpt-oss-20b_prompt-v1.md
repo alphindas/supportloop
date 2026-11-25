@@ -111,7 +111,17 @@ Each failed task is counted once. Reasons involving the judge are only as good a
 
 ## Judge versus human
 
-**Not done yet.** A person must review 30 judge decisions (`make human-review`). Until then the judge-based numbers above are unvalidated.
+30 decisions reviewed by a person, without seeing the judge's verdict first.
+
+- Agreement: **20/30 (67%)**
+- Cohen's kappa: **-0.01**
+
+| | Judge: pass | Judge: fail |
+|---|---|---|
+| Human: pass | 19 | 3 |
+| Human: fail | 7 | 1 |
+
+One reviewer and a small sample: treat kappa as rough.
 
 ## How to read this
 
