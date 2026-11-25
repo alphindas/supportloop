@@ -1,5 +1,5 @@
 {
- "calibrated_threshold": 0.031084951013326645,
+ "calibrated_threshold": 0.0049,
  "dev": [
   {
    "id": "ret-035",
@@ -11,14 +11,14 @@
    "top_articles": [
     "card-pin",
     "card-not-working",
-    "contactless-payments",
+    "account-security-tips",
     "cash-withdrawals",
     "cash-withdrawal-declined"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.0799255222082138,
-   "latency_ms": 195.7483729993328
+   "latency_ms": 199.73661800008813
   },
   {
    "id": "ret-036",
@@ -37,7 +37,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.3333333333333333,
    "top_score": 0.2885690927505493,
-   "latency_ms": 159.79423399949155
+   "latency_ms": 155.49043400005758
   },
   {
    "id": "ret-037",
@@ -56,7 +56,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9915870428085327,
-   "latency_ms": 129.59751000016695
+   "latency_ms": 133.5873600000923
   },
   {
    "id": "ret-038",
@@ -69,13 +69,13 @@
     "verification-problems",
     "verify-identity",
     "passcode-reset",
-    "virtual-card",
-    "unrecognised-card-payment"
+    "unrecognised-card-payment",
+    "transfer-failed"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.38606879115104675,
-   "latency_ms": 161.4873879998413
+   "latency_ms": 136.40213899998344
   },
   {
    "id": "ret-039",
@@ -93,8 +93,8 @@
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
-   "top_score": 0.031084951013326645,
-   "latency_ms": 131.7500340001061
+   "top_score": 0.049497053027153015,
+   "latency_ms": 143.2065409999268
   },
   {
    "id": "ret-040",
@@ -112,8 +112,8 @@
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
-   "top_score": 0.917302668094635,
-   "latency_ms": 136.7889519997334
+   "top_score": 0.9170058369636536,
+   "latency_ms": 150.73284000004605
   },
   {
    "id": "ret-041",
@@ -127,12 +127,12 @@
     "topup-by-cash",
     "topup-fees",
     "topup-by-card",
-    "topup-methods"
+    "cash-withdrawals"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8818185925483704,
-   "latency_ms": 153.2008889998906
+   "latency_ms": 149.4620710000163
   },
   {
    "id": "ret-042",
@@ -145,13 +145,13 @@
     "foreign-payment-wrong-rate",
     "cash-wrong-amount",
     "cash-withdrawal-declined",
-    "exchange-fees",
-    "transfer-not-received"
+    "exchange-rates",
+    "exchange-fees"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.5213188529014587,
-   "latency_ms": 149.59035999982007
+   "latency_ms": 163.6822250000023
   },
   {
    "id": "ret-043",
@@ -170,7 +170,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8508408069610596,
-   "latency_ms": 166.3870450001923
+   "latency_ms": 181.70065699996485
   },
   {
    "id": "ret-044",
@@ -183,13 +183,13 @@
     "topup-fees",
     "topup-limits",
     "topup-by-card",
-    "supported-cards-currencies",
-    "topup-verification"
+    "topup-verification",
+    "supported-cards-currencies"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.6442251205444336,
-   "latency_ms": 146.44896100071492
+   "latency_ms": 194.309819999944
   },
   {
    "id": "ret-045",
@@ -208,7 +208,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.1448732316493988,
-   "latency_ms": 130.6662299994059
+   "latency_ms": 137.3052110000117
   },
   {
    "id": "ret-046",
@@ -222,12 +222,12 @@
     "cash-withdrawal-pending",
     "cash-withdrawal-declined",
     "cash-deposit-missing",
-    "topup-by-cash"
+    "card-payment-reversed"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.44329914450645447,
-   "latency_ms": 139.36522899984993
+   "latency_ms": 148.87091899981897
   },
   {
    "id": "ret-047",
@@ -246,7 +246,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.7716715335845947,
-   "latency_ms": 183.31724400013627
+   "latency_ms": 188.29844899983073
   },
   {
    "id": "ret-048",
@@ -265,7 +265,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.5017261505126953,
-   "latency_ms": 138.6135459997604
+   "latency_ms": 143.2614810000814
   },
   {
    "id": "ret-049",
@@ -276,15 +276,15 @@
    ],
    "top_articles": [
     "topup-by-bank-transfer",
-    "topup-by-cash",
     "send-money",
     "topup-methods",
-    "transfer-fees"
+    "transfer-fees",
+    "receiving-money"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8699357509613037,
-   "latency_ms": 126.02364299982582
+   "latency_ms": 138.36921099982646
   },
   {
    "id": "ret-050",
@@ -295,15 +295,15 @@
    ],
    "top_articles": [
     "extra-statement-charge",
-    "topup-verification",
     "cash-withdrawals",
     "transfer-fees",
-    "topup-fees"
+    "topup-fees",
+    "charged-twice"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.12273333966732025,
-   "latency_ms": 164.7223780000786
+   "latency_ms": 191.65717400005633
   },
   {
    "id": "ret-051",
@@ -322,7 +322,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9941118359565735,
-   "latency_ms": 147.9312689998551
+   "latency_ms": 133.67856900003972
   },
   {
    "id": "ret-098",
@@ -332,16 +332,16 @@
     "topup-verification"
    ],
    "top_articles": [
-    "topup-verification",
     "compromised-card",
+    "cash-withdrawal-unrecognised",
     "bank-transfer-missing",
     "receiving-money",
     "source-of-funds"
    ],
-   "recall": 1.0,
-   "reciprocal_rank": 1.0,
-   "top_score": 0.3965354263782501,
-   "latency_ms": 142.15243200033
+   "recall": 0.0,
+   "reciprocal_rank": 0.0,
+   "top_score": 0.0006798428948968649,
+   "latency_ms": 135.49862099989696
   },
   {
    "id": "ret-099",
@@ -359,8 +359,8 @@
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
-   "top_score": 0.409574955701828,
-   "latency_ms": 149.30143200035673
+   "top_score": 0.40922078490257263,
+   "latency_ms": 144.55217999989145
   },
   {
    "id": "ret-100",
@@ -379,7 +379,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.6941990256309509,
-   "latency_ms": 145.0921109999399
+   "latency_ms": 149.1362990000198
   },
   {
    "id": "ret-101",
@@ -393,12 +393,12 @@
     "virtual-card",
     "card-pin",
     "account-security-tips",
-    "topup-by-cash"
+    "card-not-working"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.32071492075920105,
-   "latency_ms": 152.61119399929157
+   "latency_ms": 167.78180100004647
   },
   {
    "id": "ret-102",
@@ -412,12 +412,12 @@
     "topup-by-cash",
     "receiving-money",
     "supported-cards-currencies",
-    "topup-by-bank-transfer"
+    "cash-wrong-amount"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.1748325228691101,
-   "latency_ms": 128.88627699976496
+   "latency_ms": 133.99022499993407
   },
   {
    "id": "ret-103",
@@ -429,14 +429,14 @@
    "top_articles": [
     "transfer-pending",
     "cancel-transfer",
-    "transfer-not-received",
-    "transfer-failed",
-    "transfer-timing"
+    "cash-withdrawal-pending",
+    "bank-transfer-missing",
+    "transfer-not-received"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.4259633719921112,
-   "latency_ms": 158.65410100013833
+   "latency_ms": 144.14262700006475
   },
   {
    "id": "ret-104",
@@ -450,12 +450,12 @@
     "cash-wrong-amount",
     "cash-withdrawals",
     "exchange-fees",
-    "extra-statement-charge"
+    "topup-by-cash"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.21044160425662994,
-   "latency_ms": 171.36084899993875
+   "latency_ms": 207.7638839998599
   },
   {
    "id": "ret-105",
@@ -466,15 +466,15 @@
    ],
    "top_articles": [
     "supported-cards-currencies",
+    "exchange-currency",
     "receiving-money",
-    "cash-withdrawal-unrecognised",
     "cash-withdrawals",
-    "direct-debit-unrecognised"
+    "send-money"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.004962942097336054,
-   "latency_ms": 125.50393299989082
+   "latency_ms": 133.93552999991698
   },
   {
    "id": "ret-106",
@@ -488,12 +488,12 @@
     "topup-verification",
     "direct-debit-unrecognised",
     "beneficiary-not-allowed",
-    "account-security-tips"
+    "source-of-funds"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.4645979106426239,
-   "latency_ms": 143.93705200018303
+   "latency_ms": 150.14072799999667
   },
   {
    "id": "ret-107",
@@ -508,12 +508,12 @@
     "topup-pending",
     "transfer-failed",
     "topup-reverted",
-    "topup-limits"
+    "supported-cards-currencies"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
-   "top_score": 0.6958549618721008,
-   "latency_ms": 144.3567369997254
+   "top_score": 0.6965778470039368,
+   "latency_ms": 144.42074700014018
   },
   {
    "id": "ret-108",
@@ -533,7 +533,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.3785739541053772,
-   "latency_ms": 161.78902899991954
+   "latency_ms": 145.54868200002602
   },
   {
    "id": "ret-109",
@@ -548,12 +548,12 @@
     "activate-card",
     "contactless-payments",
     "card-expiry",
-    "card-not-working"
+    "virtual-card"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.7151256799697876,
-   "latency_ms": 162.15284400004748
+   "latency_ms": 151.7993499999193
   },
   {
    "id": "ret-110",
@@ -567,13 +567,13 @@
     "topup-by-cash",
     "topup-fees",
     "cash-withdrawals",
-    "topup-methods",
-    "extra-statement-charge"
+    "extra-statement-charge",
+    "topup-limits"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.30177339911460876,
-   "latency_ms": 142.3918489999778
+   "latency_ms": 138.7442079999346
   },
   {
    "id": "ret-111",
@@ -590,7 +590,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 4.575391358230263e-05,
-   "latency_ms": 127.56580699988262
+   "latency_ms": 142.5438149999536
   },
   {
    "id": "ret-112",
@@ -607,7 +607,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.005343256052583456,
-   "latency_ms": 159.08349599976646
+   "latency_ms": 169.65826199998446
   },
   {
    "id": "ret-113",
@@ -624,7 +624,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.00017813112935982645,
-   "latency_ms": 140.6883090003248
+   "latency_ms": 174.04960399994707
   },
   {
    "id": "ret-114",
@@ -636,12 +636,12 @@
     "refund-not-showing",
     "request-refund",
     "receiving-money",
-    "topup-verification"
+    "beneficiary-not-allowed"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.002957902615889907,
-   "latency_ms": 130.99794300069334
+   "latency_ms": 155.87343199990755
   },
   {
    "id": "ret-115",
@@ -649,16 +649,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
+    "direct-debit-unrecognised",
     "supported-cards-currencies",
-    "virtual-card",
+    "receiving-money",
     "topup-by-cash",
-    "topup-pending",
-    "direct-debit-unrecognised"
+    "disputes-chargebacks"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 6.014152313582599e-05,
-   "latency_ms": 134.6174099999189
+   "top_score": 6.402006692951545e-05,
+   "latency_ms": 156.08630199994877
   },
   {
    "id": "ret-116",
@@ -668,14 +668,14 @@
    "top_articles": [
     "source-of-funds",
     "card-acceptance",
-    "extra-statement-charge",
     "direct-debit-unrecognised",
-    "card-payment-pending"
+    "topup-by-bank-transfer",
+    "account-security-tips"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0010005044750869274,
-   "latency_ms": 159.31413900034386
+   "latency_ms": 133.87856700001066
   },
   {
    "id": "ret-117",
@@ -686,13 +686,13 @@
     "exchange-currency",
     "supported-cards-currencies",
     "order-physical-card",
-    "card-acceptance",
-    "virtual-card"
+    "topup-by-bank-transfer",
+    "topup-failed"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0023967307060956955,
-   "latency_ms": 130.74661699920398
+   "latency_ms": 136.53188599982968
   },
   {
    "id": "ret-118",
@@ -709,7 +709,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.00011591933434829116,
-   "latency_ms": 131.80854300026112
+   "latency_ms": 105.66082400009691
   },
   {
    "id": "ret-119",
@@ -718,15 +718,15 @@
    "expected": [],
    "top_articles": [
     "verification-problems",
-    "disputes-chargebacks",
     "cash-withdrawal-unrecognised",
     "cash-wrong-amount",
-    "compromised-card"
+    "compromised-card",
+    "cash-withdrawals"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0001015038214973174,
-   "latency_ms": 126.39410900010262
+   "latency_ms": 123.41606900008628
   },
   {
    "id": "ret-120",
@@ -735,15 +735,15 @@
    "expected": [],
    "top_articles": [
     "exchange-rates",
+    "card-delivery-times",
     "cash-deposit-missing",
-    "topup-pending",
-    "source-of-funds",
-    "cash-withdrawal-pending"
+    "charged-twice",
+    "topup-pending"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.003635808825492859,
-   "latency_ms": 126.55706300029124
+   "latency_ms": 132.08447900001374
   },
   {
    "id": "ret-121",
@@ -755,12 +755,12 @@
     "cash-withdrawal-unrecognised",
     "order-physical-card",
     "transfer-not-received",
-    "extra-statement-charge"
+    "card-delivery-times"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 3.0479141059913673e-05,
-   "latency_ms": 129.82525799998257
+   "latency_ms": 127.98421200000121
   },
   {
    "id": "ret-122",
@@ -771,13 +771,13 @@
     "verification-problems",
     "direct-debit-unrecognised",
     "source-of-funds",
-    "charged-twice",
-    "country-support"
+    "transfer-not-received",
+    "charged-twice"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 8.614650869276375e-05,
-   "latency_ms": 135.8465650000653
+   "latency_ms": 146.45423399997526
   },
   {
    "id": "ret-123",
@@ -787,14 +787,14 @@
    "top_articles": [
     "verification-problems",
     "cash-wrong-amount",
-    "declined-card-payment",
-    "foreign-payment-wrong-rate",
-    "topup-by-bank-transfer"
+    "bank-transfer-missing",
+    "transfer-failed",
+    "foreign-payment-wrong-rate"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 2.2125668692751788e-05,
-   "latency_ms": 133.21661900045
+   "latency_ms": 128.95426500017493
   },
   {
    "id": "ret-124",
@@ -802,16 +802,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
-    "verify-identity",
+    "topup-by-card",
+    "spare-card",
     "supported-cards-currencies",
     "topup-methods",
-    "topup-fees",
-    "card-acceptance"
+    "topup-limits"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 9.17019642656669e-05,
-   "latency_ms": 139.13209500060475
+   "top_score": 0.0002002737601287663,
+   "latency_ms": 143.49769599994033
   },
   {
    "id": "ret-125",
@@ -819,16 +819,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
-    "beneficiary-not-allowed",
     "exchange-rates",
-    "verify-identity",
-    "contactless-payments",
-    "source-of-funds"
+    "virtual-card",
+    "source-of-funds",
+    "bank-transfer-missing",
+    "topup-verification"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 6.761842087144032e-05,
-   "latency_ms": 124.37364299967157
+   "top_score": 3.975192521465942e-05,
+   "latency_ms": 126.17521900006068
   }
  ],
  "test": [
@@ -841,15 +841,15 @@
    ],
    "top_articles": [
     "cash-wrong-amount",
+    "disputes-chargebacks",
     "card-payment-reversed",
     "card-payment-pending",
-    "request-refund",
-    "declined-card-payment"
+    "unrecognised-card-payment"
    ],
-   "recall": 0.0,
-   "reciprocal_rank": 0.0,
+   "recall": 1.0,
+   "reciprocal_rank": 0.2,
    "top_score": 0.09859886765480042,
-   "latency_ms": 140.68228799987992
+   "latency_ms": 132.9924829999527
   },
   {
    "id": "ret-002",
@@ -868,7 +868,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.6819385886192322,
-   "latency_ms": 132.77407300029154
+   "latency_ms": 129.82624999995096
   },
   {
    "id": "ret-003",
@@ -882,12 +882,12 @@
     "declined-card-payment",
     "transfer-failed",
     "foreign-payment-wrong-rate",
-    "cash-withdrawal-unrecognised"
+    "cash-withdrawals"
    ],
    "recall": 0.0,
    "reciprocal_rank": 0.0,
    "top_score": 0.44875842332839966,
-   "latency_ms": 156.35189499971602
+   "latency_ms": 144.66965600013282
   },
   {
    "id": "ret-004",
@@ -906,7 +906,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.45114514231681824,
-   "latency_ms": 148.56721500018466
+   "latency_ms": 146.53097600012188
   },
   {
    "id": "ret-005",
@@ -918,14 +918,14 @@
    "top_articles": [
     "transfer-failed",
     "beneficiary-not-allowed",
+    "topup-failed",
     "card-not-working",
-    "topup-by-bank-transfer",
-    "send-money"
+    "cash-withdrawal-declined"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8100284934043884,
-   "latency_ms": 125.96747499992489
+   "latency_ms": 124.2472460000954
   },
   {
    "id": "ret-006",
@@ -938,13 +938,13 @@
     "supported-cards-currencies",
     "topup-by-card",
     "card-acceptance",
-    "order-physical-card",
-    "spare-card"
+    "virtual-card",
+    "order-physical-card"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.3333333333333333,
    "top_score": 0.02748069167137146,
-   "latency_ms": 125.22909000017535
+   "latency_ms": 163.78964899990933
   },
   {
    "id": "ret-007",
@@ -955,15 +955,15 @@
    ],
    "top_articles": [
     "declined-card-payment",
+    "lost-or-stolen-card",
     "topup-failed",
     "unrecognised-card-payment",
-    "card-payment-pending",
-    "card-payment-reversed"
+    "card-payment-pending"
    ],
-   "recall": 1.0,
-   "reciprocal_rank": 0.2,
+   "recall": 0.0,
+   "reciprocal_rank": 0.16666666666666666,
    "top_score": 0.7290377616882324,
-   "latency_ms": 149.19551000002684
+   "latency_ms": 125.06059699990146
   },
   {
    "id": "ret-008",
@@ -976,13 +976,13 @@
     "verify-identity",
     "verification-problems",
     "virtual-card",
-    "transfer-failed",
-    "compromised-card"
+    "compromised-card",
+    "account-security-tips"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.21354113519191742,
-   "latency_ms": 156.57048000048235
+   "latency_ms": 141.8442619999496
   },
   {
    "id": "ret-009",
@@ -1001,7 +1001,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9874235987663269,
-   "latency_ms": 166.16453499955242
+   "latency_ms": 125.51560500014602
   },
   {
    "id": "ret-010",
@@ -1015,12 +1015,12 @@
     "cash-withdrawal-declined",
     "card-not-working",
     "card-payment-reversed",
-    "topup-failed"
+    "card-acceptance"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8388118147850037,
-   "latency_ms": 152.3742659992422
+   "latency_ms": 138.1055379999907
   },
   {
    "id": "ret-011",
@@ -1032,14 +1032,14 @@
    "top_articles": [
     "account-security-tips",
     "topup-pending",
-    "virtual-card",
-    "card-delivery-times",
-    "order-physical-card"
+    "topup-by-card",
+    "card-payment-pending",
+    "card-delivery-times"
    ],
    "recall": 1.0,
-   "reciprocal_rank": 0.25,
-   "top_score": 0.034358687698841095,
-   "latency_ms": 146.66571100042347
+   "reciprocal_rank": 0.2,
+   "top_score": 0.034293949604034424,
+   "latency_ms": 150.44777799994336
   },
   {
    "id": "ret-012",
@@ -1053,12 +1053,12 @@
     "cash-withdrawal-unrecognised",
     "cash-withdrawal-pending",
     "cash-wrong-amount",
-    "cash-deposit-missing"
+    "topup-failed"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.2065737545490265,
-   "latency_ms": 147.5658529998327
+   "latency_ms": 128.1308509999235
   },
   {
    "id": "ret-013",
@@ -1076,8 +1076,8 @@
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
-   "top_score": 0.06620602309703827,
-   "latency_ms": 150.24270899994008
+   "top_score": 0.06608537584543228,
+   "latency_ms": 150.99194200001875
   },
   {
    "id": "ret-014",
@@ -1088,15 +1088,15 @@
    ],
    "top_articles": [
     "card-expiry",
+    "lost-or-stolen-card",
     "contactless-payments",
     "card-not-working",
-    "activate-card",
-    "card-acceptance"
+    "spare-card"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9497627019882202,
-   "latency_ms": 154.30755499983206
+   "latency_ms": 163.1045220001397
   },
   {
    "id": "ret-015",
@@ -1109,13 +1109,13 @@
     "topup-by-bank-transfer",
     "topup-methods",
     "exchange-currency",
-    "receiving-money",
-    "bank-transfer-missing"
+    "topup-by-card",
+    "receiving-money"
    ],
    "recall": 0.0,
-   "reciprocal_rank": 0.125,
+   "reciprocal_rank": 0.1111111111111111,
    "top_score": 0.16735471785068512,
-   "latency_ms": 163.2398589999866
+   "latency_ms": 145.30621500011875
   },
   {
    "id": "ret-016",
@@ -1127,14 +1127,14 @@
    "top_articles": [
     "beneficiary-not-allowed",
     "transfer-failed",
-    "bank-transfer-missing",
     "send-money",
-    "transfer-not-received"
+    "transfer-not-received",
+    "account-security-tips"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8260111808776855,
-   "latency_ms": 126.16090300070937
+   "latency_ms": 131.9926270000451
   },
   {
    "id": "ret-017",
@@ -1147,13 +1147,13 @@
     "country-support",
     "card-delivery-times",
     "order-physical-card",
-    "card-acceptance",
-    "topup-by-card"
+    "lost-or-stolen-card",
+    "card-expiry"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.06108710914850235,
-   "latency_ms": 135.050572000182
+   "latency_ms": 137.17967399998088
   },
   {
    "id": "ret-018",
@@ -1172,7 +1172,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9209320545196533,
-   "latency_ms": 142.8528570004346
+   "latency_ms": 145.0575349999781
   },
   {
    "id": "ret-019",
@@ -1185,13 +1185,13 @@
     "transfer-pending",
     "transfer-not-received",
     "topup-pending",
-    "transfer-failed",
-    "cash-withdrawal-pending"
+    "cash-withdrawal-pending",
+    "card-payment-pending"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.8838388919830322,
-   "latency_ms": 153.1897309996566
+   "latency_ms": 160.2385730000151
   },
   {
    "id": "ret-020",
@@ -1202,15 +1202,15 @@
    ],
    "top_articles": [
     "extra-statement-charge",
+    "declined-card-payment",
     "disputes-chargebacks",
     "topup-failed",
-    "topup-reverted",
-    "unrecognised-card-payment"
+    "topup-verification"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.12635333836078644,
-   "latency_ms": 142.95693700023548
+   "latency_ms": 191.61594199999854
   },
   {
    "id": "ret-021",
@@ -1229,7 +1229,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.5452554821968079,
-   "latency_ms": 158.645991999947
+   "latency_ms": 173.3467799999744
   },
   {
    "id": "ret-022",
@@ -1248,7 +1248,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.8299059271812439,
-   "latency_ms": 140.5935059992771
+   "latency_ms": 137.29898799988405
   },
   {
    "id": "ret-023",
@@ -1262,12 +1262,12 @@
     "foreign-payment-wrong-rate",
     "exchange-fees",
     "exchange-currency",
-    "cash-withdrawals"
+    "supported-cards-currencies"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.16371266543865204,
-   "latency_ms": 143.1457250000676
+   "latency_ms": 158.82894499986833
   },
   {
    "id": "ret-024",
@@ -1285,8 +1285,8 @@
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
-   "top_score": 0.18286287784576416,
-   "latency_ms": 137.83661900015431
+   "top_score": 0.18227991461753845,
+   "latency_ms": 159.32487099985337
   },
   {
    "id": "ret-025",
@@ -1299,13 +1299,13 @@
     "card-expiry",
     "activate-card",
     "card-not-working",
-    "lost-or-stolen-card",
-    "virtual-card"
+    "card-pin",
+    "lost-or-stolen-card"
    ],
    "recall": 0.0,
-   "reciprocal_rank": 0.1,
+   "reciprocal_rank": 0.125,
    "top_score": 0.19915220141410828,
-   "latency_ms": 145.26397200006613
+   "latency_ms": 144.46677799992358
   },
   {
    "id": "ret-026",
@@ -1324,7 +1324,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9092645049095154,
-   "latency_ms": 146.58157199937705
+   "latency_ms": 174.24749900010283
   },
   {
    "id": "ret-027",
@@ -1337,13 +1337,13 @@
     "card-pin",
     "passcode-reset",
     "account-security-tips",
-    "contactless-payments",
+    "cash-withdrawal-declined",
     "card-not-working"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8565725088119507,
-   "latency_ms": 145.3955910001241
+   "latency_ms": 176.92005899994
   },
   {
    "id": "ret-028",
@@ -1362,7 +1362,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.2,
    "top_score": 0.19993209838867188,
-   "latency_ms": 147.19287999923836
+   "latency_ms": 140.4247000000396
   },
   {
    "id": "ret-029",
@@ -1376,12 +1376,12 @@
     "cash-withdrawal-pending",
     "topup-failed",
     "cash-wrong-amount",
-    "cash-deposit-missing"
+    "declined-card-payment"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.15778464078903198,
-   "latency_ms": 179.86859200027538
+   "latency_ms": 175.91165600015302
   },
   {
    "id": "ret-030",
@@ -1400,7 +1400,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9205042719841003,
-   "latency_ms": 156.92577799927676
+   "latency_ms": 132.66955299991423
   },
   {
    "id": "ret-031",
@@ -1413,13 +1413,13 @@
     "cash-withdrawal-declined",
     "declined-card-payment",
     "transfer-failed",
-    "card-not-working",
-    "transfer-pending"
+    "transfer-pending",
+    "card-payment-reversed"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.3333333333333333,
    "top_score": 0.766643226146698,
-   "latency_ms": 195.66941900029633
+   "latency_ms": 199.72583000003397
   },
   {
    "id": "ret-032",
@@ -1438,7 +1438,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.2,
    "top_score": 0.06441766768693924,
-   "latency_ms": 160.54704899943317
+   "latency_ms": 155.60077499981162
   },
   {
    "id": "ret-033",
@@ -1452,12 +1452,12 @@
     "supported-cards-currencies",
     "exchange-currency",
     "card-acceptance",
-    "exchange-rates"
+    "exchange-fees"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.0008328334079124033,
-   "latency_ms": 122.84509500022978
+   "latency_ms": 142.85470799995892
   },
   {
    "id": "ret-034",
@@ -1476,7 +1476,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.9701269268989563,
-   "latency_ms": 125.59829600013472
+   "latency_ms": 158.5702150000543
   },
   {
    "id": "ret-052",
@@ -1489,13 +1489,13 @@
     "card-not-working",
     "contactless-payments",
     "card-pin",
-    "declined-card-payment",
-    "topup-by-cash"
+    "topup-failed",
+    "declined-card-payment"
    ],
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.1155608743429184,
-   "latency_ms": 181.00744999992457
+   "latency_ms": 162.15033799994671
   },
   {
    "id": "ret-053",
@@ -1514,7 +1514,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8836382031440735,
-   "latency_ms": 161.67352299999038
+   "latency_ms": 165.1978990000771
   },
   {
    "id": "ret-054",
@@ -1526,14 +1526,14 @@
    "top_articles": [
     "transfer-fees",
     "topup-by-bank-transfer",
+    "topup-fees",
     "exchange-fees",
-    "exchange-currency",
-    "cash-withdrawals"
+    "exchange-currency"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.010611421428620815,
-   "latency_ms": 162.33514599935006
+   "latency_ms": 172.95466800010217
   },
   {
    "id": "ret-055",
@@ -1552,7 +1552,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.19682618975639343,
-   "latency_ms": 141.68023700040067
+   "latency_ms": 144.061696000108
   },
   {
    "id": "ret-056",
@@ -1563,15 +1563,15 @@
    ],
    "top_articles": [
     "source-of-funds",
-    "transfer-pending",
     "request-refund",
     "send-money",
-    "topup-by-cash"
+    "topup-by-cash",
+    "beneficiary-not-allowed"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.03296123817563057,
-   "latency_ms": 133.90982300006726
+   "latency_ms": 123.61590999989858
   },
   {
    "id": "ret-057",
@@ -1585,12 +1585,12 @@
     "send-money",
     "compromised-card",
     "bank-transfer-missing",
-    "direct-debit-unrecognised"
+    "topup-methods"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.5043104887008667,
-   "latency_ms": 124.74968599963177
+   "latency_ms": 126.1424489998717
   },
   {
    "id": "ret-058",
@@ -1602,14 +1602,14 @@
    "top_articles": [
     "card-acceptance",
     "charged-twice",
-    "verification-problems",
     "refund-not-showing",
-    "extra-statement-charge"
+    "extra-statement-charge",
+    "cash-wrong-amount"
    ],
    "recall": 0.0,
    "reciprocal_rank": 0.16666666666666666,
    "top_score": 0.0021322614047676325,
-   "latency_ms": 140.39095000043744
+   "latency_ms": 157.6126759998715
   },
   {
    "id": "ret-059",
@@ -1620,15 +1620,15 @@
    ],
    "top_articles": [
     "request-refund",
-    "direct-debit-unrecognised",
-    "cash-withdrawal-pending",
-    "exchange-currency",
-    "transfer-not-received"
+    "refund-not-showing",
+    "transfer-not-received",
+    "cancel-transfer",
+    "charged-twice"
    ],
    "recall": 0.0,
-   "reciprocal_rank": 0.1,
+   "reciprocal_rank": 0.0,
    "top_score": 0.051941562443971634,
-   "latency_ms": 146.69579699966562
+   "latency_ms": 164.15161200006878
   },
   {
    "id": "ret-060",
@@ -1641,13 +1641,13 @@
     "receiving-money",
     "source-of-funds",
     "verify-identity",
-    "supported-cards-currencies",
-    "beneficiary-not-allowed"
+    "bank-transfer-missing",
+    "supported-cards-currencies"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.004848532844334841,
-   "latency_ms": 155.16386900071666
+   "latency_ms": 161.54256799995892
   },
   {
    "id": "ret-061",
@@ -1660,13 +1660,13 @@
     "cash-deposit-missing",
     "cash-wrong-amount",
     "refund-not-showing",
-    "transfer-failed",
+    "topup-by-cash",
     "cash-withdrawal-unrecognised"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.07316472381353378,
-   "latency_ms": 129.29380900004617
+   "latency_ms": 135.54573200008235
   },
   {
    "id": "ret-062",
@@ -1679,13 +1679,13 @@
     "topup-by-cash",
     "cash-deposit-missing",
     "supported-cards-currencies",
-    "unrecognised-card-payment",
-    "direct-debit-unrecognised"
+    "send-money",
+    "unrecognised-card-payment"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8852352499961853,
-   "latency_ms": 128.15569000031246
+   "latency_ms": 147.77756900002714
   },
   {
    "id": "ret-063",
@@ -1695,16 +1695,16 @@
     "activate-card"
    ],
    "top_articles": [
-    "card-expiry",
     "compromised-card",
     "card-pin",
-    "topup-by-cash",
-    "card-delivery-times"
+    "card-delivery-times",
+    "card-expiry",
+    "transfer-not-received"
    ],
    "recall": 0.0,
-   "reciprocal_rank": 0.16666666666666666,
-   "top_score": 0.0024343819823116064,
-   "latency_ms": 128.78771600026084
+   "reciprocal_rank": 0.0,
+   "top_score": 0.0011879054363816977,
+   "latency_ms": 155.26976099999956
   },
   {
    "id": "ret-064",
@@ -1716,14 +1716,14 @@
    "top_articles": [
     "topup-limits",
     "spare-card",
-    "cash-withdrawals",
-    "exchange-fees",
-    "order-physical-card"
+    "order-physical-card",
+    "supported-cards-currencies",
+    "link-card"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.2573915719985962,
-   "latency_ms": 156.89904000009847
+   "latency_ms": 162.99287900005766
   },
   {
    "id": "ret-065",
@@ -1742,7 +1742,7 @@
    "recall": 0.0,
    "reciprocal_rank": 0.1,
    "top_score": 0.003765413537621498,
-   "latency_ms": 150.47826299996814
+   "latency_ms": 123.99640600006023
   },
   {
    "id": "ret-066",
@@ -1754,14 +1754,14 @@
    "top_articles": [
     "card-acceptance",
     "card-not-working",
+    "cash-withdrawal-declined",
     "declined-card-payment",
-    "extra-statement-charge",
-    "cash-withdrawal-unrecognised"
+    "contactless-payments"
    ],
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.16331195831298828,
-   "latency_ms": 158.8144299994383
+   "latency_ms": 157.94895300018652
   },
   {
    "id": "ret-067",
@@ -1772,15 +1772,15 @@
    ],
    "top_articles": [
     "topup-reverted",
+    "topup-by-cash",
     "topup-by-bank-transfer",
     "refund-not-showing",
-    "transfer-timing",
-    "card-delivery-times"
+    "transfer-timing"
    ],
    "recall": 1.0,
-   "reciprocal_rank": 0.25,
+   "reciprocal_rank": 0.2,
    "top_score": 0.044431429356336594,
-   "latency_ms": 135.77988399993046
+   "latency_ms": 126.72175900002003
   },
   {
    "id": "ret-068",
@@ -1800,7 +1800,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.8473372459411621,
-   "latency_ms": 144.32775099976425
+   "latency_ms": 151.6965739999705
   },
   {
    "id": "ret-069",
@@ -1820,7 +1820,7 @@
    "recall": 0.5,
    "reciprocal_rank": 1.0,
    "top_score": 0.555766761302948,
-   "latency_ms": 163.41425300015544
+   "latency_ms": 155.90440599999056
   },
   {
    "id": "ret-070",
@@ -1840,7 +1840,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.7072025537490845,
-   "latency_ms": 128.84339900028863
+   "latency_ms": 140.18699200005358
   },
   {
    "id": "ret-071",
@@ -1860,7 +1860,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.6924340724945068,
-   "latency_ms": 146.03067000007286
+   "latency_ms": 164.1577039999902
   },
   {
    "id": "ret-072",
@@ -1873,14 +1873,14 @@
    "top_articles": [
     "order-physical-card",
     "virtual-card",
-    "topup-by-card",
-    "topup-reverted",
-    "card-expiry"
+    "card-expiry",
+    "card-delivery-times",
+    "spare-card"
    ],
-   "recall": 0.5,
+   "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.6743722558021545,
-   "latency_ms": 156.65884999998525
+   "latency_ms": 158.25110300011147
   },
   {
    "id": "ret-073",
@@ -1899,8 +1899,8 @@
    ],
    "recall": 0.5,
    "reciprocal_rank": 1.0,
-   "top_score": 0.08961381763219833,
-   "latency_ms": 133.91558599960263
+   "top_score": 0.13251455128192902,
+   "latency_ms": 136.93837300002087
   },
   {
    "id": "ret-074",
@@ -1920,7 +1920,7 @@
    "recall": 1.0,
    "reciprocal_rank": 0.5,
    "top_score": 0.3703392744064331,
-   "latency_ms": 148.9120730002469
+   "latency_ms": 160.58403800002452
   },
   {
    "id": "ret-075",
@@ -1940,7 +1940,7 @@
    "recall": 1.0,
    "reciprocal_rank": 1.0,
    "top_score": 0.1985298991203308,
-   "latency_ms": 143.66618900021422
+   "latency_ms": 150.24041099991337
   },
   {
    "id": "ret-076",
@@ -1953,14 +1953,14 @@
    "top_articles": [
     "foreign-payment-wrong-rate",
     "cash-withdrawals",
-    "extra-statement-charge",
     "exchange-fees",
+    "extra-statement-charge",
     "exchange-currency"
    ],
    "recall": 0.5,
    "reciprocal_rank": 0.5,
    "top_score": 0.14977993071079254,
-   "latency_ms": 149.30176500001835
+   "latency_ms": 145.28150099999948
   },
   {
    "id": "ret-077",
@@ -1972,15 +1972,15 @@
    ],
    "top_articles": [
     "transfer-failed",
-    "source-of-funds",
     "beneficiary-not-allowed",
     "declined-card-payment",
-    "send-money"
+    "send-money",
+    "transfer-not-received"
    ],
-   "recall": 1.0,
+   "recall": 0.5,
    "reciprocal_rank": 1.0,
    "top_score": 0.8327813148498535,
-   "latency_ms": 160.6915279999157
+   "latency_ms": 143.69811599999593
   },
   {
    "id": "ret-078",
@@ -1988,16 +1988,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
+    "topup-by-cash",
     "topup-fees",
     "extra-statement-charge",
     "exchange-rates",
-    "source-of-funds",
-    "topup-pending"
+    "topup-by-card"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 0.006718870252370834,
-   "latency_ms": 143.93680299963307
+   "top_score": 0.011777842417359352,
+   "latency_ms": 121.12455199985561
   },
   {
    "id": "ret-079",
@@ -2006,15 +2006,15 @@
    "expected": [],
    "top_articles": [
     "source-of-funds",
+    "country-support",
     "verify-identity",
-    "card-acceptance",
-    "supported-cards-currencies",
-    "topup-by-card"
+    "topup-methods",
+    "card-acceptance"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 0.0006312434561550617,
-   "latency_ms": 132.8740460003246
+   "top_score": 0.000628784007858485,
+   "latency_ms": 134.11953900003937
   },
   {
    "id": "ret-080",
@@ -2022,16 +2022,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
-    "cash-withdrawal-unrecognised",
     "foreign-payment-wrong-rate",
     "direct-debit-unrecognised",
+    "request-refund",
     "unrecognised-card-payment",
     "beneficiary-not-allowed"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 0.00024536947603337467,
-   "latency_ms": 155.01207500074088
+   "top_score": 0.00017536994710098952,
+   "latency_ms": 132.7517300001091
   },
   {
    "id": "ret-081",
@@ -2048,7 +2048,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.00039357561036013067,
-   "latency_ms": 134.31420699998853
+   "latency_ms": 142.84965299998476
   },
   {
    "id": "ret-082",
@@ -2060,12 +2060,12 @@
     "topup-by-bank-transfer",
     "exchange-currency",
     "topup-failed",
-    "receiving-money"
+    "cancel-transfer"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0027149852830916643,
-   "latency_ms": 155.1754459997028
+   "latency_ms": 124.24197399991499
   },
   {
    "id": "ret-083",
@@ -2073,16 +2073,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
-    "country-support",
     "receiving-money",
+    "account-security-tips",
+    "verify-identity",
     "order-physical-card",
-    "direct-debit-unrecognised",
-    "spare-card"
+    "direct-debit-unrecognised"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 0.0010242064017802477,
-   "latency_ms": 130.60810299975856
+   "top_score": 0.00042223287164233625,
+   "latency_ms": 121.64848599991274
   },
   {
    "id": "ret-084",
@@ -2099,7 +2099,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.027324529364705086,
-   "latency_ms": 133.58777700068458
+   "latency_ms": 132.7845950002029
   },
   {
    "id": "ret-085",
@@ -2109,14 +2109,14 @@
    "top_articles": [
     "country-support",
     "beneficiary-not-allowed",
-    "order-physical-card",
-    "verify-identity",
-    "receiving-money"
+    "spare-card",
+    "account-security-tips",
+    "verify-identity"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.00043224150431342423,
-   "latency_ms": 140.65231299991865
+   "latency_ms": 141.50027400000909
   },
   {
    "id": "ret-086",
@@ -2128,12 +2128,12 @@
     "send-money",
     "direct-debit-unrecognised",
     "verify-identity",
-    "receiving-money"
+    "cash-withdrawal-unrecognised"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0005357805639505386,
-   "latency_ms": 131.87792200005788
+   "latency_ms": 131.52612999988378
   },
   {
    "id": "ret-087",
@@ -2143,14 +2143,14 @@
    "top_articles": [
     "source-of-funds",
     "direct-debit-unrecognised",
-    "bank-transfer-missing",
-    "foreign-payment-wrong-rate",
-    "topup-methods"
+    "topup-by-cash",
+    "account-security-tips",
+    "supported-cards-currencies"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.00026530236937105656,
-   "latency_ms": 157.3848870002621
+   "latency_ms": 141.3747249998778
   },
   {
    "id": "ret-088",
@@ -2160,14 +2160,14 @@
    "top_articles": [
     "exchange-rates",
     "exchange-fees",
-    "receiving-money",
-    "beneficiary-not-allowed",
-    "topup-failed"
+    "cancel-transfer",
+    "card-acceptance",
+    "topup-fees"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 2.2474090656032786e-05,
-   "latency_ms": 138.38836300055846
+   "latency_ms": 143.56935099999646
   },
   {
    "id": "ret-089",
@@ -2178,13 +2178,13 @@
     "send-money",
     "transfer-pending",
     "topup-pending",
-    "source-of-funds",
-    "topup-by-cash"
+    "exchange-rates",
+    "source-of-funds"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 1.922317096614279e-05,
-   "latency_ms": 119.05678600032843
+   "latency_ms": 112.1206779998829
   },
   {
    "id": "ret-090",
@@ -2193,15 +2193,15 @@
    "expected": [],
    "top_articles": [
     "verification-problems",
-    "verify-identity",
-    "direct-debit-unrecognised",
-    "transfer-failed",
-    "activate-card"
+    "passcode-reset",
+    "lost-or-stolen-card",
+    "exchange-rates",
+    "foreign-payment-wrong-rate"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 3.0006618544575758e-05,
-   "latency_ms": 130.66950000029465
+   "latency_ms": 140.36557600002197
   },
   {
    "id": "ret-091",
@@ -2209,16 +2209,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
+    "verification-problems",
     "cash-wrong-amount",
     "topup-by-card",
     "topup-by-bank-transfer",
-    "exchange-currency",
-    "source-of-funds"
+    "exchange-currency"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 1.8777873265207745e-05,
-   "latency_ms": 137.9981370000678
+   "top_score": 0.00010229986219201237,
+   "latency_ms": 153.928599999972
   },
   {
    "id": "ret-092",
@@ -2227,15 +2227,15 @@
    "expected": [],
    "top_articles": [
     "source-of-funds",
-    "card-pin",
-    "card-not-working",
-    "bank-transfer-missing",
-    "cancel-transfer"
+    "beneficiary-not-allowed",
+    "topup-verification",
+    "transfer-timing",
+    "foreign-payment-wrong-rate"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 1.8342892872169614e-05,
-   "latency_ms": 126.63222900027904
+   "latency_ms": 145.01487499978793
   },
   {
    "id": "ret-093",
@@ -2243,16 +2243,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
-    "verify-identity",
     "country-support",
     "card-acceptance",
+    "exchange-rates",
     "transfer-pending",
-    "exchange-rates"
+    "exchange-fees"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 2.392351052549202e-05,
-   "latency_ms": 135.873946999709
+   "top_score": 2.2474090656032786e-05,
+   "latency_ms": 132.00230500001453
   },
   {
    "id": "ret-094",
@@ -2269,7 +2269,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 2.2474090656032786e-05,
-   "latency_ms": 150.72202800001833
+   "latency_ms": 179.2306520001148
   },
   {
    "id": "ret-095",
@@ -2286,7 +2286,7 @@
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 0.0005378763889893889,
-   "latency_ms": 130.55898800030263
+   "latency_ms": 152.33212799989815
   },
   {
    "id": "ret-096",
@@ -2296,14 +2296,14 @@
    "top_articles": [
     "exchange-currency",
     "supported-cards-currencies",
-    "verification-problems",
     "receiving-money",
-    "foreign-payment-wrong-rate"
+    "foreign-payment-wrong-rate",
+    "send-money"
    ],
    "recall": null,
    "reciprocal_rank": null,
    "top_score": 4.683888619183563e-05,
-   "latency_ms": 126.10178100021585
+   "latency_ms": 158.1836679999924
   },
   {
    "id": "ret-097",
@@ -2311,16 +2311,16 @@
    "source": "ai_written",
    "expected": [],
    "top_articles": [
+    "topup-limits",
     "transfer-fees",
-    "verify-identity",
     "transfer-timing",
     "cash-withdrawals",
-    "topup-by-card"
+    "cash-withdrawal-declined"
    ],
    "recall": null,
    "reciprocal_rank": null,
-   "top_score": 1.8200149497715756e-05,
-   "latency_ms": 134.42573599968455
+   "top_score": 1.967902426258661e-05,
+   "latency_ms": 161.90311399986967
   }
  ],
  "summaries": {
@@ -2336,8 +2336,8 @@
     0.3673522068209569,
     0.5708058862433862
    ],
-   "latency_p50_ms": 0.16590399991400773,
-   "latency_p95_ms": 0.33986375069616753
+   "latency_p50_ms": 0.1620909999928699,
+   "latency_p95_ms": 0.3270846499276557
   },
   "Dense only": {
    "n": 60,
@@ -2351,8 +2351,8 @@
     0.6442063492063493,
     0.8201587301587302
    ],
-   "latency_p50_ms": 16.849324500526563,
-   "latency_p95_ms": 26.162848400826988
+   "latency_p50_ms": 16.167410999969434,
+   "latency_p95_ms": 24.506133399825103
   },
   "Hybrid (RRF)": {
    "n": 60,
@@ -2366,10 +2366,25 @@
     0.5771662013095837,
     0.7631881748425866
    ],
-   "latency_p50_ms": 17.344445499475114,
-   "latency_p95_ms": 23.444143199458267
+   "latency_p50_ms": 14.414557500117553,
+   "latency_p95_ms": 23.292085550008323
   },
-  "Hybrid + reranker (the app)": {
+  "Dense + reranker": {
+   "n": 60,
+   "recall": 0.8333333333333334,
+   "recall_ci": [
+    0.7416666666666667,
+    0.9166666666666666
+   ],
+   "reciprocal_rank": 0.7222685185185185,
+   "reciprocal_rank_ci": [
+    0.6231944444444445,
+    0.8128275462962963
+   ],
+   "latency_p50_ms": 148.83433199997853,
+   "latency_p95_ms": 173.15279025008292
+  },
+  "Hybrid + reranker": {
    "n": 60,
    "recall": 0.8333333333333334,
    "recall_ci": [
@@ -2381,8 +2396,8 @@
     0.62875,
     0.815
    ],
-   "latency_p50_ms": 146.319065499938,
-   "latency_p95_ms": 170.40895770069255
+   "latency_p50_ms": 153.06623949993536,
+   "latency_p95_ms": 181.37721419993795
   }
  }
 }
