@@ -10,7 +10,8 @@ groq_generator_model: openai/gpt-oss-20b
 # It is a Groq "preview" model. Every report records which judge was configured.
 groq_judge_model: qwen/qwen3.8-27b
 ollama_base_url: http://localhost:11434
-ollama_model: llama3.2:3b                # chosen by make benchmark-llm (DESIGN.md section 6)
+# Safety override of the pre-set rule, which picked llama3.2:3b (DESIGN.md section 6.2).
+ollama_model: phi4-mini
 ollama_num_ctx: 4096
 llm_temperature: 0.0
 llm_max_output_tokens: 1000

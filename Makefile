@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -28,6 +28,9 @@ benchmark-retrieval:  ## compare embedders and rerankers (needs GPU, downloads m
 
 run:                  ## start the API on http://127.0.0.1:8000
 	uv run uvicorn --factory app.main:create_app --host 127.0.0.1 --port 8000
+
+fee-cases:            ## replay two wrong-fee questions on local models (needs Ollama)
+	uv run python -m evals.fee_cases
 
 benchmark-llm:        ## compare local chat models (needs Ollama; uses some Groq quota)
 	uv run python -m evals.benchmark_llm
