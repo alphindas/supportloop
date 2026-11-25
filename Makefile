@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -38,7 +38,7 @@ retrieval-eval:       ## evaluate retrieval on the held-out split and write the 
 review-pairs:         ## review AI-drafted retrieval labels by hand
 	uv run python -m scripts.review_pairs
 
-eval: retrieval-eval  ## Phase 2 adds the full answer evaluation here
+eval: eval-answers    ## the full answer evaluation
 
 samples:              ## send 10 sample conversations to the running API (make run first)
 	uv run python -m scripts.sample_conversations
@@ -48,3 +48,12 @@ guardrail-check:      ## false-positive check of guardrail rules on real message
 
 simulate:             ## replay 200 mining-pool messages through the running API
 	uv run python -m ab.simulate --limit 200 --run sim1
+
+eval-answers:         ## run eval set v1 through the app and write the report (uses Groq quota)
+	uv run python -m evals.run_eval
+
+human-review:         ## YOU check 30 judge decisions (blind), then the report is rebuilt
+	uv run python -m evals.human_review
+
+judge-live:           ## judge faithfulness on a sample of stored replies (uses Groq quota)
+	uv run python -m evals.judge_live --limit 40

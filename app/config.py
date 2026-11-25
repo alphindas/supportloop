@@ -77,6 +77,12 @@ class Settings(BaseSettings):
     trace_file_path: Path
     otlp_endpoint: str
 
+    judge_rubric_version: str
+    rubrics_dir: Path
+    judge_temperature: float = Field(ge=0, le=2)
+    judge_max_output_tokens: int = Field(gt=0)
+    judge_live_sample_rate: float = Field(ge=0, le=1)
+
     @classmethod
     def settings_customise_sources(
         cls,

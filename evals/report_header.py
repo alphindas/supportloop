@@ -29,8 +29,13 @@ def report_header(
     eval_set: str,
     models: dict[str, str],
     judge_used: bool,
+    overrides: dict[str, str] | None = None,
 ) -> str:
-    """Markdown header. The judge model is always recorded, even when no judge ran."""
+    """Markdown header. The judge model is always recorded, even when no judge ran.
+
+    `overrides` replaces rows with values saved when the results were produced, so that
+    rebuilding a report later does not change its date, commit or judge.
+    """
     judge_note = "used in this report" if judge_used else "configured; not used in this report"
     rows = {
         "Generated": date.today().isoformat(),
@@ -40,6 +45,7 @@ def report_header(
         "Eval set": eval_set,
         **models,
         "Judge model": f"{settings.groq_judge_model} ({judge_note})",
+        **(overrides or {}),
     }
     table = "\n".join(f"| {key} | {value} |" for key, value in rows.items())
     return f"# {title}\n\n| Field | Value |\n|---|---|\n{table}\n"

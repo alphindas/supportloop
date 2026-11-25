@@ -16,15 +16,20 @@ class PromptTemplate:
     user: Template
 
 
-def load_prompt(prompts_dir: Path, version: str) -> PromptTemplate:
-    """Read prompt_<version>.txt, which has '### SYSTEM' and '### USER' parts."""
-    text = (prompts_dir / f"prompt_{version}.txt").read_text(encoding="utf-8")
+def load_template(path: Path, version: str) -> PromptTemplate:
+    """Read a file that has '### SYSTEM' and '### USER' parts."""
+    text = path.read_text(encoding="utf-8")
     try:
         head, user = text.split("### USER\n", 1)
         system = head.split("### SYSTEM\n", 1)[1]
     except (ValueError, IndexError) as error:
-        raise ValueError(f"prompt_{version}.txt needs '### SYSTEM' and '### USER'") from error
+        raise ValueError(f"{path.name} needs '### SYSTEM' and '### USER'") from error
     return PromptTemplate(version, system.strip(), Template(user.strip()))
+
+
+def load_prompt(prompts_dir: Path, version: str) -> PromptTemplate:
+    """Read prompt_<version>.txt."""
+    return load_template(prompts_dir / f"prompt_{version}.txt", version)
 
 
 def load_messages(prompts_dir: Path, version: str) -> dict[str, str]:

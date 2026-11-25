@@ -57,3 +57,11 @@ variant_name: baseline                   # label on metrics and stored turns; A/
 trace_exporter: file                     # file | otlp | none
 trace_file_path: logs/traces.jsonl       # used by 'file'; ignored by git
 otlp_endpoint: http://localhost:4318/v1/traces
+
+# --- Evaluation ------------------------------------------------------------------
+# The judge is groq_judge_model above.
+judge_rubric_version: v1
+rubrics_dir: evals/rubrics
+judge_temperature: 0.0
+judge_max_output_tokens: 700
+judge_live_sample_rate: 0.2              # share of stored live answers the judge checks
