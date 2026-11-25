@@ -1,5 +1,7 @@
 """Assemble a ChatService from settings."""
 
+import logging
+
 import httpx
 
 from app.chat.pipeline import ChatService
@@ -12,6 +14,8 @@ from app.rag.chunking import chunk_articles
 from app.rag.kb import load_articles
 from app.rag.models import build_embedder, build_reranker
 from app.rag.retriever import HybridRetriever, RetrievalConfig
+
+logger = logging.getLogger("supportloop.startup")
 
 
 def build_retriever(settings: Settings) -> tuple[HybridRetriever, dict[str, str]]:
@@ -36,6 +40,11 @@ def build_chat_service(
     settings: Settings, client: httpx.AsyncClient, provider: LLMProvider | None = None
 ) -> ChatService:
     """Create the service. A provider can be passed in by tests."""
+    if settings.llm_provider == "ollama" and settings.retrieval_device == "cuda":
+        logger.warning(
+            "gpu_memory_conflict",
+            extra={"fields": {"advice": "set SUPPORTLOOP_RETRIEVAL_DEVICE=cpu with Ollama"}},
+        )
     retriever, titles = build_retriever(settings)
     prompts_dir = settings.resolve(settings.prompts_dir)
     injection, escalation = load_guardrails(settings.resolve(settings.guardrails_path))

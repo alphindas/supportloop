@@ -31,6 +31,8 @@ class OllamaProvider:
 
     def build_payload(self, request: LLMRequest) -> dict[str, Any]:
         """Build the request body."""
+        params = dict(self._model_params)
+        extra_options = params.pop("options", {})  # merged, so none of ours get lost
         payload: dict[str, Any] = {
             "model": self.model,
             "messages": [message.model_dump() for message in request.messages],
@@ -41,8 +43,9 @@ class OllamaProvider:
                 # Set explicitly: a small default would silently cut off the articles.
                 "num_ctx": self._num_ctx,
                 "seed": 0,
+                **extra_options,
             },
-            **self._model_params,
+            **params,
         }
         if request.json_schema is not None:
             payload["format"] = request.json_schema

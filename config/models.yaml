@@ -33,6 +33,10 @@ llm:
     qwen/qwen3.8-27b: {reasoning_effort: none}
   ollama:
     # Thinking is switched off so a small local model replies in reasonable time.
-    qwen3.5:2b: {think: false, keep_alive: 10m}
-    llama3.2:3b: {keep_alive: 10m}
-    phi4-mini: {keep_alive: 10m}
+    # num_gpu: 99 puts every layer on the GPU. Left to itself, Ollama kept 20-37% of each
+    # model on the CPU even with over 1 GB of VRAM free. Each of these was checked to fit
+    # with the GPU otherwise empty. It will NOT fit next to the retrieval models, so use
+    # SUPPORTLOOP_RETRIEVAL_DEVICE=cpu with Ollama.
+    qwen3.5:2b: {think: false, keep_alive: 10m, options: {num_gpu: 99}}
+    llama3.2:3b: {keep_alive: 10m, options: {num_gpu: 99}}
+    phi4-mini: {keep_alive: 10m, options: {num_gpu: 99}}

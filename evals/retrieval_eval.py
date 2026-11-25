@@ -17,6 +17,7 @@ REPORT = PROJECT_ROOT / "reports" / "retrieval_v1.md"
 RAW = PROJECT_ROOT / "reports" / "raw" / "retrieval_v1.json"
 BENCH_RETRIEVAL = PROJECT_ROOT / "reports" / "raw" / "benchmark_retrieval.json"
 BENCH_LLM = PROJECT_ROOT / "reports" / "raw" / "benchmark_llm.json"
+BENCH_LLM_AUTO = PROJECT_ROOT / "reports" / "raw" / "benchmark_llm_auto_offload.json"
 
 
 def summarise(results: list[dict], resamples: int, seed: int) -> dict:
@@ -88,6 +89,30 @@ def escalation_table(results: dict[str, list[dict]], threshold: float) -> list[s
     return lines
 
 
+def mistake_table(runs: list[dict]) -> list[str]:
+    """Not all mistakes are equal: answering when a person was needed is the risky one."""
+    lines = [
+        "| Model | Answered when it should have handed off or refused | Handed off or refused "
+        "an answerable question | Refused when it should have handed off |",
+        "|---|---|---|---|",
+    ]
+    for run in runs:
+        pairs = [(r["expected"], json.loads(r["reply"]).get("behavior")) for r in run["rows"]
+                 if r["valid_json"]]  # fmt: skip
+        risky = sum(want != "answer" and got == "answer" for want, got in pairs)
+        cautious = sum(want == "answer" and got != "answer" for want, got in pairs)
+        wrong_refusal = sum(want == "escalate" and got == "refuse" for want, got in pairs)
+        lines.append(
+            f"| {run['provider']}:{run['model']} | {risky} | {cautious} | {wrong_refusal} |"
+        )
+    lines += [
+        "",
+        "These are the model's raw choices. In the app, the retrieval score threshold and the "
+        "output checks run afterwards and can turn an answer into a hand-off.",
+    ]
+    return lines
+
+
 def benchmark_sections() -> list[str]:
     """Model-comparison tables, copied from the saved benchmark runs."""
     lines: list[str] = []
@@ -150,6 +175,26 @@ def benchmark_sections() -> list[str]:
                 f"| {run['checks_passed']}/{run['n']} | {run['latency_p50_s']:.1f} "
                 f"| {run['latency_p95_s']:.1f} | {speed} | {vram} |"
             )
+        missed = data["tasks_with_no_expected_article_retrieved"]
+        lines += [
+            "",
+            f"Hosted reference is not part of the local choice. Answerable tasks whose expected "
+            f"article was not retrieved: {len(missed)}.",
+        ]
+        if BENCH_LLM_AUTO.exists():
+            earlier = json.loads(BENCH_LLM_AUTO.read_text())
+            shares = [
+                f"{r['model']} {r['gpu_share']:.0%} on GPU, p50 {r['latency_p50_s']:.1f} s, "
+                f"pass {r['passed']}/{r['n']}"
+                for r in earlier["runs"]
+                if r["provider"] == "ollama"
+            ]
+            lines += [
+                "",
+                "An earlier run left GPU placement to Ollama (no `num_gpu` setting; saved in "
+                f"`{BENCH_LLM_AUTO.name}`): " + "; ".join(shares) + ".",
+            ]
+        lines += ["", "**Which mistakes each model made**", "", *mistake_table(data["runs"])]
     return lines
 
 

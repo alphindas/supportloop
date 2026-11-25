@@ -138,10 +138,13 @@ async def test_ollama_payload_sets_context_size_and_schema() -> None:
             200, json={"message": {"content": "hi"}, "prompt_eval_count": 5, "eval_count": 1}
         )
     )
-    provider = OllamaProvider("m", "http://o.test", client, POLICY, 4096, {"think": False})
+    params = {"think": False, "options": {"num_gpu": 99}}
+    provider = OllamaProvider("m", "http://o.test", client, POLICY, 4096, params)
     response = await provider.complete(request())
     sent = json.loads(seen[0].content)
     assert sent["options"]["num_ctx"] == 4096 and sent["think"] is False
+    assert sent["options"]["num_gpu"] == 99 and sent["options"]["temperature"] == 0
+    assert params == {"think": False, "options": {"num_gpu": 99}}  # not mutated
     assert sent["format"] == {"type": "object"}
     assert response.text == "hi" and response.input_tokens == 5
 
