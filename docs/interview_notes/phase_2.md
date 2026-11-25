@@ -2,7 +2,9 @@
 
 Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `reports/production_signals_simulation.md`. Written 2026-11-25.
 
-**Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code. **The judge has not been checked against a person until you run `make human-review`.** Do not call the judge validated before then.
+**Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code.
+
+**Do not call the judge validated.** Human review round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2 is pending; update these notes with its real numbers when it is done.
 
 ## 1. What we built and why
 
@@ -33,6 +35,8 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 | One judge call, two verdicts, reason before verdict | Half the requests. | Two calls: more independent, twice the quota. Risk of one verdict colouring the other. |
 | Judge from a different model family, temperature 0, cached | Less self-preference; stable results. | Generator judging itself. |
 | Human answers before seeing the judge | Seeing the verdict first pulls people towards it. | Showing the verdict and asking "agree?": inflates agreement. |
+| Round 2 added, round 1 kept unedited | The rubric was misapplied on some round-1 items. Editing those verdicts after seeing the judge would make agreement meaningless. Round 2 uses 30 other tasks and is reported separately. | Fixing or deleting round-1 verdicts, or pooling the rounds. |
+| Round 2 shows the rubric and hides all judge verdicts | The round-1 screen showed only a one-line question, which was a flaw in the tool: the rule "ignore helpfulness when judging faithfulness" was not visible. | Relying on the reviewer to remember the rubric. |
 | Report agreement **and** kappa | If most verdicts are "pass", agreement is high even for a lazy judge. | Agreement alone. |
 | Cache plus saved first-run latency | A rerun gives a byte-identical report. | Re-timing cached calls: reports cache speed as model speed. |
 | Stop the run on quota or outage | A hand-off caused by a rate limit is not the bot's answer. | Grading it: silently wrong results. |
@@ -40,7 +44,7 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 
 ## 3. Trade-offs, weaknesses, and what I would do with more time
 
-**The most important weakness: the judge is unvalidated.** Faithfulness 0.950 and correctness 0.670 depend on it. I already know of one verdict that breaks the rubric: on `v1-035` it called a missing detail "unfaithful", though the rubric only counts added or changed facts.
+**The most important weakness: the judge is unvalidated.** Faithfulness 0.950 and correctness 0.670 depend on it. In human review round 1, agreement was 20/30 (67%). Given that I said "pass" 22 times and the judge 26 times, chance alone predicts 67%, so kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. I found afterwards that I had misapplied the rubric on some items: I mixed up "faithful" with "helpful", and missed omitted key facts such as the 1.5% fee. So round 1 cannot tell me how much of the disagreement is the judge's fault and how much is mine. I left every verdict unedited and added a second round. The judge also has at least one verdict that breaks the rubric: on `v1-035` it called a missing detail "unfaithful".
 
 **What the numbers show:**
 
@@ -59,15 +63,15 @@ Other weaknesses:
 - Live judging is a manual command, not a scheduled job.
 - No multi-turn tasks in the eval set, so follow-up questions are not measured.
 
-With more time: run the human review and fix the rubric in a new version if agreement is poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
+With more time: add a second reviewer and worked examples to the rubric, and change the rubric in a new version if agreement stays poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
 
 ## 4. Eight likely questions, with short answers
 
 **Q1. How do you know your judge is right?**
-By default I do not, and the report says so. The check is a blind human review of 30 random judge decisions, reporting agreement and Cohen's kappa. (After you run it, say your actual numbers here.) I already found one verdict that contradicts the rubric. Even after the review, it is one reviewer and 30 items, so it is a sanity check, not proof.
+I don't yet. I ran a blind review of 30 judge decisions: we agreed on 20, which is exactly what chance predicts here (kappa -0.01). I then realised I had misapplied the rubric on some items, partly mixing up "faithful" with "helpful". My review screen had not shown the rubric. I did not edit those verdicts, because changing them after seeing the judge would make the check meaningless. I added a second blind round on 30 different tasks, with the rubric on screen, and report the two separately. Even a good second round would not be clean proof: I saw the judge's reasoning during round 1, I am one reviewer, and 30 items is small. Better: a written rubric with examples, two independent reviewers, and agreement between the humans measured first. (When round 2 is done, add its real numbers.)
 
 **Q2. Why report kappa as well as agreement?**
-Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.
+My own round 1 is the example: 67% agreement sounds acceptable, but chance alone predicts 67%, so kappa is -0.01. Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.
 
 **Q3. Why not just use thumbs up and down?**
 Feedback is rare, and biased towards annoyed or delighted users. A confidently wrong fee may get a thumbs-up, because the customer does not know it is wrong. So I combine signals: hand-offs, weak search, guardrail hits, ratings and sampled judging. None is ground truth; each only chooses what a person should look at.

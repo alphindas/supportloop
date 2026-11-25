@@ -2,7 +2,7 @@
 
 A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
 
-**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** One Phase 2 step is still open: a person has not yet checked the LLM judge. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated:** a first human check agreed with it no better than chance, and a second round is pending. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
 
 ## How a message is handled
 
@@ -55,7 +55,7 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make samples` | 10 demo conversations against the running API | `make run` |
 | `make retrieval-eval` | Write `reports/retrieval_v1.md` | index |
 | `make eval` | Run eval set v1 through the app and judge it. Cached and resumable (`uv run python -m evals.run_eval --limit 40` runs a small batch) | index, Groq key |
-| `make human-review` | **You** check 30 judge decisions, blind; rebuilds the eval report | a finished eval run |
+| `make human-review` | **You** check judge decisions, blind (`ROUND=2` by default, or `ROUND=1`); rebuilds the eval report | a finished eval run |
 | `make simulate` | Replay 200 real customer messages through the API | `make run` |
 | `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
 | `make traffic-report` | Summarise stored production signals | stored turns |
@@ -80,7 +80,9 @@ All numbers come from the files in [`reports/`](reports/).
 
 ### Answer quality: 150 tasks, `gpt-oss-20b`, prompt v1
 
-[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge has not been checked against a person yet**, and the tasks and labels are AI-drafted.
+[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated** (see below), and the tasks and labels are AI-drafted.
+
+**Judge versus one human, round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. The reviewer reported misapplying the rubric on some items (mixing up "faithful" with "helpful", and missing omitted key facts), so this round cannot separate judge errors from reviewer errors. The verdicts are published unedited. A second blind round on 30 different tasks is **pending**. Rounds are reported separately in the eval report.
 
 | Metric | Value [95% interval] |
 |---|---|
@@ -95,7 +97,7 @@ All numbers come from the files in [`reports/`](reports/).
 | Tokens per reply | 840 |
 
 - **Weakest area: knowing when it cannot answer.** Of 30 unanswerable tasks, 7 were answered and 4 refused instead of handed off.
-- Of 48 failed tasks, 25 had the right behaviour but were judged incorrect, often because part of the reference answer was missing. Whether the judge is too strict is for the human review to show. At least one judge verdict breaks its own rubric (it calls an omission "unfaithful", task `v1-035`).
+- Of 48 failed tasks, 25 had the right behaviour but were judged incorrect, often because part of the reference answer was missing. Whether the judge is too strict is not yet settled. At least one judge verdict breaks its own rubric (it calls an omission "unfaithful", task `v1-035`).
 - Injection (15 attacks written by the same AI as the rules): 7 stopped by pattern rules, 15 got no model-written text, 13 refused as expected. This does not measure resistance to a real attacker.
 - The confidence score only weakly predicts a good reply (AUC 0.66).
 
@@ -144,7 +146,7 @@ Do not compare 0.950 with 0.778: they use different questions.
 ## Known limitations
 
 - **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
-- **Unvalidated judge.** Faithfulness and correctness come from one language model that no person has checked yet.
+- **Unvalidated judge.** Faithfulness and correctness come from one language model. The first human check agreed with it only at chance level.
 - **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
 - **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
