@@ -4,7 +4,7 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 
 **Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code.
 
-**Do not call the judge validated.** Human review round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2 is pending; update these notes with its real numbers when it is done.
+**Do not call the judge validated.** Human review round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2: 25/30 (83%), 69% expected by chance, kappa 0.47. One reviewer, 30 items per round, and round 2 is not fully independent.
 
 ## 1. What we built and why
 
@@ -44,13 +44,13 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 
 ## 3. Trade-offs, weaknesses, and what I would do with more time
 
-**The most important weakness: the judge is unvalidated.** Faithfulness 0.950 and correctness 0.670 depend on it. In human review round 1, agreement was 20/30 (67%). Given that I said "pass" 22 times and the judge 26 times, chance alone predicts 67%, so kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. I found afterwards that I had misapplied the rubric on some items: I mixed up "faithful" with "helpful", and missed omitted key facts such as the 1.5% fee. So round 1 cannot tell me how much of the disagreement is the judge's fault and how much is mine. I left every verdict unedited and added a second round. The judge also has at least one verdict that breaks the rubric: on `v1-035` it called a missing detail "unfaithful".
+**The most important weakness: the judge is unvalidated.** Faithfulness 0.950 and correctness 0.670 depend on it. In human review round 1, agreement was 20/30 (67%). Given that I said "pass" 22 times and the judge 26 times, chance alone predicts 67%, so kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. I found afterwards that I had misapplied the rubric on some items: I mixed up "faithful" with "helpful", and missed omitted key facts such as the 1.5% fee. So round 1 cannot tell me how much of the disagreement is the judge's fault and how much is mine. I left every verdict unedited and added a second round on 30 other tasks: 25/30 (83%), chance 69%, kappa 0.47; faithful 16/17, correct 9/13. All 5 disagreements were the judge passing what I failed (4 of them on correctness). That is better agreement, but not validation: I had seen the judge's reasoning in round 1. The judge also has at least one verdict that breaks the rubric: on `v1-035` it called a missing detail "unfaithful".
 
 **What the numbers show:**
 
 - Pass rate 0.680 [0.607, 0.753].
 - The weak spot is knowing when it cannot answer: escalation recall 0.633 on 30 tasks. 7 were answered, 4 refused.
-- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. I have not separated these causes. I did not edit the references or rubric after seeing results.
+- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. I have not separated these causes. Round 2 gave no sign of a strict judge (it never failed an item I passed), but that is only 13 correctness verdicts. I did not edit the references or rubric after seeing results.
 - On live-style traffic with the local model, 8 of 36 sampled replies were judged unfaithful. Two that I checked against the articles are wrong statements about fees.
 
 Other weaknesses:
@@ -68,7 +68,7 @@ With more time: add a second reviewer and worked examples to the rubric, and cha
 ## 4. Eight likely questions, with short answers
 
 **Q1. How do you know your judge is right?**
-I don't yet. I ran a blind review of 30 judge decisions: we agreed on 20, which is exactly what chance predicts here (kappa -0.01). I then realised I had misapplied the rubric on some items, partly mixing up "faithful" with "helpful". My review screen had not shown the rubric. I did not edit those verdicts, because changing them after seeing the judge would make the check meaningless. I added a second blind round on 30 different tasks, with the rubric on screen, and report the two separately. Even a good second round would not be clean proof: I saw the judge's reasoning during round 1, I am one reviewer, and 30 items is small. Better: a written rubric with examples, two independent reviewers, and agreement between the humans measured first. (When round 2 is done, add its real numbers.)
+I don't yet. I ran a blind review of 30 judge decisions: we agreed on 20, which is exactly what chance predicts here (kappa -0.01). I then realised I had misapplied the rubric on some items, partly mixing up "faithful" with "helpful". My review screen had not shown the rubric. I did not edit those verdicts, because changing them after seeing the judge would make the check meaningless. I added a second blind round on 30 different tasks, with the rubric on screen, and report the two separately. In round 2 we agreed on 25, chance predicts 69%, kappa 0.47. All 5 disagreements were the judge passing something I failed. This is not clean proof: I saw the judge's reasoning during round 1, I am one reviewer, and 30 items is small. So I still would not let a ship decision rest on the judge alone. Better: a written rubric with examples, two independent reviewers, and agreement between the humans measured first.
 
 **Q2. Why report kappa as well as agreement?**
 My own round 1 is the example: 67% agreement sounds acceptable, but chance alone predicts 67%, so kappa is -0.01. Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.

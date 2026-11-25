@@ -2,7 +2,7 @@
 
 A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
 
-**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated:** a first human check agreed with it no better than chance, and a second round is pending. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated:** two checks by one reviewer disagree (kappa -0.01, then 0.47), so it is still not established that it can be trusted. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
 
 ## How a message is handled
 
@@ -82,7 +82,9 @@ All numbers come from the files in [`reports/`](reports/).
 
 [Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated** (see below), and the tasks and labels are AI-drafted.
 
-**Judge versus one human, round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. The reviewer reported misapplying the rubric on some items (mixing up "faithful" with "helpful", and missing omitted key facts), so this round cannot separate judge errors from reviewer errors. The verdicts are published unedited. A second blind round on 30 different tasks is **pending**. Rounds are reported separately in the eval report.
+**Judge versus one human, round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. The reviewer reported misapplying the rubric on some items (mixing up "faithful" with "helpful", and missing omitted key facts), so this round cannot separate judge errors from reviewer errors. The verdicts are published unedited. 
+
+**Round 2** (30 different tasks, rubric on screen, no judge verdict shown during the round): agreement 25/30 (83%), 69% expected by chance, kappa 0.47. By verdict type: faithful 16/17, correct 9/13 (round 1: 14/17 and 6/13). In all 5 disagreements the judge passed an answer the reviewer failed, so the judge may be too lenient; 4 of the 5 are correctness verdicts. Round 2 is not fully independent: the reviewer had seen the judge's verdicts and reasons in round 1, so the higher agreement may partly come from learning how the judge decides. It does not replace round 1, and the rounds are not pooled.
 
 | Metric | Value [95% interval] |
 |---|---|
@@ -146,7 +148,7 @@ Do not compare 0.950 with 0.778: they use different questions.
 ## Known limitations
 
 - **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
-- **Unvalidated judge.** Faithfulness and correctness come from one language model. The first human check agreed with it only at chance level.
+- **Unvalidated judge.** Faithfulness and correctness come from one language model. One reviewer checked it twice: kappa -0.01 (rubric misapplied on some items), then 0.47 on 30 other tasks (not fully independent).
 - **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
 - **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
