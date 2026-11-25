@@ -1,26 +1,26 @@
 # Progress
 
-## Done: Phase 1 (2026-11-25)
-Repo setup, 60 KB articles, hybrid retrieval, model benchmarks, retrieval report, chat API with
-guardrails, tests, sample conversations, interview notes.
+## Done
+- **Phase 1** (2026-11-25): knowledge base, retrieval, model benchmarks, chat API, guardrails.
+- **After Phase 1 review:** BM25 dropped from the live path (DESIGN.md 6.3), threshold bug fixed,
+  history audited for secrets, pushed to GitHub (public). Online A/B stays on local Ollama.
+
+## In progress: Phase 2
+- [ ] SQLite storage of every turn + failure signals
+- [ ] POST /feedback, GET /metrics
+- [ ] OpenTelemetry traces
+- [ ] ab/simulate.py (200 mining-pool messages)
+- [ ] Eval set v1 (~150 tasks)
+- [ ] Rule graders, LLM judge, live-traffic judge sampling
+- [ ] run_eval.py + report; rerun gives same numbers
+- [ ] human_review.py (the review itself must be done by Alphin, not by AI)
+- [ ] Interview notes phase_2.md + quiz
 
 ## Waiting on Alphin
-1. Quiz answers for `docs/interview_notes/phase_1.md`, then "go" for Phase 2.
-2. Restart WSL (`wsl --shutdown` from Windows) so the new 10 GB limit applies.
-3. Review AI-drafted labels: `make review-pairs`. KB articles also need review.
-4. Nothing has been pushed to GitHub.
-
-## Next: Phase 2
-SQLite storage, `POST /feedback`, Prometheus `/metrics`, OpenTelemetry traces (not built in
-Phase 1), `ab/simulate.py` (mining pool), eval set v1, graders and judge, human review.
+- Phase 1 quiz answers (to be corrected when sent; does not block Phase 2).
+- Review AI-drafted labels (`make review-pairs`) and KB articles.
 
 ## Carry forward
-- Do not tune retrieval on `retrieval_v1` test questions: their results have been seen.
-  Changes need new dev data and fresh test questions.
-- Candidate Phase 3 A/B hypothesis: prompt v2 separates "refuse" from "escalate" better
-  (v1 refused a savings-interest question in the samples and the LLM benchmark shows the
-  same error type).
-- Online A/B: the agreed plan is local Ollama. Measured Groq use (about 830 tokens a call)
-  is lower than first assumed, so re-check that choice before Phase 3.
-- Local-model benchmark did not include the score threshold; `llama3.2:3b` answered twice
-  when it should not have. Re-check in the Phase 2 eval.
+- `retrieval_v1` test questions have been seen and were used for the BM25 decision.
+- Candidate Phase 3 A/B hypothesis: prompt v2 separates "refuse" from "escalate" better.
+- `llama3.2:3b` answered when it should not have in the LLM benchmark; `phi4-mini` did not.

@@ -21,7 +21,7 @@ def fake_index(tmp_path_factory: pytest.TempPathFactory) -> Path:
 
 
 @pytest.fixture
-def test_settings(fake_index: Path) -> Settings:
+def test_settings(fake_index: Path, tmp_path: Path) -> Settings:
     return Settings(
         _env_file=None,
         llm_provider="fake",
@@ -32,4 +32,7 @@ def test_settings(fake_index: Path) -> Settings:
         index_dir=fake_index,
         escalation_score_threshold=0.3,
         prompt_version="v1",
+        # Each test gets its own database, so tests never touch real data.
+        database_path=tmp_path / "test.db",
+        trace_exporter="none",
     )

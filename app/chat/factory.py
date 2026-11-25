@@ -3,6 +3,7 @@
 import logging
 
 import httpx
+from opentelemetry import trace as otel
 
 from app.chat.pipeline import ChatService
 from app.config import Settings
@@ -38,7 +39,10 @@ def build_retriever(settings: Settings) -> tuple[HybridRetriever, dict[str, str]
 
 
 def build_chat_service(
-    settings: Settings, client: httpx.AsyncClient, provider: LLMProvider | None = None
+    settings: Settings,
+    client: httpx.AsyncClient,
+    provider: LLMProvider | None = None,
+    tracer: otel.Tracer | None = None,
 ) -> ChatService:
     """Create the service. A provider can be passed in by tests."""
     if settings.llm_provider == "ollama" and settings.retrieval_device == "cuda":
@@ -58,4 +62,5 @@ def build_chat_service(
         injection,
         escalation,
         titles,
+        tracer,
     )

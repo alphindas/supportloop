@@ -71,6 +71,12 @@ class Settings(BaseSettings):
     max_conversations: int = Field(gt=0)
     guardrails_path: Path
 
+    database_path: Path
+    variant_name: str = Field(pattern=r"^[A-Za-z0-9_.-]{1,40}$")
+    trace_exporter: Literal["file", "otlp", "none"]
+    trace_file_path: Path
+    otlp_endpoint: str
+
     @classmethod
     def settings_customise_sources(
         cls,

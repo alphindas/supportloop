@@ -1,10 +1,13 @@
 """One chat turn: redact, check, retrieve, generate, verify, decide."""
 
 import asyncio
+import json
 import logging
 import time
 import uuid
 
+from opentelemetry import trace as otel
+from opentelemetry.trace import SpanKind, Status, StatusCode
 from pydantic import BaseModel
 
 from app.chat.history import ConversationStore, Turn
@@ -13,6 +16,7 @@ from app.guardrails.output import BotAnswer, bot_answer_schema, check_answer, pa
 from app.guardrails.pii import redact
 from app.guardrails.rules import RuleSet
 from app.llm.base import LLMError, LLMProvider, LLMRequest, LLMResponse, Message
+from app.observability import semconv
 from app.prompts.loader import PromptTemplate
 from app.rag.retriever import HybridRetriever, RetrievedChunk
 
@@ -40,6 +44,7 @@ class ChatResult(BaseModel):
     guardrail_events: list[str]
     model: str
     prompt_version: str
+    variant: str
 
 
 class TurnTrace(BaseModel):
@@ -48,7 +53,10 @@ class TurnTrace(BaseModel):
     redacted_message: str
     retrieval_query: str = ""
     retrieved: list[dict] = []
+    context: dict[str, str] = {}  # article id -> text shown to the model
+    top_score: float | None = None
     llm: dict | None = None
+    model_reply: str | None = None
     latency_ms: float = 0.0
 
 
@@ -98,6 +106,12 @@ def build_llm_request(
     )
 
 
+def _mark_failed(span: otel.Span, error: Exception) -> None:
+    """Record only the error type. Error messages could contain request text."""
+    span.set_attribute(semconv.ERROR_TYPE, type(error).__name__)
+    span.set_status(Status(StatusCode.ERROR))
+
+
 class ChatService:
     """Runs the pipeline. All dependencies are passed in, so tests can swap them."""
 
@@ -111,7 +125,9 @@ class ChatService:
         injection_rules: RuleSet,
         escalation_rules: RuleSet,
         titles: dict[str, str],
+        tracer: otel.Tracer | None = None,
     ) -> None:
+        self.tracer = tracer or otel.NoOpTracer()
         self.settings = settings
         self.retriever = retriever
         self.provider = provider
@@ -127,15 +143,31 @@ class ChatService:
     async def handle(
         self, user_id: str, conversation_id: str, message: str
     ) -> tuple[ChatResult, TurnTrace]:
-        """Answer one customer message."""
+        """Answer one customer message. The whole turn is one trace."""
+        with self.tracer.start_as_current_span("chat_request", kind=SpanKind.SERVER) as span:
+            span.set_attribute(semconv.CONVERSATION_ID, conversation_id)
+            span.set_attribute(semconv.VARIANT, self.settings.variant_name)
+            span.set_attribute(semconv.PROMPT_VERSION, self.prompt.version)
+            result, trace = await self._run(user_id, conversation_id, message)
+            span.set_attribute(semconv.REQUEST_ID, result.request_id)
+            span.set_attribute(semconv.BEHAVIOR, result.behavior)
+            span.set_attribute(semconv.ESCALATE, result.escalate)
+            return result, trace
+
+    async def _run(
+        self, user_id: str, conversation_id: str, message: str
+    ) -> tuple[ChatResult, TurnTrace]:
         started = time.perf_counter()
-        # Redaction comes first. The raw message is not used again after this line.
-        redaction = redact(message)
-        question = redaction.text
-        events = [f"pii_redacted:{kind}" for kind in sorted(redaction.counts)]
+        with self.tracer.start_as_current_span("guardrail input") as span:
+            # Redaction comes first. The raw message is not used again after this line.
+            redaction = redact(message)
+            question = redaction.text
+            events = [f"pii_redacted:{kind}" for kind in sorted(redaction.counts)]
+            injections = self.injection_rules.matches(question)
+            span.set_attribute(semconv.PII_KINDS, sorted(redaction.counts))
+            span.set_attribute(semconv.INJECTION_RULES, injections)
         trace = TurnTrace(redacted_message=question)
 
-        injections = self.injection_rules.matches(question)
         if injections:
             events += [f"prompt_injection:{name}" for name in injections]
             # Not added to history, so the attack text never reaches a later prompt.
@@ -150,10 +182,7 @@ class ChatService:
         trace.retrieval_query = query
         rule_hits = self.escalation_rules.matches(question)
         try:
-            async with self._retrieval_lock:
-                chunks = await asyncio.to_thread(
-                    self.retriever.retrieve, query, self.settings.context_top_k
-                )
+            chunks = await self._retrieve(query)
         except RuntimeError as error:  # e.g. the GPU ran out of memory
             return self._system_failure(
                 user_id, conversation_id, "retrieval_error", error, rule_hits, events,
@@ -170,22 +199,88 @@ class ChatService:
             for c in chunks
         ]
         article_texts = format_articles(chunks)
-        top_score = chunks[0].rerank_score if chunks else None
+        trace.context = article_texts
+        trace.top_score = chunks[0].rerank_score if chunks else None
 
         request = build_llm_request(self.settings, self.prompt, question, history, article_texts)
         try:
-            response = await self.provider.complete(request)
+            response = await self._generate(conversation_id, request)
         except LLMError as error:
             return self._system_failure(
                 user_id, conversation_id, "llm_error", error, rule_hits, events, trace, started
             )
 
         trace.llm = response.model_dump(exclude={"text"})
-        result = self._decide(
-            conversation_id, question, response, article_texts, top_score, rule_hits, events
-        )
+        trace.model_reply = redact(response.text).text
+        with self.tracer.start_as_current_span("guardrail output") as span:
+            result = self._decide(
+                conversation_id,
+                question,
+                response,
+                article_texts,
+                trace.top_score,
+                rule_hits,
+                events,
+            )
+            span.set_attribute(semconv.GUARDRAIL_EVENTS, result.guardrail_events)
+            span.set_attribute(semconv.BEHAVIOR, result.behavior)
         self.history.add(user_id, conversation_id, Turn(question, redact(result.answer).text))
         return self._finish(user_id, result, trace, started)
+
+    async def _retrieve(self, query: str) -> list[RetrievedChunk]:
+        with self.tracer.start_as_current_span(
+            "retrieval", record_exception=False, set_status_on_exception=False
+        ) as span:
+            span.set_attribute(semconv.OPERATION_NAME, "retrieval")
+            span.set_attribute(semconv.RETRIEVAL_TOP_K, self.settings.context_top_k)
+            try:
+                async with self._retrieval_lock:
+                    chunks = await asyncio.to_thread(
+                        self.retriever.retrieve, query, self.settings.context_top_k
+                    )
+            except RuntimeError as error:
+                _mark_failed(span, error)
+                raise
+            # Chunk IDs and scores only. The query text is left out on purpose.
+            documents = [
+                {"id": c.chunk.chunk_id, "score": c.rerank_score or c.rrf_score} for c in chunks
+            ]
+            span.set_attribute(semconv.RETRIEVAL_DOCUMENTS, json.dumps(documents))
+            return chunks
+
+    async def _generate(self, conversation_id: str, request: LLMRequest) -> LLMResponse:
+        with self.tracer.start_as_current_span(
+            f"chat {self.provider.model}",
+            kind=SpanKind.CLIENT,
+            record_exception=False,
+            set_status_on_exception=False,
+        ) as span:
+            span.set_attributes(
+                {
+                    semconv.OPERATION_NAME: "chat",
+                    semconv.PROVIDER_NAME: self.provider.name,
+                    semconv.REQUEST_MODEL: self.provider.model,
+                    semconv.REQUEST_TEMPERATURE: request.temperature,
+                    semconv.REQUEST_MAX_TOKENS: request.max_output_tokens,
+                    semconv.OUTPUT_TYPE: "json",
+                    semconv.PROMPT_NAME: "supportloop_chat",
+                    semconv.PROMPT_VERSION: request.prompt_version,
+                    semconv.CONVERSATION_ID: conversation_id,
+                }
+            )
+            try:
+                response = await self.provider.complete(request)
+            except LLMError as error:
+                _mark_failed(span, error)
+                raise
+            span.set_attribute(semconv.RESPONSE_MODEL, response.model)
+            span.set_attribute(semconv.LLM_CACHED, response.cached)
+            span.set_attribute(semconv.LLM_WAIT_MS, response.wait_ms)
+            if response.input_tokens is not None:
+                span.set_attribute(semconv.USAGE_INPUT_TOKENS, response.input_tokens)
+            if response.output_tokens is not None:
+                span.set_attribute(semconv.USAGE_OUTPUT_TOKENS, response.output_tokens)
+            return response
 
     def _system_failure(
         self,
@@ -303,6 +398,7 @@ class ChatService:
             guardrail_events=events,
             model=f"{self.provider.name}:{self.provider.model}",
             prompt_version=self.prompt.version,
+            variant=self.settings.variant_name,
         )
 
     def _finish(
@@ -316,7 +412,8 @@ class ChatService:
                     "user_id": user_id,
                     **result.model_dump(exclude={"citations", "answer"}),
                     "cited": [c.article_id for c in result.citations],
-                    **trace.model_dump(),
+                    # Article text and the raw reply go to the database, not the log.
+                    **trace.model_dump(exclude={"context", "model_reply"}),
                 }
             },
         )

@@ -50,3 +50,10 @@ max_message_chars: 2000
 history_turns: 3
 max_conversations: 1000                  # conversations kept in memory
 guardrails_path: config/guardrails.yaml
+
+# --- Storage and observability ---------------------------------------------------
+database_path: data/supportloop.db       # ignored by git
+variant_name: baseline                   # label on metrics and stored turns; A/B arms in Phase 3
+trace_exporter: file                     # file | otlp | none
+trace_file_path: logs/traces.jsonl       # used by 'file'; ignored by git
+otlp_endpoint: http://localhost:4318/v1/traces
