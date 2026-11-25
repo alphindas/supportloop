@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm samples review-pairs
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -25,3 +25,20 @@ data:                 ## download Banking77 and build the message pools
 
 benchmark-retrieval:  ## compare embedders and rerankers (needs GPU, downloads models)
 	uv run python -m evals.benchmark_retrieval
+
+run:                  ## start the API on http://127.0.0.1:8000
+	uv run uvicorn --factory app.main:create_app --host 127.0.0.1 --port 8000
+
+benchmark-llm:        ## compare local chat models (needs Ollama; uses some Groq quota)
+	uv run python -m evals.benchmark_llm
+
+retrieval-eval:       ## evaluate retrieval on the held-out split and write the report
+	uv run python -m evals.retrieval_eval
+
+review-pairs:         ## review AI-drafted retrieval labels by hand
+	uv run python -m scripts.review_pairs
+
+eval: retrieval-eval  ## Phase 2 adds the full answer evaluation here
+
+samples:              ## send 10 sample conversations to the running API (make run first)
+	uv run python -m scripts.sample_conversations

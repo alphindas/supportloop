@@ -12,6 +12,17 @@ retrieval:
   # Escalation threshold: the highest score cut-off that wrongly escalates at most this
   # share of answerable dev questions.
   max_false_escalation_rate: 0.05
+# Selection rule for the local model, written BEFORE its first run: highest pass rate;
+# among models within tie_margin of it, the lowest median latency.
+llm:
+  local_models: [qwen3.5:2b, llama3.2:3b, phi4-mini]
+  # Same tasks on the hosted generator, for context. Not part of the local choice.
+  hosted_reference_models: [openai/gpt-oss-20b]
+  task_counts: {answer: 20, escalate: 5, refuse: 5}
+  seed: 20261125
+  tie_margin: 0.034
+  timeout_seconds: 300
+
 bootstrap:
   resamples: 10000
   seed: 20261125
