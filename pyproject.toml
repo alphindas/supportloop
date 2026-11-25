@@ -1,0 +1,49 @@
+[project]
+name = "supportloop"
+version = "0.1.0"
+description = "Customer-support chatbot for the fictional fintech NovaPay, with evals, a data loop and A/B testing."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "bm25s>=0.3.16",
+    "chromadb>=1.5.9",
+    "fastapi>=0.165.0",
+    "httpx>=0.28.1",
+    "numpy>=2.5.5",
+    "pydantic>=2.14.4",
+    "pydantic-settings>=2.16.3",
+    "pyyaml>=6.0.4",
+    "sentence-transformers>=6.3.0",
+    "torch>=2.15.0",
+    "transformers>=5.24.1",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[tool.uv]
+# This is an application, not a library, so there is nothing to build or install.
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: errors, I: import order, UP: modern syntax, B: likely bugs,
+# SIM: simpler code, ASYNC: async mistakes
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["error::pytest.PytestUnraisableExceptionWarning"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "pytest-asyncio>=1.5.0",
+    "ruff>=0.17.6",
+]

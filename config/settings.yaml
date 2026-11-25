@@ -1,0 +1,47 @@
+# Default settings. Versioned in git, so every report can be traced back to them.
+# Override any value with an environment variable: SUPPORTLOOP_<NAME IN CAPITALS>.
+# Secrets never go here.
+
+# --- LLM -------------------------------------------------------------------
+llm_provider: groq                       # groq | ollama | fake
+groq_base_url: https://api.groq.com/openai/v1
+groq_generator_model: openai/gpt-oss-20b
+# Judge is a different model family from the generator, so it does not grade its own style.
+# It is a Groq "preview" model. Every report records which judge was configured.
+groq_judge_model: qwen/qwen3.8-27b
+groq_reasoning_effort: low               # gpt-oss reasoning tokens count against the daily quota
+ollama_base_url: http://localhost:11434
+ollama_model: qwen3.5:2b                 # confirmed or replaced by the Phase 1 benchmark
+ollama_num_ctx: 4096
+llm_temperature: 0.0
+llm_max_output_tokens: 1000
+llm_timeout_seconds: 60
+llm_max_retries: 5
+llm_backoff_base_seconds: 1.0
+llm_backoff_max_seconds: 60.0
+# Never sleep longer than this for one retry. A longer "retry-after" means a daily
+# quota is used up, so we stop and tell the caller instead of hanging for hours.
+llm_max_retry_after_seconds: 90.0
+llm_cache_enabled: false                 # off for live traffic, on for evals
+llm_cache_path: data/cache/llm_cache.sqlite3
+prompt_version: v1
+
+# --- Retrieval ---------------------------------------------------------------
+embedding_model: Qwen/Qwen3-Embedding-0.6B    # confirmed or replaced by the benchmark
+reranker_model: Qwen/Qwen3-Reranker-0.6B      # "none" switches reranking off
+retrieval_device: cuda                        # cuda | cpu
+kb_dir: data/kb
+index_dir: data/index
+chunk_max_words: 220
+bm25_top_k: 20
+dense_top_k: 20
+rrf_k: 60
+rerank_candidates: 20
+context_top_k: 4
+
+# --- Chat behaviour ------------------------------------------------------------
+# Placeholder until it is calibrated on the dev retrieval set.
+escalation_score_threshold: 0.30
+max_message_chars: 2000
+history_turns: 3
+guardrails_path: config/guardrails.yaml

@@ -1,0 +1,22 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Local data, caches and databases (never committed)
+data/banking77/
+data/chroma/
+data/index/
+data/cache/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
