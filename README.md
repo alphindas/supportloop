@@ -40,7 +40,7 @@ curl -s http://127.0.0.1:8000/chat -H 'content-type: application/json' \
 **Local model instead of Groq** (retrieval must move to the CPU, so it is slower):
 
 ```bash
-ollama pull llama3.2:3b
+ollama pull phi4-mini
 SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 ```
 
@@ -55,6 +55,7 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make samples` | 10 demo conversations against the running API | `make run` |
 | `make retrieval-eval` | Write `reports/retrieval_v1.md` | index |
 | `make eval` | Run eval set v1 through the app and judge it. Cached and resumable (`uv run python -m evals.run_eval --limit 40` runs a small batch) | index, Groq key |
+| `make fee-cases` | Replay two wrong-fee questions on both local models | Ollama |
 | `make human-review` | **You** check judge decisions, blind (`ROUND=2` by default, or `ROUND=1`); rebuilds the eval report | a finished eval run |
 | `make simulate` | Replay 200 real customer messages through the API | `make run` |
 | `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
@@ -136,8 +137,8 @@ Do not compare 0.950 with 0.778: they use different questions.
 
 | Model | Pass |
 |---|---|
-| `llama3.2:3b` (chosen: tie with the next, but faster) | 21/30 |
-| `phi4-mini` | 20/30 |
+| `llama3.2:3b` (picked by the pre-set rule: tie with the next, but faster) | 21/30 |
+| `phi4-mini` (used: safety override) | 20/30 |
 | `qwen3.5:2b` | 16/30 |
 | `openai/gpt-oss-20b` on Groq (reference, the default model) | 26/30 |
 
@@ -154,7 +155,8 @@ Do not compare 0.950 with 0.778: they use different questions.
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
 - **Refuse versus hand-off:** the model sometimes refuses a banking question that should go to a human (sample 10: savings interest; 4 of 30 unanswerable eval tasks). The score threshold does not catch this, because it does not override a refusal.
 - **Near-miss topics:** questions close to an existing article often get an answer instead of a hand-off. The score threshold mostly misses these.
-- **`llama3.2:3b` trade-off:** in the benchmark it answered 3 times when it should have handed off or refused. `phi4-mini` never did, but handed off more answerable questions.
+- **Local model is a safety override.** The pre-set rule picked `llama3.2:3b`. The app uses `phi4-mini` instead, chosen after seeing the results: in the benchmark it never answered when it should have handed off or refused (`llama3.2:3b` did 3 times), but it handed off more answerable questions.
+- **The override does not fix wrong fees.** On [two wrong-fee cases](reports/local_model_fee_cases.md), `phi4-mini` still gave a wrong card fee on one ([details](DESIGN.md)).
 - **Confidence** is the reranker's top score. It is not a probability, and correct answers can score low.
 - **Number check** cannot catch numbers written as words, or a real number used for the wrong thing. Nothing checks non-numeric claims yet.
 - **PII:** names and addresses are not detected. A mistyped card number that fails the Luhn check is not treated as a card.

@@ -129,13 +129,24 @@ From `reports/retrieval_v1.md`, which also shows what kind of mistakes each mode
 | Model | Pass | p50 s | VRAM GiB |
 |---|---|---|---|
 | qwen3.5:2b | 16/30 | 1.2 | 2.19 |
-| llama3.2:3b **(chosen local)** | 21/30 | 1.5 | 2.38 |
-| phi4-mini | 20/30 | 1.8 | 2.88 |
+| llama3.2:3b (picked by the rule) | 21/30 | 1.5 | 2.38 |
+| phi4-mini **(used, by safety override)** | 20/30 | 1.8 | 2.88 |
 | openai/gpt-oss-20b (hosted reference) | 26/30 | 0.6 | hosted |
 
 Rerun with dense-retrieval context. One task (`ret-098`) failed for every model because retrieval no longer returns its article.
 
-**Choice: `llama3.2:3b`**, by the pre-declared rule, **now only just**: `phi4-mini` is one task behind, which the rule counts as a tie, so latency decides. **Trade-off:** `llama3.2:3b` answered 3 times when it should have handed off or refused; `phi4-mini` and `qwen3.5:2b` never did (they handed off too often instead). For a fintech that risk matters, and choosing `phi4-mini` for safety would be defensible. The app's retrieval threshold catches some such cases, not necessarily all.
+**Result of the rule: `llama3.2:3b`**, by the pre-declared rule, **now only just**: `phi4-mini` is one task behind, which the rule counts as a tie, so latency decides. **Trade-off:** `llama3.2:3b` answered 3 times when it should have handed off or refused; `phi4-mini` and `qwen3.5:2b` never did (they handed off too often instead). For a fintech that risk matters, and choosing `phi4-mini` for safety would be defensible. The app's retrieval threshold catches some such cases, not necessarily all.
+
+**Safety override (2026-11-25): the app and the online A/B use `phi4-mini`.** This was decided by a person after seeing the results, so it is **not** an outcome of the pre-set rule. The rule and its result above are unchanged. Reason: in the benchmark `phi4-mini` made 0 risky errors (answering when it should hand off or refuse) against 3 for `llama3.2:3b`. Cost: one benchmark task fewer, more needless hand-offs, 0.3 s more at p50 and 0.5 GiB more VRAM. The Phase 2 production signals were measured on `llama3.2:3b` and do not describe `phi4-mini`.
+
+**Check on two wrong-fee cases** (`make fee-cases`, [replies](reports/local_model_fee_cases.md), 3 runs each, same fee article as in the simulated traffic). The replies were compared with the articles by Claude Code; no person has checked that reading yet.
+
+| Case | `llama3.2:3b` | `phi4-mini` |
+|---|---|---|
+| `a8db2bee`: fee for a card top-up | Wrong in 3/3: invents a £10 minimum fee | **Still wrong in 3/3**, in a new way: no £10 fee, but it gives 1.5% as the card top-up fee (UK and EEA debit cards are free) and applies it to credit cards issued outside the UK and EEA (2.0%) |
+| `f3d6916d`: all top-up fees | Wrong in 3/3: charges UK and EEA debit cards 1.5% | Fees right in 3/3. It states the card top-up limits as if they applied to every top-up, and leaves out that only the higher card fee applies when two rules match |
+
+So the override does **not** fix wrong fee claims. It rests only on the hand-off and refusal behaviour in the benchmark. The code checks flagged none of the wrong replies. Two cases are far too few to compare the models on accuracy.
 
 All three local models run fully on the GPU only with `num_gpu: 99`; Ollama's automatic placement kept part of each on the CPU.
 
