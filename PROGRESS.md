@@ -9,21 +9,24 @@
   replayed), eval set v1 (150), rule graders + LLM judge, eval report (reruns identical),
   live judging, production signals report, blind human-review tool, interview notes.
 - **Human review round 1** (by Alphin): 20/30, kappa -0.01. Published unedited; Alphin reported
-  misapplying the rubric on some items. **Never edit verdict files** (a test pins round 1).
+  misapplying the rubric on some items.
+- **Human review round 2** (by Alphin, 30 other tasks): 25/30, chance 69%, kappa 0.47;
+  faithful 16/17, correct 9/13. In all 5 disagreements the judge passed what Alphin failed.
+  Not fully independent (judge verdicts were seen in round 1). Published unedited; numbers
+  added to the README and Phase 2 notes. **The judge is still not treated as validated.**
+- **Never edit verdict files** (a test pins both rounds by hash).
+- **Local model for the online A/B: `phi4-mini`**, a safety override of the pre-set rule,
+  which picked `llama3.2:3b` (DESIGN.md 6.2). On two wrong-fee cases (`make fee-cases`) it
+  **still gave a wrong fee on one**, so the override rests only on benchmark hand-off and
+  refusal behaviour.
 
-## Open
-- [ ] Human review round 2: `make human-review ROUND=2` (Alphin only, never AI). It must be
-      done without reading the report's "Failed tasks" table. Then commit
-      `evals/human_review/*.round2.jsonl` and the rebuilt report, and add the numbers to
-      README and docs/interview_notes/phase_2.md.
-- [ ] If agreement is still poor: rubric or reference changes go in a NEW version.
-
-## Waiting on Alphin
-- Phase 1 and Phase 2 quiz answers (correct them when sent).
-- "go" for Phase 3.
-- Choose the local model for the online A/B (`llama3.2:3b` won by rule; `phi4-mini` made no
-  risky errors in the benchmark).
-- Review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
+## What's next
+1. Alphin: approve the push of the commits made after `cec459b`.
+2. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`, and
+   confirm `phi4-mini` still stands given the remaining wrong fee.
+3. Alphin: Phase 1 and Phase 2 quiz answers (correct them when sent).
+4. Alphin: review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
+5. Alphin: "go" for Phase 3 (data loop, A/B testing, Docker, CI). **Not started.**
 
 ## Carry forward to Phase 3
 - `retrieval_v1` test questions have been seen and were used for the BM25 decision. The fresh
@@ -33,9 +36,16 @@
   ("refuse vs escalate", "do not answer if the articles only cover a similar topic") is a
   natural A/B hypothesis. Do not tune the prompt by reading eval v1 failures and then report
   the gain on eval v1 as if it were unseen.
-- The judge is unvalidated, so do not let a ship decision rest on judge scores alone.
-- Local `llama3.2:3b` gave wrong fee claims on simulated traffic that passed the number check.
-- Online A/B on local Ollama: about 6 s per request with retrieval on CPU (200 requests took
-  about 20 minutes).
+- Do not let a ship decision rest on judge scores alone. In round 2 the judge was more
+  lenient than the reviewer. Any rubric or reference change goes in a NEW version; existing
+  results stay. A stronger check needs a second reviewer who has not seen judge output.
+- Both local models gave wrong fee claims that passed the number check (it cannot catch a
+  real number attached to the wrong thing). A fee-claim check is a candidate improvement.
+- Production signals (200 replayed messages) were measured on `llama3.2:3b`. They do not
+  describe `phi4-mini`; both A/B arms need fresh runs on `phi4-mini`.
+- Local replies can differ in wording between reruns even at temperature 0.
 - Mining must not read `data/sim/` or `data/kb/COVERAGE.md`.
 - The local database holds the simulated turns Phase 3 mines. It is not in git.
+- Online A/B on local Ollama: about 6 s per request was measured with `llama3.2:3b` and
+  retrieval on CPU (200 requests took about 20 minutes). Not yet measured end to end with
+  `phi4-mini`.
