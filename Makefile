@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -42,3 +42,6 @@ eval: retrieval-eval  ## Phase 2 adds the full answer evaluation here
 
 samples:              ## send 10 sample conversations to the running API (make run first)
 	uv run python -m scripts.sample_conversations
+
+guardrail-check:      ## false-positive check of guardrail rules on real messages
+	uv run python -m evals.guardrail_check
