@@ -1,0 +1,17 @@
+# Selection rules, written BEFORE the first benchmark run (2026-11-25).
+retrieval:
+  eval_set: evals/sets/retrieval_v1.jsonl
+  embedders: [Qwen/Qwen3-Embedding-0.6B, BAAI/bge-m3, BAAI/bge-small-en-v1.5]
+  rerankers: [none, Qwen/Qwen3-Reranker-0.6B, BAAI/bge-reranker-v2-m3]
+  recall_k: 5
+  # Choose on the dev split only. A candidate is "tied" with the best if it is at most
+  # this far behind on BOTH metrics (0.034 is about one of the 30 dev questions).
+  tie_margin: 0.034
+  # Among tied candidates, take the one with the lowest median latency.
+  tie_breaker: latency_p50_ms
+  # Escalation threshold: the highest score cut-off that wrongly escalates at most this
+  # share of answerable dev questions.
+  max_false_escalation_rate: 0.05
+bootstrap:
+  resamples: 10000
+  seed: 20261125
