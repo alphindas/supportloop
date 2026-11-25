@@ -41,8 +41,9 @@ rerank_candidates: 20
 context_top_k: 4
 
 # --- Chat behaviour ------------------------------------------------------------
-# Placeholder until it is calibrated on the dev retrieval set.
-escalation_score_threshold: 0.30
+# Calibrated on the dev retrieval split by make retrieval-eval (rule in benchmark.yaml).
+# Only valid for the reranker above: another reranker scores on a different scale.
+escalation_score_threshold: 0.0311
 max_message_chars: 2000
 history_turns: 3
 max_conversations: 1000                  # conversations kept in memory

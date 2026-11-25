@@ -136,11 +136,13 @@ class HybridRetriever:
         )
         return list(result["ids"][0])
 
-    def retrieve(self, query: str, top_k: int, mode: str = "hybrid") -> list[RetrievedChunk]:
+    def retrieve(
+        self, query: str, top_k: int, mode: str = "hybrid", rerank: bool = True
+    ) -> list[RetrievedChunk]:
         """Return the best chunks for a query.
 
-        mode is 'hybrid' in the app. 'bm25' and 'dense' exist so the retrieval eval can
-        measure whether each part is actually useful.
+        The app uses mode='hybrid' with reranking. The other options exist so the
+        retrieval eval can measure whether each part is actually useful.
         """
         bm25_ids = (
             self.bm25_search(query, self.config.bm25_top_k) if mode in ("hybrid", "bm25") else []
@@ -160,7 +162,7 @@ class HybridRetriever:
             )
             for chunk_id, score in fused[: self.config.rerank_candidates]
         ]
-        if self._reranker is None:
+        if self._reranker is None or not rerank:
             return results[:top_k]
 
         scores = self._reranker.score(query, [r.chunk.text for r in results])

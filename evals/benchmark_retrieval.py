@@ -43,14 +43,18 @@ def retrieval_config() -> RetrievalConfig:
 
 
 def evaluate(
-    retriever: HybridRetriever, questions: list[dict], recall_k: int, mode: str = "hybrid"
+    retriever: HybridRetriever,
+    questions: list[dict],
+    recall_k: int,
+    mode: str = "hybrid",
+    rerank: bool = True,
 ) -> list[dict]:
     """Run every question once and record the ranking, metrics and latency."""
     results = []
     for row in questions:
         started = time.perf_counter()
         found = retriever.retrieve(
-            row["question"], top_k=retriever.config.rerank_candidates, mode=mode
+            row["question"], top_k=retriever.config.rerank_candidates, mode=mode, rerank=rerank
         )
         latency_ms = (time.perf_counter() - started) * 1000
         ranked = distinct_articles([r.chunk.article_id for r in found])

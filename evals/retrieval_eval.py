@@ -7,6 +7,7 @@ import json
 
 from app.chat.factory import build_retriever
 from app.config import PROJECT_ROOT, get_settings
+from app.rag.retriever import HybridRetriever
 from evals.benchmark_retrieval import evaluate, load_benchmark_config, load_questions
 from evals.report_header import report_header
 from evals.retrieval_metrics import choose_threshold
@@ -36,6 +37,36 @@ def metric_cell(summary: dict, key: str) -> str:
     """'0.900 [0.817, 0.967]'."""
     low, high = summary[f"{key}_ci"]
     return f"{summary[key]:.3f} [{low:.3f}, {high:.3f}]"
+
+
+APP_SETUP = "Hybrid + reranker (the app)"
+
+
+def run_stages(retriever: HybridRetriever, questions: list[dict], k: int) -> dict:
+    """Run the same answerable questions with parts of the pipeline switched off."""
+    positives = [q for q in questions if q["expected_article_ids"]]
+    return {
+        "BM25 only": evaluate(retriever, positives, k, mode="bm25", rerank=False),
+        "Dense only": evaluate(retriever, positives, k, mode="dense", rerank=False),
+        "Hybrid (RRF)": evaluate(retriever, positives, k, rerank=False),
+        APP_SETUP: evaluate(retriever, positives, k),
+    }
+
+
+def paired_difference(
+    first: list[dict], second: list[dict], key: str, resamples: int, seed: int
+) -> str:
+    """Mean per-question difference (first - second) with a 95% bootstrap interval.
+
+    Both setups answer the same questions, so comparing them question by question is
+    more precise than comparing two separate intervals.
+    """
+    assert [r["id"] for r in first] == [r["id"] for r in second]
+    differences = [a[key] - b[key] for a, b in zip(first, second, strict=True)]
+    low, high = bootstrap_ci(differences, resamples, seed)
+    verdict = "no clear difference" if low <= 0 <= high else "clear difference"
+    mean = sum(differences) / len(differences)
+    return f"{mean:+.3f} [{low:+.3f}, {high:+.3f}] ({verdict})"
 
 
 def escalation_table(results: dict[str, list[dict]], threshold: float) -> list[str]:
@@ -141,20 +172,16 @@ def main() -> None:
         retrieval["max_false_escalation_rate"],
     )
 
-    # Ablation on test: remove parts to see what each one adds.
-    positives = [q for q in test if q["expected_article_ids"]]
-    reranker = retriever._reranker
-    retriever._reranker = None
-    stages = {
-        "BM25 only": evaluate(retriever, positives, k, mode="bm25"),
-        "Dense only": evaluate(retriever, positives, k, mode="dense"),
-        "Hybrid (RRF)": evaluate(retriever, positives, k),
+    ablation = {
+        split: {
+            name: summarise(rows, boot["resamples"], boot["seed"])
+            for name, rows in run_stages(retriever, questions, k).items()
+        }
+        for split, questions in (("test", test), ("dev", dev))
     }
-    retriever._reranker = reranker
-    stages["Hybrid + reranker (the app)"] = [r for r in test_results if r["expected"]]
-    summaries = {
-        name: summarise(rows, boot["resamples"], boot["seed"]) for name, rows in stages.items()
-    }
+    summaries = ablation["test"]
+    app_rows = [r for r in test_results if r["expected"]]
+    dense_rows = run_stages(retriever, test, k)["Dense only"]
 
     reviewed = sum(row["review_status"] == "human_reviewed" for row in dev + test)
     total_rows = len(dev) + len(test)
@@ -188,9 +215,34 @@ def main() -> None:
             f"| {summary['latency_p50_ms']:.0f} | {summary['latency_p95_ms']:.0f} |"
         )
 
+    lines += [
+        "",
+        "**Paired comparison, app minus dense-only (test):**",
+        "",
+        f"- Recall@{k}: "
+        + paired_difference(app_rows, dense_rows, "recall", boot["resamples"], boot["seed"]),
+        "- MRR: "
+        + paired_difference(
+            app_rows, dense_rows, "reciprocal_rank", boot["resamples"], boot["seed"]
+        ),
+        "",
+        "### Same ablation on the dev split (used for model selection)",
+        "",
+        f"| Setup | Recall@{k} | MRR |",
+        "|---|---|---|",
+        *[
+            f"| {name} | {metric_cell(summary, 'recall')} "
+            f"| {metric_cell(summary, 'reciprocal_rank')} |"
+            for name, summary in ablation["dev"].items()
+        ],
+        "",
+        "Compare the two tables: the chosen setup scores much higher on dev than on the "
+        "held-out test questions. Dev is small, the models were chosen on it, and the two "
+        "splits may differ in difficulty. **Quote the test numbers, not the dev numbers.** "
+        "Nothing in the system has been changed in response to the test results.",
+    ]
     lines += ["", "### By question type (the app's setup)", ""]
     lines += [f"| Group | n | Recall@{k} | MRR |", "|---|---|---|---|"]
-    app_rows = stages["Hybrid + reranker (the app)"]
     for field, value in [
         ("source", "banking77_eval_pool"),
         ("source", "ai_written"),
