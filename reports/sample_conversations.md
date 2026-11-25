@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Generated | 2026-11-25 |
-| Git commit | 13cb370 |
+| Git commit | f5bf233 |
 | Config | config/settings.yaml |
 | Prompt version | v1 |
 | Eval set | none (hand-picked demo messages, not an evaluation) |
@@ -33,7 +33,7 @@ Real replies from the running API, unedited. These were picked to show each beha
 **Customer:** What does it cost to top up with a credit card?
 
 **Bot:**
-> Topping up with a credit card costs 1.5% of the amount you add.
+> A top‑up with a credit card costs 1.5% of the amount you add.
 
 - behavior `answer`, escalate `False`, confidence 0.926
 - citations: `topup-fees`
@@ -71,7 +71,7 @@ Real replies from the running API, unedited. These were picked to show each beha
 **Customer:** how much is that?
 
 **Bot:**
-> A spare physical card costs £5.
+> A spare card costs £5.
 
 - behavior `answer`, escalate `False`, confidence 0.960
 - citations: `spare-card`
@@ -84,7 +84,7 @@ Real replies from the running API, unedited. These were picked to show each beha
 **Customer:** My card 4111 1111 1111 1111 was declined in a shop. Email me at jane.doe@example.com or call +44 7700 900123.
 
 **Bot:**
-> It looks like your card was declined at the shop. Common reasons include insufficient balance, wrong PIN or security code, a frozen or expired card, exceeding the daily £5,000 limit, or a security check stopping the payment. Check the app for the specific reason and try again. If the same payment is declined again or no reason is shown, please contact support for further assistance.
+> It looks like your card was declined at the shop. Common reasons include insufficient balance, wrong PIN or security code, a frozen or expired card, exceeding the daily £5,000 limit, or a security check stopping the payment. Check the app for the specific reason and try again. If no reason is shown or the same payment is declined again, please contact support for further assistance.
 
 - behavior `answer`, escalate `False`, confidence 0.802
 - citations: `declined-card-payment`
@@ -153,7 +153,7 @@ Real replies from the running API, unedited. These were picked to show each beha
 **Bot:**
 > Sorry, I can only help with questions about NovaPay cards, payments and your account.
 
-- behavior `refuse`, escalate `False`, confidence 0.003
+- behavior `refuse`, escalate `False`, confidence 0.005
 - citations: none
 - escalation reasons: none
 - guardrail events: ['out_of_scope']
