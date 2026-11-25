@@ -1,0 +1,18 @@
+# Explanations shown in the eval report. Verdict files are never edited.
+rounds:
+  1: >-
+    After this round the reviewer reported misapplying the rubric on some items: mixing up
+    "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee. The
+    verdicts are published unedited. Because some may be reviewer mistakes, this round
+    cannot separate judge errors from reviewer errors. How the round was run: the screen
+    showed a one-line question for each verdict, not the full rubric (which says to ignore
+    helpfulness when judging faithfulness), and showed the judge's verdict and reason
+    after each answer.
+  2: >-
+    **Why this round was added:** the rubric was misapplied on some items in round 1 (see
+    above). It uses 30 tasks that were not in round 1, one verdict each, chosen with a
+    fixed seed. Two changes from round 1: the screen shows the rubric text the judge gets,
+    and no judge verdict is shown during the round. It is not a fully independent test:
+    the reviewer saw the judge's verdicts and reasons during round 1, so higher agreement
+    here could come from learning how the judge decides as well as from applying the
+    rubric correctly. It does not replace round 1.

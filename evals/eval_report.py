@@ -4,6 +4,8 @@ import json
 from collections.abc import Callable
 from pathlib import Path
 
+import yaml
+
 from app.config import PROJECT_ROOT, Settings
 from evals.report_header import report_header
 from evals.stats import bootstrap_percentile, bootstrap_ratio, cohens_kappa
@@ -56,49 +58,107 @@ def auc(positive: list[float], negative: list[float]) -> float | None:
     return wins / (len(positive) * len(negative))
 
 
-def load_human_review(config_name: str) -> list[dict]:
-    """The human's verdicts, if any have been recorded."""
-    path = HUMAN_DIR / f"{config_name}.jsonl"
+def review_path(config_name: str, round_number: int) -> Path:
+    """Where one round's verdicts are saved. Round 1 keeps the plain file name."""
+    suffix = "" if round_number == 1 else f".round{round_number}"
+    return HUMAN_DIR / f"{config_name}{suffix}.jsonl"
+
+
+def load_human_review(config_name: str, round_number: int = 1) -> list[dict]:
+    """The human's verdicts for one round, if any have been recorded."""
+    path = review_path(config_name, round_number)
     if not path.exists():
         return []
     return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
 
-def human_section(reviews: list[dict], wanted: int) -> list[str]:
-    """Judge-human agreement, or a clear statement that it has not been done."""
-    lines = ["## Judge versus human", ""]
-    if not reviews:
-        return [
-            *lines,
-            f"**Not done yet.** A person must review {wanted} judge decisions "
-            "(`make human-review`). Until then the judge-based numbers above are unvalidated.",
-        ]
+def load_round_notes(config_name: str) -> dict[int, str]:
+    """Written explanations for each round, such as why another one was added."""
+    path = HUMAN_DIR / f"{config_name}.notes.yaml"
+    if not path.exists():
+        return {}
+    return yaml.safe_load(path.read_text(encoding="utf-8"))["rounds"]
+
+
+def agreement_table(reviews: list[dict]) -> list[str]:
+    """Agreement, chance agreement, kappa, a split by verdict type and the 2x2 table."""
+    total = len(reviews)
     human = [r["human"] for r in reviews]
     judge = [r["judge"] for r in reviews]
     agree = sum(h == j for h, j in zip(human, judge, strict=True))
+    human_pass, judge_pass = sum(human) / total, sum(judge) / total
+    by_chance = human_pass * judge_pass + (1 - human_pass) * (1 - judge_pass)
     kappa = cohens_kappa(human, judge)
     cells = {
         (h, j): sum(a is h and b is j for a, b in zip(human, judge, strict=True))
         for h in (True, False)
         for j in (True, False)
     }
-    status = "" if len(reviews) >= wanted else f" **Incomplete: target is {wanted}.**"
+    by_dimension = []
+    for dimension in ("faithful", "correct"):
+        group = [r for r in reviews if r["dimension"] == dimension]
+        same = sum(r["human"] == r["judge"] for r in group)
+        by_dimension.append(f"{dimension} {same}/{len(group)}")
     return [
-        *lines,
-        f"{len(reviews)} decisions reviewed by a person, without seeing the judge's verdict "
-        f"first.{status}",
-        "",
-        f"- Agreement: **{agree}/{len(reviews)} ({agree / len(reviews):.0%})**",
+        f"- Agreement: **{agree}/{total} ({agree / total:.0%})**",
+        f"- Agreement expected by chance, given how often each said pass: {by_chance:.0%}",
         "- Cohen's kappa: "
         + ("undefined (only one kind of verdict)" if kappa is None else f"**{kappa:.2f}**"),
+        f"- Agreement by verdict type: {', '.join(by_dimension)}",
         "",
         "| | Judge: pass | Judge: fail |",
         "|---|---|---|",
         f"| Human: pass | {cells[True, True]} | {cells[True, False]} |",
         f"| Human: fail | {cells[False, True]} | {cells[False, False]} |",
-        "",
-        "One reviewer and a small sample: treat kappa as rough.",
     ]
+
+
+def human_section(config_name: str, rows: list[dict], wanted: int) -> list[str]:
+    """Each review round on its own. Rounds are never pooled."""
+    lines = ["## Judge versus human", ""]
+    first = load_human_review(config_name, 1)
+    if not first:
+        return [
+            *lines,
+            f"**Not done yet.** A person must review {wanted} judge decisions "
+            "(`make human-review ROUND=1`). Until then the judge-based numbers above are "
+            "unvalidated.",
+        ]
+    notes = load_round_notes(config_name)
+    lines.append(
+        "One reviewer. In each round the person gave a verdict without seeing the judge's "
+        "verdict on that item. **Rounds are reported separately and not pooled.** 30 items "
+        "is a small sample: treat kappa as rough."
+    )
+    failed = {r["id"] for r in rows if r["passed"] is False}
+    for number in (1, 2):
+        reviews = load_human_review(config_name, number)
+        if number == 2 and not reviews and 2 not in notes:
+            continue
+        lines += ["", f"### Round {number}", ""]
+        if notes.get(number):
+            lines += [notes[number].strip(), ""]
+        if number == 1:
+            if len(reviews) < wanted:
+                lines += [f"**Incomplete: {len(reviews)}/{wanted}.**", ""]
+            lines += agreement_table(reviews)
+        elif len(reviews) < wanted:
+            # Showing partial results would tell the reviewer how the judge is voting.
+            lines.append(
+                f"**Pending: {len(reviews)}/{wanted} recorded.** Results stay hidden until the "
+                "round is complete. Before and during the round, do not read the 'Failed "
+                "tasks' table below: it quotes the judge."
+            )
+        else:
+            lines += agreement_table(reviews)
+            listed = len({r["id"] for r in reviews} & failed)
+            lines += [
+                "",
+                f"{listed} of the {len(reviews)} tasks in this round failed the eval, so this "
+                "report lists them under 'Failed tasks', often with the judge's reason. If "
+                "the reviewer had read that list earlier, those items were not fully blind.",
+            ]
+    return lines
 
 
 def metric_lines(rows: list[dict], rates: Rates) -> list[str]:
@@ -341,7 +401,7 @@ def write_report(
     lines += ["", *failure_summary(rows)]
     if meta.get("retrieval_check"):
         lines += ["", *meta["retrieval_check"]]
-    lines += ["", *human_section(load_human_review(meta["config_name"]), human_sample_size)]
+    lines += ["", *human_section(meta["config_name"], rows, human_sample_size)]
     lines += [
         "",
         "## How to read this",

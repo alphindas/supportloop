@@ -1,18 +1,26 @@
 """Human review bookkeeping and judging of stored live replies."""
 
+import hashlib
 import json
 
 import httpx
 from fastapi.testclient import TestClient
 
 from app.chat.factory import build_chat_service
-from app.config import Settings
+from app.config import PROJECT_ROOT, Settings
 from app.llm.fake import FakeProvider
 from app.main import create_app
 from app.storage.db import create_database
 from app.storage.repository import Repository
+from evals import eval_report
 from evals.eval_report import Rates
-from evals.human_review import decisions, review, sample_decisions
+from evals.human_review import (
+    decisions,
+    review,
+    rubric_guidance,
+    sample_decisions,
+    sample_new_tasks,
+)
 from evals.judge_live import is_sampled, judge_turns
 from evals.traffic_report import build_report
 
@@ -36,6 +44,9 @@ def test_correctness_is_only_a_decision_when_there_is_a_reference() -> None:
     assert sample_decisions(ROWS, 2, 1) == sample_decisions(list(reversed(ROWS)), 2, 1)
 
 
+SAMPLE = [("t1", "faithful"), ("t1", "correct"), ("t2", "faithful")]
+
+
 def test_review_hides_the_judge_until_the_human_has_answered(tmp_path) -> None:
     log: list[str] = []
 
@@ -45,21 +56,87 @@ def test_review_hides_the_judge_until_the_human_has_answered(tmp_path) -> None:
         return "y"
 
     output = tmp_path / "h.jsonl"
-    review(ROWS, output, ask=ask, say=log.append)
+    review(ROWS, output, SAMPLE, ask=ask, say=log.append)
     records = [json.loads(line) for line in output.read_text().splitlines()]
     assert len(records) == 3 and all(r["human"] is True for r in records)
     assert {r["judge"] for r in records} == {True, False}
     assert "DISAGREE" in log
 
 
-def test_review_resumes_without_repeating(tmp_path) -> None:
+def test_review_resumes_and_never_rewrites_earlier_verdicts(tmp_path) -> None:
     output = tmp_path / "h.jsonl"
     answers = iter(["y", "q"])
-    review(ROWS, output, ask=lambda _: next(answers), say=lambda _: None)
-    assert len(output.read_text().splitlines()) == 1
-    review(ROWS, output, ask=lambda _: "n", say=lambda _: None)
+    review(ROWS, output, SAMPLE, ask=lambda _: next(answers), say=lambda _: None)
+    first = output.read_text()
+    assert len(first.splitlines()) == 1
+    review(ROWS, output, SAMPLE, ask=lambda _: "n", say=lambda _: None)
+    assert output.read_text().startswith(first)
     records = [json.loads(line) for line in output.read_text().splitlines()]
     assert len({(r["id"], r["dimension"]) for r in records}) == len(records) == 3
+
+
+def test_round_two_uses_new_tasks_once_each() -> None:
+    rows = [row(f"t{i}") for i in range(10)]
+    used = {"t0", "t1", "t2"}
+    sample = sample_new_tasks(rows, used, 5, seed=2)
+    tasks = [task_id for task_id, _ in sample]
+    assert len(tasks) == len(set(tasks)) == 5 and not used & set(tasks)
+    assert sample == sample_new_tasks(list(reversed(rows)), used, 5, seed=2)
+    assert len(sample_new_tasks(rows, used, 30, seed=2)) == 7  # no more tasks exist
+
+
+def test_round_two_shows_the_rubric_and_never_the_judge(tmp_path) -> None:
+    log: list[str] = []
+    review(
+        ROWS, tmp_path / "r2.jsonl", SAMPLE, ask=lambda _: "y", say=log.append,
+        reveal=False, guidance={"faithful": "RUBRIC-F", "correct": "RUBRIC-C"},
+    )  # fmt: skip
+    text = "\n".join(log)
+    assert "RUBRIC-F" in text and "RUBRIC-C" in text
+    assert "JUDGE-REASON" not in text and "Judge said" not in text and "AGREE" not in text
+
+
+def test_rubric_guidance_is_cut_from_the_judge_rubric() -> None:
+    guidance = rubric_guidance(PROJECT_ROOT / "evals" / "rubrics" / "judge_v1.txt")
+    assert "whether the answer is helpful" in guidance["faithful"]
+    assert "essential point is missing" in guidance["correct"]
+    assert "essential point is missing" not in guidance["faithful"]
+
+
+def saved(task_ids: list[str], human: bool, judge: bool) -> str:
+    return "".join(
+        json.dumps({"id": t, "dimension": "faithful", "human": human, "judge": judge}) + "\n"
+        for t in task_ids
+    )
+
+
+def test_report_keeps_rounds_apart_and_hides_a_partial_round(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(eval_report, "HUMAN_DIR", tmp_path)
+    (tmp_path / "run.notes.yaml").write_text("rounds:\n  1: first note\n  2: why again\n")
+    rows = [{"id": "a", "passed": False}, {"id": "b", "passed": True}]
+    (tmp_path / "run.jsonl").write_text(saved(["x", "y"], human=True, judge=True))
+
+    pending = "\n".join(eval_report.human_section("run", rows, wanted=2))
+    assert "why again" in pending and "Pending: 0/2" in pending
+
+    (tmp_path / "run.round2.jsonl").write_text(saved(["a"], human=False, judge=True))
+    partial = "\n".join(eval_report.human_section("run", rows, wanted=2))
+    assert "Pending: 1/2" in partial and partial.count("Agreement: **") == 1
+
+    (tmp_path / "run.round2.jsonl").write_text(saved(["a", "b"], human=False, judge=True))
+    done = "\n".join(eval_report.human_section("run", rows, wanted=2))
+    first, second = done.split("### Round 2")
+    assert "**2/2 (100%)**" in first and "**0/2 (0%)**" in second
+    assert "/4" not in done  # never pooled
+    assert "1 of the 2 tasks in this round failed" in second
+
+
+def test_published_round_one_is_unchanged() -> None:
+    """Round 1 is published exactly as the reviewer gave it. Editing it must fail here."""
+    path = PROJECT_ROOT / "evals" / "human_review" / "groq-openai-gpt-oss-20b_prompt-v1.jsonl"
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+        "d19fc34c149a23c40ad1b47fb079cac8de604c24ab29d5c008840b0b91eb4a0a"
+    )
 
 
 def test_sampling_is_stable_and_close_to_the_rate() -> None:
