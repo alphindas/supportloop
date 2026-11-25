@@ -178,7 +178,7 @@ A **failure candidate** is a turn worth a human look. It becomes a **confirmed f
 | Escalation or "I don't know" | `escalate = true`. May be correct behaviour; still shows a possible KB gap. |
 | Weak retrieval | Top reranker score below threshold. |
 | Negative feedback | Thumbs down. |
-| Guardrail | Injection detected or output check failed. PII redaction is counted but is **not** a failure on its own: it is the system working. |
+| Guardrail | Injection detected, output check failed, or out-of-scope refusal (so that wrong refusals of real banking questions reach a reviewer). PII redaction is counted but is **not** a failure on its own: it is the system working. |
 | Unfaithful answer | Judge says "not supported" on a sample of live traffic. |
 | System error | Timeout, provider error, unreadable output. |
 
@@ -194,11 +194,21 @@ A **failure candidate** is a turn worth a human look. It becomes a **confirmed f
 | Citation accuracy | Share of answers where every citation was retrieved and at least one is an expected article. |
 | Number check | Every number in an answer appears in a cited article or in the user's message. |
 | Escalation precision / recall | Of our escalations, how many were expected / of expected escalations, how many we made. |
-| Judge-human agreement | Percent agreement and Cohen's kappa (agreement beyond chance) on 30 random verdicts. If nearly all are "pass", percent agreement looks high even for a weak judge, so we show the full table. |
+| Judge-human agreement | Percent agreement and Cohen's kappa (agreement beyond chance) on 30 random verdicts. The person answers **before** seeing the judge's verdict, so it cannot sway them. If nearly all are "pass", percent agreement looks high even for a weak judge, so we show the full table. |
 | Latency p50 / p95 | End to end, uncached calls only. Time spent waiting on rate limits is reported separately. |
 | Tokens per answer | Input plus output, as reported by the provider. |
 
 Eval metrics get 95% bootstrap confidence intervals (resample the tasks many times and see how much the number moves), with a fixed seed.
+
+### 8.1 How production signals are recorded (built in Phase 2)
+
+| Piece | Design | Why |
+|---|---|---|
+| Storage | The API writes one row per turn after the reply is made: redacted message, chunk IDs and scores, the article text shown, redacted model reply, decision, versions, latency and tokens. If the write fails, the customer still gets the reply and an error is counted. | Everything needed to explain or re-judge a reply, even after the knowledge base changes. |
+| Evals | Call the pipeline directly, never the API | Test traffic cannot pollute production data or metrics. |
+| Simulator | Intent labels go to `data/sim/`, never to the API or database | Mining must not see which topics are planted gaps. |
+| Metrics | Counters and a latency histogram by model and variant; no user or request IDs as labels. Escalation rate is a PromQL ratio. | High-cardinality labels overload Prometheus. Counters reset on restart; the database is the permanent record. One worker process only. |
+| Traces | One trace per turn: input guardrail, retrieval, LLM call, output guardrail. GenAI attribute names in `app/observability/semconv.py`. No message, query or answer text. Written to `logs/traces.jsonl`, or sent by OTLP. | The conventions are still in "Development". Text in traces is a second copy of customer data. |
 
 ## 9. Data splits (stops us testing on what we tuned on)
 
