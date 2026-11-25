@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -57,3 +57,6 @@ human-review:         ## YOU check 30 judge decisions (blind), then the report i
 
 judge-live:           ## judge faithfulness on a sample of stored replies (uses Groq quota)
 	uv run python -m evals.judge_live --limit 40
+
+traffic-report:       ## summarise the production signals stored in the database
+	uv run python -m evals.traffic_report --source simulation

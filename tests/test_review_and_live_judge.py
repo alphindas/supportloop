@@ -11,8 +11,10 @@ from app.llm.fake import FakeProvider
 from app.main import create_app
 from app.storage.db import create_database
 from app.storage.repository import Repository
+from evals.eval_report import Rates
 from evals.human_review import decisions, review, sample_decisions
 from evals.judge_live import is_sampled, judge_turns
+from evals.traffic_report import build_report
 
 
 def row(task_id: str, expected: str = "answer", judged: bool = True) -> dict:
@@ -89,3 +91,7 @@ async def test_unfaithful_live_reply_becomes_a_failure_signal(test_settings: Set
     assert await judge_turns(repo, judge, settings, limit=10) == (1, 1)
     assert [s.signal for s in repo.signals()].count("low_faithfulness") == 1
     assert await judge_turns(repo, judge, settings, limit=10) == (0, 0)
+
+    report = build_report(repo, settings, "live", Rates(100, 1))
+    assert "| Turns | 2 from 1 users |" in report and "| low_faithfulness | 1 |" in report
+    assert "made up" in report and "Judge model" in report
