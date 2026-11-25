@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check run ingest retrieval-eval benchmark-retrieval benchmark-llm eval samples
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm samples review-pairs
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -19,3 +19,9 @@ check: lint test
 
 ingest:               ## chunk, embed and index the knowledge base
 	uv run python -m scripts.ingest
+
+data:                 ## download Banking77 and build the message pools
+	uv run python -m scripts.prepare_data
+
+benchmark-retrieval:  ## compare embedders and rerankers (needs GPU, downloads models)
+	uv run python -m evals.benchmark_retrieval

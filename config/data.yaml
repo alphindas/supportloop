@@ -1,0 +1,13 @@
+banking77:
+  base_url: https://raw.githubusercontent.com/PolyAI-LDN/task-specific-datasets/master/banking_data
+  files: [train.csv, test.csv]
+  license: CC BY 4.0 (PolyAI)
+  dir: data/banking77
+# test.csv has 40 messages per intent. Each intent is divided into pools that never overlap.
+splits:
+  seed: 20261125
+  per_intent:
+    eval: 8            # source of real phrasing for eval sets and retrieval pairs
+    mining: 10         # replayed through the API; the data loop mines these
+    loop_holdout: 6    # never mined; checks that new articles help unseen messages
+    ab: 16             # online experiments
