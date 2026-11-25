@@ -60,8 +60,23 @@ def test_pin_and_cvv_values_are_removed_but_the_question_survives() -> None:
 
 
 @pytest.mark.parametrize(
+    ("raw", "cleaned"),
+    [
+        ("cvv 913 keeps failing", "cvv [SECRET_CODE] keeps failing"),
+        ("my pin 4821 is blocked", "my pin [SECRET_CODE] is blocked"),
+        ("OTP code 55210", "OTP code [SECRET_CODE]"),
+    ],
+)
+def test_codes_are_removed_without_a_joining_word(raw: str, cleaned: str) -> None:
+    assert redact(raw).text == cleaned
+
+
+@pytest.mark.parametrize(
     "text",
     [
+        "I entered the wrong PIN 3 times",
+        "it asks for my PIN after £300 of payments",
+        "my passcode has 6 digits",
         "I was charged £1,000.00 twice on 2026-11-25",
         "I made 3 payments of 250 on 01/02/2026 at 10:45",
         "Can I top up 10000 or 30000 in 30 days?",

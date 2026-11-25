@@ -27,10 +27,11 @@ CARD_CANDIDATE = re.compile(r"(?<![\w+])\d(?:[ -]?\d){12,18}(?![\w])")
 PHONE_CANDIDATE = re.compile(r"(?<![\w.,/£$€])(?:\+|\()?\d(?:[\d ().-]{6,18})\d(?![\w/]|[.,]\d)")
 US_STYLE_PHONE = re.compile(r"\d{3}[ .-]\d{3}[ .-]\d{4}")
 
-# "my pin is 1234", "cvv: 123". The keyword is kept so the question still makes sense.
+# "my pin is 1234", "cvv: 123", "cvv 913". The keyword is kept so the question still
+# makes sense. At least 3 digits are needed, so "wrong PIN 3 times" is left alone.
 SECRET_CODE = re.compile(
-    r"\b(pin|cvv|cvc|security code|passcode|one[- ]time code|otp)"
-    r"(\s*(?:number|code)?\s*(?:is|was|:|=)\s*)(\d{3,8})\b",
+    r"\b(pin|cvv|cvc|security code|passcode|one[- ]time code|otp)\b"
+    r"(\s*(?:(?:number|code)\b)?\s*(?:(?:is|was)\b|:|=)?\s*)(\d{3,8})\b",
     re.IGNORECASE,
 )
 
