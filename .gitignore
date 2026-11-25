@@ -16,6 +16,10 @@ data/chroma/
 data/index/
 data/cache/
 *.db
+# SQLite side files. The -wal file holds real rows that are not yet in the .db file.
+*.db-*
+*.sqlite3-*
+*.sqlite-*
 *.sqlite
 *.sqlite3
 *.log
