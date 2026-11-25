@@ -23,6 +23,15 @@ llm:
   tie_margin: 0.034
   timeout_seconds: 300
 
+# Pipeline simplification check (requested after the Phase 1 review). Written BEFORE
+# "dense + reranker" was first measured. Dense + reranker replaces hybrid + reranker if,
+# on the retrieval TEST split, its mean is at most tie_margin below the hybrid pipeline
+# on BOTH Recall@5 and MRR. This decides on the test split, so afterwards that split is
+# no longer unseen for this choice.
+simplification:
+  split: test
+  tie_margin: 0.034
+
 bootstrap:
   resamples: 10000
   seed: 20261125
