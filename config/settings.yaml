@@ -9,7 +9,6 @@ groq_generator_model: openai/gpt-oss-20b
 # Judge is a different model family from the generator, so it does not grade its own style.
 # It is a Groq "preview" model. Every report records which judge was configured.
 groq_judge_model: qwen/qwen3.8-27b
-groq_reasoning_effort: low               # gpt-oss reasoning tokens count against the daily quota
 ollama_base_url: http://localhost:11434
 ollama_model: qwen3.5:2b                 # confirmed or replaced by the Phase 1 benchmark
 ollama_num_ctx: 4096
@@ -25,6 +24,8 @@ llm_max_retry_after_seconds: 90.0
 llm_cache_enabled: false                 # off for live traffic, on for evals
 llm_cache_path: data/cache/llm_cache.sqlite3
 prompt_version: v1
+messages_version: v1                     # fixed refusal and handoff texts
+prompts_dir: app/prompts
 
 # --- Retrieval ---------------------------------------------------------------
 embedding_model: Qwen/Qwen3-Embedding-0.6B    # confirmed or replaced by the benchmark
@@ -44,4 +45,5 @@ context_top_k: 4
 escalation_score_threshold: 0.30
 max_message_chars: 2000
 history_turns: 3
+max_conversations: 1000                  # conversations kept in memory
 guardrails_path: config/guardrails.yaml

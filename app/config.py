@@ -36,7 +36,6 @@ class Settings(BaseSettings):
     groq_base_url: str
     groq_generator_model: str
     groq_judge_model: str
-    groq_reasoning_effort: Literal["low", "medium", "high"]
     ollama_base_url: str
     ollama_model: str
     ollama_num_ctx: int = Field(gt=0)
@@ -50,6 +49,8 @@ class Settings(BaseSettings):
     llm_cache_enabled: bool
     llm_cache_path: Path
     prompt_version: str
+    messages_version: str
+    prompts_dir: Path
 
     embedding_model: str
     reranker_model: str
@@ -66,6 +67,7 @@ class Settings(BaseSettings):
     escalation_score_threshold: float = Field(ge=0, le=1)
     max_message_chars: int = Field(gt=0)
     history_turns: int = Field(ge=0)
+    max_conversations: int = Field(gt=0)
     guardrails_path: Path
 
     @classmethod
