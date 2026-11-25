@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Generated | 2026-11-25 |
-| Git commit | d6af99d |
+| Git commit | 450e704 |
 | Config | config/settings.yaml |
 | Prompt version | v1 |
 | Eval set | Banking77 test.csv, all 3080 messages (CC BY 4.0, PolyAI) |
