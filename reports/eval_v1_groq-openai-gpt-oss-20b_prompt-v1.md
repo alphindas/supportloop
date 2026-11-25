@@ -83,6 +83,20 @@ Among replies with model text: 62 passed, 39 failed. AUC = 0.66 (0.5 = no inform
 
 A number check also runs inside the app, so replies with unsupported numbers are replaced before grading. The number rule here therefore cannot show how often the model invents numbers.
 
+## Why tasks failed (48 of 150)
+
+Each failed task is counted once. Reasons involving the judge are only as good as the judge.
+
+| Main reason | Tasks |
+|---|---|
+| right behaviour, judged incorrect (often: part of the reference missing) | 25 |
+| wrong behaviour: expected escalate, got answer | 7 |
+| right behaviour, judged unfaithful | 4 |
+| wrong behaviour: expected answer, got escalate | 4 |
+| wrong behaviour: expected escalate, got refuse | 4 |
+| right behaviour, citation check failed | 2 |
+| wrong behaviour: expected refuse, got escalate | 2 |
+
 ## Fresh check of the BM25 decision (retrieval only)
 
 97 answerable inputs from this eval set. They played no part in choosing models or the threshold, or in dropping BM25. Labels are AI-drafted.
