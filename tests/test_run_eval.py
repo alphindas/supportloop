@@ -60,6 +60,7 @@ async def test_rerun_gives_identical_results_and_report(
     assert a == report_text(test_settings, second, paths["report"])
     assert "Pass rate (all tasks)" in a and "Not done yet" in a and "INCOMPLETE" not in a
     assert "Judge model" in a and "Prompt version" in a
+    assert "## Why tasks failed" in a
 
 
 async def test_batch_limit_stops_and_a_later_run_finishes(

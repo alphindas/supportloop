@@ -243,6 +243,41 @@ def metric_lines(rows: list[dict], rates: Rates) -> list[str]:
     return lines
 
 
+def failure_reason(row: dict) -> str:
+    """The single main reason a task failed. Checked in this order."""
+    if not row["checks"]["behaviour_correct"]:
+        return f"wrong behaviour: expected {row['expected_behavior']}, got {row['behavior']}"
+    if row["checks"]["pii_ok"] is False:
+        return "personal data leaked"
+    verdict = row["verdict"]
+    if row["checks"]["numbers_ok"] is False:
+        return "right behaviour, unsupported number"
+    if verdict and not verdict["faithful"]:
+        return "right behaviour, judged unfaithful"
+    if row["checks"]["citation_ok"] is False:
+        return "right behaviour, citation check failed"
+    return "right behaviour, judged incorrect (often: part of the reference missing)"
+
+
+def failure_summary(rows: list[dict]) -> list[str]:
+    """How many failures had each main reason."""
+    failed = [r for r in rows if r["passed"] is False]
+    counts: dict[str, int] = {}
+    for row in failed:
+        counts[failure_reason(row)] = counts.get(failure_reason(row), 0) + 1
+    ordered = sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))
+    return [
+        f"## Why tasks failed ({len(failed)} of {len(rows)})",
+        "",
+        "Each failed task is counted once. Reasons involving the judge are only as good as "
+        "the judge.",
+        "",
+        "| Main reason | Tasks |",
+        "|---|---|",
+        *[f"| {reason} | {count} |" for reason, count in ordered],
+    ]
+
+
 def failure_lines(rows: list[dict]) -> list[str]:
     """Every failed task, so nothing is hidden behind an average."""
     lines = [
@@ -303,6 +338,7 @@ def write_report(
             "again to continue.\n"
         )
     lines += metric_lines(rows, rates)
+    lines += ["", *failure_summary(rows)]
     if meta.get("retrieval_check"):
         lines += ["", *meta["retrieval_check"]]
     lines += ["", *human_section(load_human_review(meta["config_name"]), human_sample_size)]
