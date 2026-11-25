@@ -113,6 +113,21 @@ def test_provider_failure_hands_off_to_a_human(test_settings: Settings, error: L
     assert body["behavior"] == "escalate" and body["escalation_reasons"] == ["llm_error"]
 
 
+def test_retrieval_crash_hands_off_to_a_human(test_settings: Settings) -> None:
+    provider = FakeProvider()
+    service = build_chat_service(test_settings, httpx.AsyncClient(), provider)
+
+    def out_of_memory(*args: object, **kwargs: object) -> None:
+        raise RuntimeError("CUDA out of memory")
+
+    service.retriever.retrieve = out_of_memory
+    with TestClient(create_app(test_settings, service)) as client:
+        body = ask(client)
+    assert body["behavior"] == "escalate" and body["escalation_reasons"] == ["retrieval_error"]
+    assert "CUDA" not in body["answer"]
+    assert provider.requests == []
+
+
 def test_weak_retrieval_escalates_even_if_the_model_answers(test_settings: Settings) -> None:
     strict = test_settings.model_copy(update={"escalation_score_threshold": 1.0})
     with api(strict, llm_json()) as (client, _):

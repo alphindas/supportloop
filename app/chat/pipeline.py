@@ -148,10 +148,17 @@ class ChatService:
         # Follow-ups such as "what does it cost?" need the previous question to search.
         query = f"{history[-1].question}\n{question}" if history else question
         trace.retrieval_query = query
-        async with self._retrieval_lock:
-            chunks = await asyncio.to_thread(
-                self.retriever.retrieve, query, self.settings.context_top_k
-            )
+        rule_hits = self.escalation_rules.matches(question)
+        try:
+            async with self._retrieval_lock:
+                chunks = await asyncio.to_thread(
+                    self.retriever.retrieve, query, self.settings.context_top_k
+                )
+        except RuntimeError as error:  # e.g. the GPU ran out of memory
+            return self._system_failure(
+                user_id, conversation_id, "retrieval_error", error, rule_hits, events,
+                trace, started,
+            )  # fmt: skip
         trace.retrieved = [
             {
                 "chunk_id": c.chunk.chunk_id,
@@ -164,28 +171,42 @@ class ChatService:
         ]
         article_texts = format_articles(chunks)
         top_score = chunks[0].rerank_score if chunks else None
-        rule_hits = self.escalation_rules.matches(question)
 
         request = build_llm_request(self.settings, self.prompt, question, history, article_texts)
         try:
             response = await self.provider.complete(request)
         except LLMError as error:
-            logger.warning("llm_error", extra={"fields": {"error": str(error)[:300]}})
-            events.append("llm_error")
-            result = self._result(
-                conversation_id,
-                "escalate",
-                self.messages["escalate"],
-                reasons=["llm_error", *[f"rule:{r}" for r in rule_hits]],
-                events=events,
+            return self._system_failure(
+                user_id, conversation_id, "llm_error", error, rule_hits, events, trace, started
             )
-            return self._finish(user_id, result, trace, started)
 
         trace.llm = response.model_dump(exclude={"text"})
         result = self._decide(
             conversation_id, question, response, article_texts, top_score, rule_hits, events
         )
         self.history.add(user_id, conversation_id, Turn(question, redact(result.answer).text))
+        return self._finish(user_id, result, trace, started)
+
+    def _system_failure(
+        self,
+        user_id: str,
+        conversation_id: str,
+        kind: str,
+        error: Exception,
+        rule_hits: list[str],
+        events: list[str],
+        trace: TurnTrace,
+        started: float,
+    ) -> tuple[ChatResult, TurnTrace]:
+        """Something broke. The customer is handed to a person instead of seeing an error."""
+        logger.warning(kind, extra={"fields": {"error": str(error)[:300]}})
+        result = self._result(
+            conversation_id,
+            "escalate",
+            self.messages["escalate"],
+            reasons=[kind, *[f"rule:{r}" for r in rule_hits]],
+            events=[*events, kind],
+        )
         return self._finish(user_id, result, trace, started)
 
     def _decide(
