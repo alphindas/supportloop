@@ -215,7 +215,8 @@ def benchmark_sections() -> list[str]:
             ]
             lines += [
                 "",
-                "An earlier run left GPU placement to Ollama (no `num_gpu` setting; saved in "
+                "An earlier run, with the earlier hybrid retrieval, left GPU placement to "
+                "Ollama (no `num_gpu` setting; saved in "
                 f"`{BENCH_LLM_AUTO.name}`): " + "; ".join(shares) + ".",
             ]
         lines += ["", "**Which mistakes each model made**", "", *mistake_table(data["runs"])]
