@@ -40,17 +40,23 @@ def metric_cell(summary: dict, key: str) -> str:
     return f"{summary[key]:.3f} [{low:.3f}, {high:.3f}]"
 
 
-APP_SETUP = "Hybrid + reranker (the app)"
+# name -> (retrieval mode, use the reranker)
+SETUPS = {
+    "BM25 only": ("bm25", False),
+    "Dense only": ("dense", False),
+    "Hybrid (RRF)": ("hybrid", False),
+    "Dense + reranker": ("dense", True),
+    "Hybrid + reranker": ("hybrid", True),
+}
+RERANKED = {"dense": "Dense + reranker", "hybrid": "Hybrid + reranker"}
 
 
 def run_stages(retriever: HybridRetriever, questions: list[dict], k: int) -> dict:
     """Run the same answerable questions with parts of the pipeline switched off."""
     positives = [q for q in questions if q["expected_article_ids"]]
     return {
-        "BM25 only": evaluate(retriever, positives, k, mode="bm25", rerank=False),
-        "Dense only": evaluate(retriever, positives, k, mode="dense", rerank=False),
-        "Hybrid (RRF)": evaluate(retriever, positives, k, rerank=False),
-        APP_SETUP: evaluate(retriever, positives, k),
+        name: evaluate(retriever, positives, k, mode=mode, rerank=rerank)
+        for name, (mode, rerank) in SETUPS.items()
     }
 
 
@@ -68,6 +74,22 @@ def paired_difference(
     verdict = "no clear difference" if low <= 0 <= high else "clear difference"
     mean = sum(differences) / len(differences)
     return f"{mean:+.3f} [{low:+.3f}, {high:+.3f}] ({verdict})"
+
+
+def mean(rows: list[dict], key: str) -> float:
+    """Average of one metric."""
+    return sum(r[key] for r in rows) / len(rows)
+
+
+def simplification_decision(runs: dict[str, list[dict]], tie_margin: float) -> dict:
+    """Apply the rule in config/benchmark.yaml: may BM25 be dropped?"""
+    gaps = {
+        key: mean(runs["Dense + reranker"], key) - mean(runs["Hybrid + reranker"], key)
+        for key in ("recall", "reciprocal_rank")
+    }
+    # The tiny allowance stops floating-point rounding from flipping an exact tie.
+    use_dense = all(gap >= -tie_margin - 1e-9 for gap in gaps.values())
+    return {"mode": "dense" if use_dense else "hybrid", "gaps": gaps}
 
 
 def escalation_table(results: dict[str, list[dict]], threshold: float) -> list[str]:
@@ -122,7 +144,9 @@ def benchmark_sections() -> list[str]:
             "",
             "## Model selection: embedder and reranker (dev split only)",
             "",
-            "Source: `make benchmark-retrieval`. Each row ran in its own process. VRAM is the "
+            "Source: `make benchmark-retrieval`, run with retrieval mode "
+            f"`{data['runs'][0].get('retrieval_mode', 'hybrid')}`. "
+            "Each row ran in its own process. VRAM is the "
             "peak PyTorch reserved while answering queries; the CUDA driver uses some more.",
             "",
             "| Embedder | Reranker | Recall@5 | MRR | p50 ms | p95 ms | Peak VRAM MiB |",
@@ -224,9 +248,14 @@ def main() -> None:
         }
         for split, questions in (("test", test), ("dev", dev))
     }
+    test_runs = run_stages(retriever, test, k)
+    rule = config["simplification"]
+    decision = simplification_decision(
+        test_runs if rule["split"] == "test" else run_stages(retriever, dev, k), rule["tie_margin"]
+    )
+    app_name = RERANKED[settings.retrieval_mode]
+    app_rows = test_runs[app_name]
     summaries = ablation["test"]
-    app_rows = [r for r in test_results if r["expected"]]
-    dense_rows = run_stages(retriever, test, k)["Dense only"]
 
     reviewed = sum(row["review_status"] == "human_reviewed" for row in dev + test)
     total_rows = len(dev) + len(test)
@@ -238,6 +267,7 @@ def main() -> None:
             models={
                 "Embedding model": settings.embedding_model,
                 "Reranker model": settings.reranker_model,
+                "Retrieval mode": settings.retrieval_mode,
                 "Retrieval device": settings.retrieval_device,
                 "Corpus fingerprint": retriever.corpus_fingerprint,
                 "Generator LLM": "none (retrieval only)",
@@ -254,22 +284,40 @@ def main() -> None:
         "|---|---|---|---|---|",
     ]
     for name, summary in summaries.items():
+        label = f"{name} **(the app)**" if name == app_name else name
         lines.append(
-            f"| {name} | {metric_cell(summary, 'recall')} "
+            f"| {label} | {metric_cell(summary, 'recall')} "
             f"| {metric_cell(summary, 'reciprocal_rank')} "
             f"| {summary['latency_p50_ms']:.0f} | {summary['latency_p95_ms']:.0f} |"
         )
 
+    pairs = [
+        ("Dense + reranker", "Hybrid + reranker"),
+        (app_name, "Dense only"),
+    ]
+    lines += ["", "**Paired comparisons on test (first minus second):**", ""]
+    for first, second in pairs:
+        for label, key in ((f"Recall@{k}", "recall"), ("MRR", "reciprocal_rank")):
+            difference = paired_difference(
+                test_runs[first], test_runs[second], key, boot["resamples"], boot["seed"]
+            )
+            lines.append(f"- {first} minus {second}, {label}: {difference}")
+    dropped = decision["mode"] == "dense"
     lines += [
         "",
-        "**Paired comparison, app minus dense-only (test):**",
+        "### Decision: is BM25 needed?",
         "",
-        f"- Recall@{k}: "
-        + paired_difference(app_rows, dense_rows, "recall", boot["resamples"], boot["seed"]),
-        "- MRR: "
-        + paired_difference(
-            app_rows, dense_rows, "reciprocal_rank", boot["resamples"], boot["seed"]
-        ),
+        f"Rule (written in `config/benchmark.yaml` before dense + reranker was measured): use "
+        f"dense + reranker if its mean is at most {rule['tie_margin']} below hybrid + reranker "
+        f"on both Recall@{k} and MRR, on the {rule['split']} split. Measured gaps: "
+        f"Recall@{k} {decision['gaps']['recall']:+.3f}, "
+        f"MRR {decision['gaps']['reciprocal_rank']:+.3f}. **Rule result: "
+        f"{'drop BM25 (dense + reranker)' if dropped else 'keep the hybrid pipeline'}.** "
+        f"The app is configured as `{settings.retrieval_mode}`.",
+        "",
+        "**Caveat:** this decision was made on the test split. For the choice between these "
+        "two pipelines, the test numbers are therefore no longer unseen, and a tie is not "
+        "proof that the two are equal. A check on new questions is needed.",
         "",
         "### Same ablation on the dev split (used for model selection)",
         "",
@@ -281,10 +329,11 @@ def main() -> None:
             for name, summary in ablation["dev"].items()
         ],
         "",
-        "Compare the two tables: the chosen setup scores much higher on dev than on the "
-        "held-out test questions. Dev is small, the models were chosen on it, and the two "
-        "splits may differ in difficulty. **Quote the test numbers, not the dev numbers.** "
-        "Nothing in the system has been changed in response to the test results.",
+        "The reranked setups score much higher on dev than on the test questions. Dev is "
+        "small, the models were chosen on it, and the two splits may differ in difficulty. "
+        "**Quote the test numbers, not the dev numbers.** The only change made in response "
+        "to test results is the BM25 decision above; no thresholds, weights or text were "
+        "tuned on test.",
     ]
     lines += ["", "### By question type (the app's setup)", ""]
     lines += [f"| Group | n | Recall@{k} | MRR |", "|---|---|---|---|"]

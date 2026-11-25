@@ -39,14 +39,16 @@ def load_questions(path: Path, split: str) -> list[dict]:
 def retrieval_config() -> RetrievalConfig:
     """Retrieval settings from config."""
     s = get_settings()
-    return RetrievalConfig(s.bm25_top_k, s.dense_top_k, s.rrf_k, s.rerank_candidates)
+    return RetrievalConfig(
+        s.bm25_top_k, s.dense_top_k, s.rrf_k, s.rerank_candidates, s.retrieval_mode
+    )
 
 
 def evaluate(
     retriever: HybridRetriever,
     questions: list[dict],
     recall_k: int,
-    mode: str = "hybrid",
+    mode: str | None = None,
     rerank: bool = True,
 ) -> list[dict]:
     """Run every question once and record the ranking, metrics and latency."""
@@ -104,6 +106,7 @@ def run_one(embedder_name: str, reranker_name: str, device: str) -> dict:
     return {
         "embedder": embedder_name,
         "reranker": reranker_name,
+        "retrieval_mode": settings.retrieval_mode,
         "device": device,
         "recall_at_k": sum(r["recall"] for r in positive) / len(positive),
         "mrr": sum(r["reciprocal_rank"] for r in positive) / len(positive),

@@ -34,6 +34,8 @@ retrieval_device: cuda                        # cuda | cpu
 kb_dir: data/kb
 index_dir: data/index
 chunk_max_words: 220
+# BM25 was dropped after Phase 1: dense + reranker tied hybrid + reranker (DESIGN.md 6.3).
+retrieval_mode: dense                         # dense | hybrid (BM25 + dense); both then rerank
 bm25_top_k: 20
 dense_top_k: 20
 rrf_k: 60

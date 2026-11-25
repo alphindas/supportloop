@@ -31,6 +31,7 @@ def build_retriever(settings: Settings) -> tuple[HybridRetriever, dict[str, str]
             settings.dense_top_k,
             settings.rrf_k,
             settings.rerank_candidates,
+            settings.retrieval_mode,
         ),
     )
     return retriever, {article.id: article.title for article in articles}

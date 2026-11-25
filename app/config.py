@@ -58,6 +58,7 @@ class Settings(BaseSettings):
     kb_dir: Path
     index_dir: Path
     chunk_max_words: int = Field(gt=0)
+    retrieval_mode: Literal["hybrid", "dense"]
     bm25_top_k: int = Field(gt=0)
     dense_top_k: int = Field(gt=0)
     rrf_k: int = Field(gt=0)

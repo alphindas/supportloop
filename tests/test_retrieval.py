@@ -43,6 +43,16 @@ def test_pipeline_finds_the_right_chunk(tmp_path: Path, reranker: FakeReranker |
     assert len(results) == 2
 
 
+def test_dense_mode_does_not_use_bm25(tmp_path: Path) -> None:
+    build_index(CHUNKS, FakeEmbedder(), tmp_path)
+    dense = RetrievalConfig(5, 5, 60, 5, mode="dense")
+    retriever = HybridRetriever(CHUNKS, FakeEmbedder(), FakeReranker(), tmp_path, dense)
+    results = retriever.retrieve("change my PIN", top_k=3)
+    assert results[0].chunk.article_id == "pin"
+    assert all(r.bm25_rank is None and r.dense_rank is not None for r in results)
+    assert retriever._bm25 is None
+
+
 def test_stale_index_is_rejected(tmp_path: Path) -> None:
     build_index(CHUNKS, FakeEmbedder(), tmp_path)
     changed = [*CHUNKS, chunk("new", "A new article")]

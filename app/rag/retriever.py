@@ -1,4 +1,4 @@
-"""Hybrid retrieval: BM25 + dense search, merged with RRF, then reranked."""
+"""Retrieval: dense search (optionally plus BM25, merged with RRF), then reranking."""
 
 import json
 from dataclasses import dataclass
@@ -21,6 +21,7 @@ class RetrievalConfig:
     dense_top_k: int
     rrf_k: int
     rerank_candidates: int
+    mode: str = "hybrid"  # hybrid | dense
 
 
 @dataclass(frozen=True)
@@ -106,19 +107,31 @@ class HybridRetriever:
         self._collection = _chroma_client(index_dir).get_collection(
             _collection_name(embedder.name), embedding_function=None
         )
-        # BM25 is rebuilt in memory at start-up; it takes milliseconds at this size.
-        self._bm25 = bm25s.BM25()
-        self._bm25.index(
-            bm25s.tokenize([c.text for c in chunks], stopwords="en", show_progress=False),
-            show_progress=False,
-        )
+        # The app searches by meaning only by default, so the BM25 index is built the
+        # first time something asks for it (hybrid mode or the retrieval eval).
+        self._bm25: bm25s.BM25 | None = None
+
+    def _bm25_index(self) -> bm25s.BM25:
+        """Build the in-memory BM25 index once. It takes milliseconds at this size."""
+        if self._bm25 is None:
+            index = bm25s.BM25()
+            index.index(
+                bm25s.tokenize(
+                    [self._chunks[i].text for i in self._chunk_ids],
+                    stopwords="en",
+                    show_progress=False,
+                ),
+                show_progress=False,
+            )
+            self._bm25 = index
+        return self._bm25
 
     def bm25_search(self, query: str, top_k: int) -> list[str]:
         """Word-matching search. Chunks sharing no words with the query are left out."""
         tokens = bm25s.tokenize([query], stopwords="en", return_ids=False, show_progress=False)
         if not tokens[0]:
             return []
-        indexes, scores = self._bm25.retrieve(
+        indexes, scores = self._bm25_index().retrieve(
             tokens, k=min(top_k, len(self._chunk_ids)), show_progress=False
         )
         return [
@@ -137,13 +150,15 @@ class HybridRetriever:
         return list(result["ids"][0])
 
     def retrieve(
-        self, query: str, top_k: int, mode: str = "hybrid", rerank: bool = True
+        self, query: str, top_k: int, mode: str | None = None, rerank: bool = True
     ) -> list[RetrievedChunk]:
         """Return the best chunks for a query.
 
-        The app uses mode='hybrid' with reranking. The other options exist so the
-        retrieval eval can measure whether each part is actually useful.
+        The app uses the configured mode with reranking. Passing mode ('hybrid',
+        'dense' or 'bm25') or rerank=False lets the retrieval eval switch parts off
+        to measure whether each one is useful.
         """
+        mode = mode or self.config.mode
         bm25_ids = (
             self.bm25_search(query, self.config.bm25_top_k) if mode in ("hybrid", "bm25") else []
         )
