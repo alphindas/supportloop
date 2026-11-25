@@ -1,6 +1,9 @@
 """Retrieval metrics, measured on articles (several chunks of one article count once)."""
 
+import math
 from collections.abc import Sequence
+
+THRESHOLD_DECIMALS = 4  # precision used in config/settings.yaml and in reports
 
 
 def distinct_articles(article_ids: Sequence[str]) -> list[str]:
@@ -26,8 +29,11 @@ def reciprocal_rank(ranked: Sequence[str], expected: Sequence[str]) -> float:
 def choose_threshold(answerable_scores: Sequence[float], max_false_rate: float) -> float:
     """Highest threshold that wrongly escalates at most max_false_rate of answerable cases.
 
-    A question is escalated when its top score is below the threshold.
+    A question is escalated when its top score is below the threshold. The value is
+    rounded DOWN to the precision we write in config: rounding to the nearest value
+    could round up past the boundary question and break the limit.
     """
     ordered = sorted(answerable_scores)
     allowed = int(len(ordered) * max_false_rate)
-    return ordered[allowed]
+    scale = 10**THRESHOLD_DECIMALS
+    return math.floor(ordered[allowed] * scale) / scale

@@ -369,6 +369,13 @@ def main() -> None:
         "dev row is optimistic because the value was chosen on it. The threshold is only one "
         "safety layer; the model can also choose to escalate.",
         "",
+        "How fragile the value is: the lowest answerable dev scores are "
+        + ", ".join(
+            f"{score:.4f}"
+            for score in sorted(r["top_score"] for r in dev_results if r["expected"])[:4]
+        )
+        + ". With so few questions, one score can move the threshold a long way.",
+        "",
         *escalation_table(
             {"dev": dev_results, "test": test_results}, settings.escalation_score_threshold
         ),

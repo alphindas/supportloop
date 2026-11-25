@@ -32,6 +32,13 @@ def test_threshold_respects_the_false_escalation_budget() -> None:
     assert sum(s < threshold for s in scores) == 2
 
 
+def test_threshold_is_rounded_down_so_the_boundary_question_is_not_escalated() -> None:
+    scores = [0.0006, 0.004962942] + [0.5] * 28
+    threshold = choose_threshold(scores, max_false_rate=0.05)
+    assert threshold == 0.0049  # nearest rounding would give 0.0050
+    assert sum(s < threshold for s in scores) == 1
+
+
 def test_bootstrap_is_repeatable_and_brackets_the_mean() -> None:
     values = [1.0] * 8 + [0.0] * 2
     first = bootstrap_ci(values, resamples=2000, seed=7)
