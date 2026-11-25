@@ -16,3 +16,6 @@ format:
 	uv run ruff format .
 
 check: lint test
+
+ingest:               ## chunk, embed and index the knowledge base
+	uv run python -m scripts.ingest

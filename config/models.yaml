@@ -1,0 +1,21 @@
+# Per-model settings, taken from each model card (read 2026-11-25).
+embedders:
+  Qwen/Qwen3-Embedding-0.6B:
+    query_prompt_name: query          # prompt stored inside the model repo
+    max_length: 512
+  BAAI/bge-m3:
+    max_length: 512
+  BAAI/bge-small-en-v1.5:
+    query_prefix: "Represent this sentence for searching relevant passages: "
+    max_length: 512
+rerankers:
+  Qwen/Qwen3-Reranker-0.6B:
+    max_length: 1024
+    batch_size: 4
+  BAAI/bge-reranker-v2-m3:
+    max_length: 1024
+    batch_size: 8
+# Used when a model runs on this device. Half precision halves memory use.
+dtype:
+  cuda: float16
+  cpu: bfloat16
