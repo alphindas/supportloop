@@ -40,6 +40,7 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM", "ASYNC"]
 [tool.ruff.lint.per-file-ignores]
 # This file is mostly hand-readable data, one question per line.
 "scripts/build_retrieval_pairs.py" = ["E501"]
+"scripts/build_eval_v1.py" = ["E501"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
