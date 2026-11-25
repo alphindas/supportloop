@@ -149,6 +149,8 @@ All three local models run fully on the GPU only with `num_gpu: 99`; Ollama's au
 - **What could be lost:** BM25 is good at exact terms (codes, product names). Our questions rarely depend on them. On a larger or more technical knowledge base, measure again.
 - **Caveat:** this choice was made on the test split, so that split is no longer unseen for it, and a tie on 60 questions is not proof of equality. Phase 2's new eval questions give a fresh check.
 
+**Fresh check (Phase 2):** on 97 answerable inputs from eval set v1, which played no part in any decision, dense + reranker scored Recall@5 0.959 and hybrid + reranker 0.948 (paired difference +0.010, interval -0.021 to +0.041). The decision held up.
+
 **Knock-on 1: embedder re-checked in dense mode** (dev split, same rule). Without BM25 as a second source, the embedder matters more.
 
 | Embedder | Reranker | Recall@5 | MRR | p50 ms | VRAM MiB |
@@ -267,6 +269,7 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 | Free-plan limits make runs take days | Cache, resumable batches, daily token budget in config, retry using the `retry-after` header. |
 | GPU out of memory | Measure each model. With Groq, retrieval stays on the GPU. With Ollama, try retrieval on the CPU. If too slow, offline evals run in two stages (retrieve all, free the GPU, generate all). A live local-model API may stay slow. |
 | Groq vs Ollama is not a clean comparison | Retrieval hardware and network differ, so latency is not like for like. Make prompt v1 vs v2 the first experiment. |
+| **Observed in Phase 2:** real numbers attached to the wrong thing | The local model told simulated customers of fees that do not exist; the number check passed them. The judge on live samples caught them after the fact. Candidates for Phase 3: a prompt change, a different local model, or a check that ties each amount to its sentence in the source. |
 | KB, questions and judge are all AI-made | Scores may be too optimistic. Items are labelled `ai_drafted` until a human marks them reviewed; real Banking77 phrasing; human spot checks. |
 | One reviewer | No measure of agreement between humans. State it as a limitation. |
 | PII rules miss things | Rules cover cards, IBANs, emails and phones. **Not names or addresses.** |

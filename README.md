@@ -2,7 +2,7 @@
 
 A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
 
-**Status: Phase 1 of 3 (chatbot) is built.** Monitoring and answer evaluation (Phase 2) and the data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** One Phase 2 step is still open: a person has not yet checked the LLM judge. The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
 
 ## How a message is handled
 
@@ -53,15 +53,65 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make ingest` | Re-index the knowledge base (required after editing articles) | GPU |
 | `make run` | Start the API | index, LLM |
 | `make samples` | 10 demo conversations against the running API | `make run` |
-| `make retrieval-eval` (or `make eval`) | Write `reports/retrieval_v1.md` | index |
+| `make retrieval-eval` | Write `reports/retrieval_v1.md` | index |
+| `make eval` | Run eval set v1 through the app and judge it. Cached and resumable (`uv run python -m evals.run_eval --limit 40` runs a small batch) | index, Groq key |
+| `make human-review` | **You** check 30 judge decisions, blind; rebuilds the eval report | a finished eval run |
+| `make simulate` | Replay 200 real customer messages through the API | `make run` |
+| `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
+| `make traffic-report` | Summarise stored production signals | stored turns |
 | `make benchmark-retrieval` | Compare embedders and rerankers | GPU |
 | `make benchmark-llm` | Compare local LLMs, with a hosted reference | Ollama with the three models, Groq key |
 | `make guardrail-check` | False positives of guardrail rules on real messages | `make data` |
 | `make review-pairs` | Review AI-drafted retrieval labels by hand | nothing |
 
+## Monitoring
+
+- **`POST /feedback`**: `{"request_id", "user_id", "rating": "up"|"down", "comment"}`.
+- **`GET /metrics`** (Prometheus): requests, latency histogram, errors, escalations, guardrail hits, tokens and feedback, by model and variant. Escalation rate:
+  `rate(supportloop_escalations_total[5m]) / rate(supportloop_requests_total[5m])` (sum over `behavior`).
+- **Database** `data/supportloop.db`: every turn (redacted) with its evidence and failure signals.
+- **Traces**: one per request, using OpenTelemetry GenAI attribute names, in `logs/traces.jsonl` (or OTLP). No message text.
+
+To simulate traffic on the local model without using Groq quota, start the API with the local-model command above, then run `make simulate` in a second terminal.
+
 ## Results so far
 
-All numbers come from the files in [`reports/`](reports/). **No result yet measures whether the bot's answers are correct**; that is Phase 2.
+All numbers come from the files in [`reports/`](reports/).
+
+### Answer quality: 150 tasks, `gpt-oss-20b`, prompt v1
+
+[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge has not been checked against a person yet**, and the tasks and labels are AI-drafted.
+
+| Metric | Value [95% interval] |
+|---|---|
+| Pass rate (all checks) | 0.680 [0.607, 0.753] |
+| Behaviour accuracy (answer / escalate / refuse) | 0.887 [0.833, 0.933] |
+| Faithfulness (101 replies with model text) | 0.950 [0.904, 0.990] |
+| Correctness (94 judged replies to answerable tasks) | 0.670 [0.576, 0.763] |
+| Citation accuracy | 0.978 [0.944, 1.000] |
+| Escalation precision / recall | 0.760 [0.579, 0.923] / 0.633 [0.448, 0.806] |
+| Answered when it should not have | 0.132 [0.045, 0.233] |
+| Latency p50 / p95 | 1083 ms / 1637 ms |
+| Tokens per reply | 840 |
+
+- **Weakest area: knowing when it cannot answer.** Of 30 unanswerable tasks, 7 were answered and 4 refused instead of handed off.
+- Of 48 failed tasks, 25 had the right behaviour but were judged incorrect, often because part of the reference answer was missing. Whether the judge is too strict is for the human review to show. At least one judge verdict breaks its own rubric (it calls an omission "unfaithful", task `v1-035`).
+- Injection (15 attacks written by the same AI as the rules): 7 stopped by pattern rules, 15 got no model-written text, 13 refused as expected. This does not measure resistance to a real attacker.
+- The confidence score only weakly predicts a good reply (AUC 0.66).
+
+### Production signals: 200 replayed messages, local `llama3.2:3b`
+
+[Report](reports/production_signals_simulation.md). Real Banking77 messages, simulated users. These are signals, not accuracy.
+
+| Signal | Value [95% interval] |
+|---|---|
+| Escalation rate | 0.195 [0.140, 0.250] |
+| Judged faithful (36 sampled replies) | 0.778 [0.639, 0.917] |
+| Latency p50 (retrieval on CPU) | 6000 ms |
+
+**Real wrong answers about money.** Two replies the judge flagged were checked against the article text and are wrong: one invented a "£10 minimum" fee (£10 is the minimum top-up amount), and one said UK and EEA debit cards cost 1.5% to top up (they are free). Both were sent as normal answers with high confidence. The number check passed them, because both numbers appear in the cited articles, attached to other things.
+
+Do not compare 0.950 with 0.778: they use different questions.
 
 **Retrieval, 60 test questions** ([report](reports/retrieval_v1.md), 95% bootstrap intervals):
 
@@ -87,13 +137,19 @@ All numbers come from the files in [`reports/`](reports/). **No result yet measu
 | `qwen3.5:2b` | 16/30 |
 | `openai/gpt-oss-20b` on Groq (reference, the default model) | 26/30 |
 
+**BM25 check on new questions** (97 answerable eval inputs, not used for any decision): Recall@5 0.959 without BM25 and 0.948 with it; no clear difference. These questions scored higher than the 60 retrieval test questions, so retrieval numbers depend a lot on the question mix.
+
 **Guardrail rules on 3,080 real customer messages** ([report](reports/guardrails_v1.md)): the injection rules wrongly flagged 0. How many real attacks they catch has not been measured.
 
 ## Known limitations
 
-- **AI-drafted data.** The articles, many retrieval questions and all labels were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet. Scores are likely optimistic.
+- **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
+- **Unvalidated judge.** Faithfulness and correctness come from one language model that no person has checked yet.
+- **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
+- **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
-- **Refuse versus hand-off:** the model sometimes refuses a banking question that should go to a human (sample 10: savings interest). The score threshold does not catch this, because it does not override a refusal.
+- **Refuse versus hand-off:** the model sometimes refuses a banking question that should go to a human (sample 10: savings interest; 4 of 30 unanswerable eval tasks). The score threshold does not catch this, because it does not override a refusal.
+- **Near-miss topics:** questions close to an existing article often get an answer instead of a hand-off. The score threshold mostly misses these.
 - **`llama3.2:3b` trade-off:** in the benchmark it answered 3 times when it should have handed off or refused. `phi4-mini` never did, but handed off more answerable questions.
 - **Confidence** is the reranker's top score. It is not a probability, and correct answers can score low.
 - **Number check** cannot catch numbers written as words, or a real number used for the wrong thing. Nothing checks non-numeric claims yet.
