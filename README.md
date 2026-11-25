@@ -67,8 +67,8 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 ## Monitoring
 
 - **`POST /feedback`**: `{"request_id", "user_id", "rating": "up"|"down", "comment"}`.
-- **`GET /metrics`** (Prometheus): requests, latency histogram, errors, escalations, guardrail hits, tokens and feedback, by model and variant. Escalation rate:
-  `rate(supportloop_escalations_total[5m]) / rate(supportloop_requests_total[5m])` (sum over `behavior`).
+- **`GET /metrics`** (Prometheus): requests, latency histogram, errors, escalations, guardrail hits, tokens and feedback, by model and variant. Escalation rate in PromQL:
+  `sum by (model, variant) (rate(supportloop_escalations_total[5m])) / sum by (model, variant) (rate(supportloop_requests_total[5m]))`
 - **Database** `data/supportloop.db`: every turn (redacted) with its evidence and failure signals.
 - **Traces**: one per request, using OpenTelemetry GenAI attribute names, in `logs/traces.jsonl` (or OTLP). No message text.
 
