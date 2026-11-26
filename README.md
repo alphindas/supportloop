@@ -2,7 +2,7 @@
 
 A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
 
-**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated by a human yet.** It has only been compared with a second-AI reviewer (ChatGPT). The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated.** One person, the project owner, has checked 30 of its verdicts (kappa -0.06); two earlier comparisons were with a second AI (ChatGPT). The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
 
 ## How a message is handled
 
@@ -81,13 +81,23 @@ All numbers come from the files in [`reports/`](reports/).
 
 ### Answer quality: 150 tasks, `gpt-oss-20b`, prompt v1
 
-[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated by a human yet** (see below), and the tasks and labels are AI-drafted.
+[Report](reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md). Judge: `qwen/qwen3.8-27b`. **The judge is not validated** (see below), and the tasks and labels are AI-drafted.
 
-**Judge versus a second-AI reviewer (ChatGPT). The judge is not validated by a human yet.** The verdicts in both rounds came from ChatGPT, not from a person, so this is AI-versus-AI agreement. Two models can share the same mistakes. The ChatGPT model version, the prompt and what it was shown are not recorded, so the verdicts cannot be reproduced and neither round can be called blind or independent. Both rounds were first published here as human review; **that was wrong** (corrected 2026-11-25), and some commit messages still say so. The verdict files are [unedited](evals/human_review/README.md).
+**Judge review. The judge is not validated.** Each round used different tasks; rounds are not pooled.
 
-**Second-AI round 1** (30 decisions): agreement 20/30 (67%), the same as expected by chance (67%), Cohen's kappa -0.01. By verdict type: faithful 14/17, correct 6/13. The rubric was reported as misapplied on some items (mixing up "faithful" with "helpful", and missing omitted key facts).
+| Round | Reviewer | Agreement with the judge | Expected by chance | Cohen's kappa | Faithful | Correct | Reviewer passed | Judge passed |
+|---|---|---|---|---|---|---|---|---|
+| 1 | second AI (ChatGPT) | 20/30 (67%) | 67% | -0.01 | 14/17 | 6/13 | 22/30 | 26/30 |
+| 2 | second AI (ChatGPT) | 25/30 (83%) | 69% | 0.47 | 16/17 | 9/13 | 22/30 | 27/30 |
+| 3 | one person (self-declared) | 20/30 (67%) | 69% | -0.06 | 14/15 | 6/15 | 29/30 | 21/30 |
 
-**Second-AI round 2** (30 different tasks): agreement 25/30 (83%), 69% expected by chance, kappa 0.47. By verdict type: faithful 16/17, correct 9/13. In all 5 disagreements the judge passed an answer that ChatGPT failed; which of the two was right has not been checked. The reason for the higher agreement is unknown. It does not replace round 1, and the rounds are not pooled.
+**Round 3** is the only human check. The reviewer is the project owner, who states they used no AI help; the tool cannot verify this. Agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06: no better than chance. In 9 of the 10 disagreements the person passed an answer the judge failed (8 on correctness, 1 on faithfulness); in the other, the reverse. Who was right has not been checked. With only one "fail" from the person, kappa is unstable and the round says little about whether the judge catches bad answers. The owner had access to the eval report, which lists 13 of these 30 tasks as failed, often with the judge's reason; whether any of them looked familiar is not recorded.
+
+**Rounds 1 and 2 were not human review.** The verdicts in both came from ChatGPT, not from a person, so this is AI-versus-AI agreement. Two models can share the same mistakes. The ChatGPT model version, the prompt and what it was shown are not recorded, so the verdicts cannot be reproduced and neither round can be called blind or independent. Both rounds were first published here as human review; **that was wrong** (corrected 2026-11-25), and some commit messages still say so. The verdict files are [unedited](evals/human_review/README.md).
+
+**Second-AI round 1:** the rubric was reported as misapplied on some items (mixing up "faithful" with "helpful", and missing omitted key facts).
+
+**Second-AI round 2:** in all 5 disagreements the judge passed an answer that ChatGPT failed; which of the two was right has not been checked. The reason for the higher agreement is unknown. It does not replace round 1, and the rounds are not pooled.
 
 | Metric | Value [95% interval] |
 |---|---|
@@ -151,7 +161,7 @@ Do not compare 0.950 with 0.778: they use different questions.
 ## Known limitations
 
 - **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
-- **No human validation of the judge.** Faithfulness and correctness come from one language model. Its only comparison is with another AI (ChatGPT): kappa -0.01, then 0.47 on 30 other tasks. No person has checked its verdicts in a recorded review.
+- **The judge is not validated.** Faithfulness and correctness come from one language model. One person, the project owner, checked 30 verdicts: agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06. Comparisons with another AI (ChatGPT) gave kappa -0.01 and 0.47 on other tasks.
 - **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
 - **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
 - **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).

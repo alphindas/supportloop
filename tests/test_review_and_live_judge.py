@@ -212,10 +212,11 @@ def test_round_three_has_thirty_unused_tasks() -> None:
     [
         ("", "d19fc34c149a23c40ad1b47fb079cac8de604c24ab29d5c008840b0b91eb4a0a"),
         (".round2", "b063088a6d84daa14602e1407ae244f7eaa4c212fb4935fe8dc47a72b143b2dd"),
+        (".round3", "64222b44b2c48b7239e77d531d7d1021ae924be71f87d1c524ab1f257f7232b6"),
     ],
 )
 def test_published_review_rounds_are_unchanged(suffix: str, digest: str) -> None:
-    """Both rounds stay published exactly as recorded. Editing one fails here."""
+    """All rounds stay published exactly as recorded. Editing one fails here."""
     name = f"groq-openai-gpt-oss-20b_prompt-v1{suffix}.jsonl"
     path = PROJECT_ROOT / "evals" / "human_review" / name
     assert hashlib.sha256(path.read_bytes()).hexdigest() == digest

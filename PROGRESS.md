@@ -11,20 +11,22 @@
 - **Judge review, two rounds, by a second-AI reviewer (ChatGPT), NOT by a person.** Round 1:
   20/30, kappa -0.01. Round 2 (30 other tasks): 25/30, chance 69%, kappa 0.47. First
   recorded and published as human review; corrected 2026-11-25. ChatGPT version, prompt and
-  inputs are not recorded. **The judge is not validated by a human yet.**
-- **Never edit verdict files** (a test pins both rounds by hash). Their `human` field holds
-  ChatGPT's verdict (evals/human_review/README.md).
+  inputs are not recorded.
+- **Judge review round 3, the first human check** (2026-11-26): Alphin, who states no AI help.
+  Agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06. Person passed 29/30, judge 21/30.
+  Verdicts committed unedited. Whether any task looked familiar from the report: **not
+  recorded** (the placeholder in Alphin's message was not filled in).
+  **The judge is not validated.**
+- **Never edit verdict files** (a test pins all three by hash). In rounds 1 and 2 the `human`
+  field holds ChatGPT's verdict (evals/human_review/README.md).
 - **Local model for the online A/B: `phi4-mini`**, a safety override of the pre-set rule,
   which picked `llama3.2:3b` (DESIGN.md 6.2). On two wrong-fee cases (`make fee-cases`) it
   **still gave a wrong fee on one**, so the override rests only on benchmark hand-off and
   refusal behaviour. Alphin agreed to keep it on that narrow basis. Pushed.
 
 ## What's next
-1. Alphin (planned for 2026-11-26): round 3, the first human check of the judge:
-   `make human-review ROUND=3`. **Only Alphin runs it; never fill in or preview verdicts.**
-   Do not show Alphin judge verdicts or the sampled task list before all 30 are done.
-2. After round 3: commit the verdict file unedited, pin its hash in the test, add the
-   numbers to the README, DESIGN.md and Phase 2 notes, and ask before pushing.
+1. Alphin: say whether any round 3 task looked familiar from the report (IDs, or none).
+2. Push the round 3 commits, only after Alphin agrees.
 3. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
 4. Alphin: Phase 1 and Phase 2 quiz answers (correct them when sent).
 5. Alphin: review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
@@ -46,8 +48,8 @@ ChatGPT details for rounds 1 and 2 stay "not recorded" unless Alphin supplies th
   ("refuse vs escalate", "do not answer if the articles only cover a similar topic") is a
   natural A/B hypothesis. Do not tune the prompt by reading eval v1 failures and then report
   the gain on eval v1 as if it were unseen.
-- Do not let a ship decision rest on judge scores alone: no person has validated the judge.
-  Any rubric or reference change goes in a NEW version; existing results stay. A human
+- Do not let a ship decision rest on judge scores alone: the judge is not validated.
+  Any rubric or reference change goes in a NEW version; existing results stay. Another human
   check needs people who have not seen judge output.
 - Both local models gave wrong fee claims that passed the number check (it cannot catch a
   real number attached to the wrong thing). A fee-claim check is a candidate improvement.

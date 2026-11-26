@@ -1,10 +1,10 @@
 # Interview notes: Phase 2 (measure and monitor)
 
-Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `reports/production_signals_simulation.md`. Written 2026-11-25.
+Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `reports/production_signals_simulation.md`. Written 2026-11-25; judge review updated 2026-11-26.
 
 **Be honest about authorship:** the eval tasks, labels, reference answers and judge rubric were drafted by AI with Claude Code. So were these notes: a sentence with "I" in it is a draft answer, not proof that a person checked something. Before you say it, make sure it is true of you.
 
-**The judge is not validated by a human yet.** The only review so far used a **second-AI reviewer (ChatGPT)**, not a person. Round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2: 25/30 (83%), 69% expected by chance, kappa 0.47. This is AI-versus-AI agreement. **Never call either round human review.** They were first published that way, which was wrong (corrected 2026-11-25).
+**The judge is not validated.** One human round (round 3): the project owner, self-declared as using no AI help: agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06. Rounds 1 and 2 used a **second-AI reviewer (ChatGPT)**, not a person. Round 1: 20/30 agreement (67%), 67% expected by chance, kappa -0.01. Round 2: 25/30 (83%), 69% expected by chance, kappa 0.47. This is AI-versus-AI agreement. **Never call either round human review.** They were first published that way, which was wrong (corrected 2026-11-25).
 
 ## 1. What we built and why
 
@@ -14,7 +14,7 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 - One OpenTelemetry trace per request shows each stage, with no message text.
 - A simulator replayed 200 real customer messages through the running API.
 - An eval set of 150 tasks, graded by code rules plus an LLM judge, with confidence intervals.
-- A review tool for checking the judge against a person. No person has reviewed with it yet: the two recorded rounds are a second-AI reviewer's (ChatGPT).
+- A review tool for checking the judge against a person. One person has done one round with it (round 3); rounds 1 and 2 are a second-AI reviewer's (ChatGPT).
 - Why: Phase 3 will change the system. Without this, "better" would be a guess.
 
 ## 2. Design decisions and rejected alternatives
@@ -45,13 +45,13 @@ Numbers come from `reports/eval_v1_groq-openai-gpt-oss-20b_prompt-v1.md` and `re
 
 ## 3. Trade-offs, weaknesses, and what I would do with more time
 
-**The most important weakness: the judge is not validated by a human yet.** Faithfulness 0.950 and correctness 0.670 depend on it. Its only comparison is with a second-AI reviewer (ChatGPT). In second-AI round 1, agreement was 20/30 (67%). ChatGPT said "pass" 22 times and the judge 26 times, so chance alone predicts 67% and kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. The rubric was reported as misapplied on some of these items (mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee). In round 2, on 30 other tasks: 25/30 (83%), chance 69%, kappa 0.47; faithful 16/17, correct 9/13. All 5 disagreements were the judge passing what ChatGPT failed (4 of them on correctness). Higher agreement is not validation: two models can share mistakes, nobody has checked who was right, and what ChatGPT was shown is not recorded. Separately, the judge has at least one verdict that breaks the rubric, which anyone can check in the report: on `v1-035` it called a missing detail "unfaithful".
+**The most important weakness: the judge is not validated.** Faithfulness 0.950 and correctness 0.670 depend on it. In round 3, the only human check (one reviewer, the project owner), agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06; faithful 14/15, correct 6/15. The person passed 29 of 30 and the judge 21. In 9 of the 10 disagreements the person passed what the judge failed (8 on correctness). Nobody has checked who was right: the judge may be strict, the reviewer lenient, or both. With one human "fail", kappa is unstable. 13 of the 30 tasks were listed as failed in the report, which the reviewer had access to; whether any looked familiar is not recorded. In second-AI round 1, agreement was 20/30 (67%). ChatGPT said "pass" 22 times and the judge 26 times, so chance alone predicts 67% and kappa is -0.01. By verdict type: faithful 14/17, correct 6/13. The rubric was reported as misapplied on some of these items (mixing up "faithful" with "helpful", and missing omitted key facts such as the 1.5% fee). In round 2, on 30 other tasks: 25/30 (83%), chance 69%, kappa 0.47; faithful 16/17, correct 9/13. All 5 disagreements were the judge passing what ChatGPT failed (4 of them on correctness). Higher agreement is not validation: two models can share mistakes, nobody has checked who was right, and what ChatGPT was shown is not recorded. Separately, the judge has at least one verdict that breaks the rubric, which anyone can check in the report: on `v1-035` it called a missing detail "unfaithful".
 
 **What the numbers show:**
 
 - Pass rate 0.680 [0.607, 0.753].
 - The weak spot is knowing when it cannot answer: escalation recall 0.633 on 30 tasks. 7 were answered, 4 refused.
-- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. These causes have not been separated. In second-AI round 2 the judge never failed an item that ChatGPT passed, but that is only 13 correctness verdicts and it says nothing about what a person would decide. The references and rubric were not edited after seeing results.
+- 25 of 48 failures had the right behaviour but were judged incorrect, often for leaving part of the reference out. This may mean short answers (the prompt caps them at 120 words and does not ask for every condition), strict references, a strict judge, or a mix. These causes have not been separated. In second-AI round 2 the judge never failed an item that ChatGPT passed (13 correctness verdicts), but in round 3 the person passed 8 correctness items the judge failed (of 15). The rounds used different tasks and who was right is unchecked. The references and rubric were not edited after seeing results.
 - On live-style traffic with the local model, 8 of 36 sampled replies were judged unfaithful. Two of them are wrong statements about fees. They were compared with the articles while drafting these notes with Claude Code; no check by a person is recorded.
 
 Other weaknesses:
@@ -64,12 +64,12 @@ Other weaknesses:
 - Live judging is a manual command, not a scheduled job.
 - No multi-turn tasks in the eval set, so follow-up questions are not measured.
 
-Next: a real human review of the judge on tasks not used in either round, ideally by two people who have not seen its output. With more time: add worked examples to the rubric, and change the rubric in a new version if agreement stays poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
+Next: check the round 3 disagreements against the rubric, then a review on unused tasks by two people who have not seen the judge's output. With more time: add worked examples to the rubric, and change the rubric in a new version if agreement stays poor; add multi-turn tasks and attacks written by someone else; run the same eval on the local model; add alerts on hand-off rate and judged faithfulness.
 
 ## 4. Eight likely questions, with short answers
 
 **Q1. How do you know your judge is right?**
-I don't. No person has validated it yet. I built a review tool for a blind human check, but the verdicts recorded with it came from a second AI, ChatGPT. They were first published as human review; that was wrong, and I corrected the labels without editing the verdicts. As AI-versus-AI agreement: round 1 was 20/30, exactly what chance predicts (kappa -0.01), and round 2, on 30 other tasks, was 25/30 with chance at 69% (kappa 0.47). That does not tell us the judge is right: both models can make the same mistake, and what ChatGPT was shown is not recorded. So I would not let a ship decision rest on the judge. The next step is a human review on unused tasks, ideally two people who have not seen the judge's output, measuring their agreement with each other first.
+I don't. I did one round myself with no AI help: 20/30 agreement with chance at 69%, kappa -0.06. I passed 29 of 30 and the judge passed 21. I have not checked who was right, I am one reviewer and the project owner, and I had access to the report. Before that, two rounds used a second AI, ChatGPT. They were first published as human review; that was wrong, and I corrected the labels without editing the verdicts. As AI-versus-AI agreement: round 1 was 20/30, exactly what chance predicts (kappa -0.01), and round 2, on 30 other tasks, was 25/30 with chance at 69% (kappa 0.47). That does not tell us the judge is right: both models can make the same mistake, and what ChatGPT was shown is not recorded. So I would not let a ship decision rest on the judge. The next step is a review on unused tasks by two people who have not seen the judge's output, measuring their agreement with each other first.
 
 **Q2. Why report kappa as well as agreement?**
 The first second-AI round is the example: 67% agreement between the judge and ChatGPT sounds acceptable, but chance alone predicts 67%, so kappa is -0.01. Imagine the judge says "pass" to everything and 90% of answers really are good. Agreement is 90%, but the judge has learned nothing. Kappa subtracts the agreement expected by chance, so that judge scores 0. With very few "fail" cases kappa becomes unstable, so I show the full table too.

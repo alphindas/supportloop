@@ -111,7 +111,7 @@ Each failed task is counted once. Reasons involving the judge are only as good a
 
 ## Judge review
 
-**The judge is not validated by a human yet.**
+**One person has checked the judge (round 3; self-declared, which the tool cannot verify). One reviewer and one round of this size cannot by themselves validate the judge.**
 
 **Rounds 1 and 2 were not human review.** Their verdicts came from a second-AI reviewer (ChatGPT), not from a person, so their numbers are AI-versus-AI agreement. Two models can share the same mistakes, so agreement does not show that either is right. Not recorded: the ChatGPT model version, the prompt, what it was shown and how its conversations were split. So these verdicts cannot be reproduced, and neither round can be called blind or independent. **Correction (2026-11-25):** both rounds were first published as human review. That was wrong. Earlier versions of this report and some commit messages still say so. The verdict files are unedited, so their field named `human` holds ChatGPT's verdict.
 
@@ -147,11 +147,21 @@ When this round was published, the rubric was reported as misapplied on some ite
 
 8 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. A reviewer who was shown that list first was not blind on those items.
 
-### Round 3
+### Round 3: Person (self-declared)
 
 The first round meant for a person. It uses 30 tasks that were in neither round 1 nor round 2, one verdict each, chosen with a fixed seed. `v1-035` was left out because the project documents discuss the judge's verdict on it. The screen shows the rubric text the judge gets and no judge verdict. At the start of each session the reviewer must confirm they are a person using no AI help; the tool saves that declaration with each verdict and cannot check it. Limits known before the round: there is one reviewer, who is the project owner. They have had access to this report and to the earlier rounds' results. Whether they had read anything about these 30 tasks is not recorded.
 
-**Pending: 0/30 recorded.** Results stay hidden until the round is complete. Before and during the round, do not read the 'Failed tasks' table below: it quotes the judge.
+- Agreement: **20/30 (67%)**
+- Agreement expected by chance, given how often each said pass: 69%
+- Cohen's kappa: **-0.06**
+- Agreement by verdict type: faithful 14/15, correct 6/15
+
+| | Judge: pass | Judge: fail |
+|---|---|---|
+| Person (self-declared): pass | 20 | 9 |
+| Person (self-declared): fail | 1 | 0 |
+
+13 of the 30 tasks in this round failed the eval, so this report lists them under 'Failed tasks', often with the judge's reason. A reviewer who was shown that list first was not blind on those items.
 
 ## How to read this
 
