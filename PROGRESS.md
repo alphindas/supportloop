@@ -69,6 +69,20 @@ data loop queue and makes the remaining decisions. Record everywhere that these 
 Code, **not reviewed by a human**. Write nothing in first person that Alphin did not do. Stop
 only on Groq quota or usage limit (update this file first) or at the end. **Do not push.**
 
+## Phase 3 status (2026-11-27). All labels and decisions below: Claude Code, not human-reviewed
+- Done and committed: 3.0 freeze; 3.1 claim check + `reports/fee_check_v1.md`; 3.2 mining,
+  labels, 8 articles, eval set v2, `reports/data_loop_cycle_1.md`; 3.3 pre-registration,
+  routing and analysis code; 3.5 Docker, compose (checked locally), CI file (steps rehearsed
+  in a clean container; **never run on GitHub**).
+- **Groq quota hit** during the offline prompt v2 run (`HTTP 429`, 103/179 graded). The partial
+  result was not read. Resume with:
+  `uv run python -m evals.run_eval --eval-set evals/sets/v2.jsonl --prompt-version v2`
+  (do not change the knowledge base, prompts or retrieval settings before it finishes), then
+  `make ab-analyze`.
+- Next, no Groq needed: online A/B (600 messages, phi4-mini). Then README, Phase 3 notes.
+- 3.4 intent routing: skipped (optional; the adapter path was never given). Not opened.
+- Nothing pushed since the round 3 commits. **Push only when Alphin says "push".**
+
 ## Still open for Alphin
 - Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
 - Phase 1 and Phase 2 quiz answers (correct them when sent).
