@@ -32,3 +32,26 @@ AI-written), off-topic, multi-part, PII (all personal data is fake) and prompt i
   before the first eval run, so the PII results do not show the system as it was.
 - **When KB gaps are filled (Phase 3)**, tasks with a planted-gap `intent` change from
   `escalate` to `answer`. That must happen in a new version, never by editing v1.
+
+## v2.jsonl
+179 tasks, made by data loop cycle 1 (`loop/promote.py`). **The new and changed labels are by
+Claude Code and were not reviewed by a human.**
+
+- 150 tasks come from v1. The 17 whose topic got a new article now expect an answer. `v1-071`
+  still expects a hand-off, because of the theft escalation rule.
+- 29 tasks were mined from simulated traffic (26 expect an answer, 3 a hand-off). Each has a
+  `provenance` field, `source: mined_simulation_turn` and
+  `review_status: labelled_by_claude_code_not_human_reviewed`. Their text is real Banking77
+  data (credit above), stored after redaction.
+- v1 is unchanged. Compare scores across versions only task by task:
+  [data loop report](../../reports/data_loop_cycle_1.md).
+
+## Fee claim files
+- `fee_claims_v1.yaml`: **frozen** (hash test), 42 claims about fees and limits, 21 correct and
+  21 wrong, drafted by Claude Code. 32 were not reviewed by a human. 3 were marked by a person
+  who had not seen Claude Code's label, and 7 were settled after seeing the label and reason,
+  so those 7 are not independent. `review_status` says which is which.
+- `fee_claims_v1.first_marks.yaml`, `.final_marks.yaml`, `.review.md`: the person's marks, kept
+  as given, and the sheet that was shown.
+- `fee_replies_phi4_labels.yaml`, `fee_replies_eval_v1_labels.yaml`: which saved model replies
+  state a fee wrongly. Labelled by Claude Code, not human-reviewed.
