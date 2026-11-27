@@ -24,13 +24,45 @@
   **still gave a wrong fee on one**, so the override rests only on benchmark hand-off and
   refusal behaviour. Alphin agreed to keep it on that narrow basis. Pushed.
 
-## What's next
-1. Alphin: say whether any round 3 task looked familiar from the report (IDs, or none).
-2. Push the round 3 commits, only after Alphin agrees.
-3. Alphin: check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
-4. Alphin: Phase 1 and Phase 2 quiz answers (correct them when sent).
-5. Alphin: review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
-6. Alphin: "go" for Phase 3 (data loop, A/B testing, Docker, CI). **Not started. Wait for "go".**
+## Round 3 follow-up (2026-11-27)
+- Round 3 commits are pushed.
+- **Follow-up analysis of the 10 disagreements: not done** (skipped by Alphin). Item 1 was
+  shown and no decision was recorded. Who was right is unchecked.
+- Familiar tasks in round 3: **not recorded** (the placeholder was left unfilled twice).
+- Alphin states they checked the Phase 2 Q1 interview answer and it is true.
+
+## Phase 3: started 2026-11-27 (Alphin's "go")
+Run Steps 3.0 to 3.6 in order. Stop only at two checkpoints: **fee test cases (3.0)**, where
+Alphin marks each case and approves before the freeze, and **data loop review (3.2)**, where
+only Alphin labels, with `loop/review.py`. Commit locally after each working step; push only
+when Alphin says "push". Label drafts "drafted by Claude Code, reviewed by me" or "not
+reviewed". Keep Groq caching on and long runs resumable.
+
+- 3.0 fee accuracy test set: about 40 claims, half wrong, with the hard cases (real number on
+  the wrong thing, wrong card type, combined rules, correct reuse of the same numbers). Freeze
+  with a hash test after approval. The 2 known fee cases are development cases only.
+- 3.1 claim-level fee check; old vs new on the frozen set, saved eval v1 replies and fresh
+  phi4-mini replies, with 95% intervals. No tuning on eval v1 failures. List what it misses.
+  `reports/fee_check_v1.md`.
+- 3.2 `loop/mine.py` (escalations, low scores, wrong refusals, judge-flagged, blocked fee
+  claims; embedding dedupe, cluster, rank; no PII-only items), `loop/review.py`,
+  `loop/promote.py` to eval set v2 with provenance; draft articles Alphin asks for; before and
+  after with intervals on mined and never-mined messages. `reports/data_loop_cycle_1.md`.
+- 3.3 prompt_v1 vs prompt_v2 (hand off instead of refusing; clearer fee rules). Pre-register
+  in `experiments/prompt_v2.yaml`. Offline paired on eval v2 (Groq: McNemar, bootstrap);
+  online on `phi4-mini`, one message per user, hash assignment, fixed sample, no peeking.
+  `reports/ab_prompt_v2.md`.
+- 3.4 optional intent routing with Alphin's LoRA (`banking77_lora_artifacts.zip`; skip and say
+  so if missing). Eval on a separate Banking77 test slice; A/B on vs off.
+- 3.5 Dockerfile, compose (api, prometheus; ollama optional) with health check; CI (ruff,
+  pytest with fakes, eval smoke test); final README with tables from the reports.
+- 3.6 `docs/interview_notes/phase_3.md`, 3-4 resume bullets, final summary with unpushed
+  commits, 3 quiz questions.
+
+## Still open for Alphin
+- Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
+- Phase 1 and Phase 2 quiz answers (correct them when sent).
+- Review AI-drafted labels (`make review-pairs`), eval set v1 and KB articles.
 
 ChatGPT details for rounds 1 and 2 stay "not recorded" unless Alphin supplies them.
 
