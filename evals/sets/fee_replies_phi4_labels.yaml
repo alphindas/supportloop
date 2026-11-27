@@ -1,0 +1,13 @@
+# Does a fresh phi4-mini reply (reports/raw/fee_replies_phi4-mini.json) contain a wrong
+# money statement? Labelled by Claude Code on 2026-11-27, NOT reviewed by a human, before
+# the new claim check was run on these replies. Judgement call: phi-08 ("over a month" for
+# the 30-day limit, echoing the question) is counted correct.
+labelled_by: Claude Code (not human-reviewed)
+correct: [phi-03, phi-04, phi-05, phi-06, phi-07, phi-08, phi-09, phi-10, phi-12, phi-13,
+          phi-14, phi-15, phi-16, phi-17, phi-18, phi-19, phi-20, phi-21, phi-22, phi-24,
+          phi-25, phi-26, phi-27, phi-28, phi-29, phi-30, phi-32, phi-34, phi-35, phi-36]
+wrong:
+  phi-01: Charges a debit card from France (EEA, free) 1.5%.
+  phi-11: Says the smallest cash deposit is between £5 and £500.
+  phi-31: Applies the 0.5% currency exchange fee to adding money.
+  phi-33: Charges UK and EEA debit cards 1.5%.

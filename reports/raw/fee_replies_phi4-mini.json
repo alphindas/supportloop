@@ -1,0 +1,611 @@
+{
+ "model": "ollama:phi4-mini",
+ "rows": [
+  {
+   "id": "phi-01",
+   "question": "How much does it cost to add money with my debit card from France?",
+   "reply": "To add money with your debit card from France, the top-up fee is 1.5% of the amount. Each deposit must be between £5 and £500. The fee is shown before you confirm the top-up.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-fees",
+    "topup-by-cash"
+   ],
+   "context": {
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.",
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount.",
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.",
+    "card-acceptance": "Where you can use your card, including Visa and Mastercard\nVisa or Mastercard\nNovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-02",
+   "question": "I have an American card. What will I pay to top up with it?",
+   "reply": "Top-up fees for American cards are not specified in the provided articles. Support will help with the rest.",
+   "model_behavior": "escalate",
+   "cited": [
+    "topup-fees",
+    "topup-by-card",
+    "topup-limits"
+   ],
+   "context": {
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.\n\nTop-up fees\nCash\nCash deposits have a fee of 1.5%.",
+    "topup-by-card": "Topping up by card\nHow to top up\nOpen **Add money**, choose **Card**, enter the amount and the card details, then approve the payment with your card provider's security check.",
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000."
+   },
+   "final_behavior": "escalate",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-03",
+   "question": "Is there a charge for using a credit card to load my account?",
+   "reply": "Yes, there is a charge for using a credit card to load your account. The fee is 1.5% of the amount you top up.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-fees"
+   ],
+   "context": {
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.",
+    "topup-methods": "Ways to add money to your account\nChoosing a method\nCard top-ups are usually the fastest. A bank transfer is a good choice for larger amounts. Each method has its own fees and limits.",
+    "topup-verification": "Verifying a top-up card or payment\nVerification charge\nFor a new card we may make a small temporary charge. Its statement description contains a 4-digit code. Find the code in your other card's statement and enter it in **Add money** then **Verify card**. The temporary charge is refunded. The description can take up to 3 working days to appear.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nFees on card payments\nNovaPay does not charge a fee for card payments in a currency you hold enough of. If a payment needs a currency conversion, the exchange rules apply. Some merchants add their own surcharge for paying by card, especially outside the UK."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-04",
+   "question": "My credit card is from Canada, what fee applies when I top up?",
+   "reply": "For a credit card issued outside the UK and EEA, the top-up fee is 2.0% of the amount. This fee is shown before you confirm the top-up.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-fees"
+   ],
+   "context": {
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.\n\nTop-up fees\nCash\nCash deposits have a fee of 1.5%.\n\nTop-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges.",
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-05",
+   "question": "What's the least I can top up by card?",
+   "reply": "The minimum amount you can top up by card is £10.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.",
+    "supported-cards-currencies": "Supported cards and currencies\nCards you can top up with\nVisa and Mastercard debit and credit cards in your own name. American Express and prepaid gift cards are not supported.",
+    "topup-by-card": "Topping up by card\nHow to top up\nOpen **Add money**, choose **Card**, enter the amount and the card details, then approve the payment with your card provider's security check.",
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-06",
+   "question": "How much can I put on my account by card in one go?",
+   "reply": "The maximum amount you can put on your account by card in one go is £5,000.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.\n\nTop-up limits\nCash\nEach cash deposit must be between £5 and £500.",
+    "contactless-payments": "Contactless payments\nLimits\nA single contactless payment can be up to £100. After £300 of contactless payments in a row, the card asks for your PIN.",
+    "order-physical-card": "Ordering a physical card\nHow many cards you can have\nYou can hold up to 2 physical cards on one account. See the spare card article if you want a second one."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-07",
+   "question": "Is there a daily cap on card top-ups?",
+   "reply": "Yes, there is a daily cap on card top-ups. The maximum amount you can top up in a single day is £10,000.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.\n\nTop-up limits\nBank transfer\nNovaPay sets no upper limit for bank transfer top-ups. Transfers over £10,000 may need a source of funds check.",
+    "spare-card": "Getting a spare or extra card\nShared balance\nBoth cards spend from the same account balance and share the same daily limits. Each card has its own number and PIN.",
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-08",
+   "question": "How much can I add by card over a month?",
+   "reply": "The maximum amount you can add by card over a month is £30,000. For more details on the top-up process, please contact NovaPay support.",
+   "model_behavior": "escalate",
+   "cited": [
+    "topup-limits"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.",
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount.",
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.",
+    "contactless-payments": "Contactless payments\nLimits\nA single contactless payment can be up to £100. After £300 of contactless payments in a row, the card asks for your PIN."
+   },
+   "final_behavior": "escalate",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-09",
+   "question": "Can I send any amount to top up by bank transfer?",
+   "reply": "Yes, you can send any amount to top up by bank transfer. NovaPay sets no upper limit for bank transfer top-ups. Transfers over £10,000 may need a source of funds check.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits",
+    "topup-methods"
+   ],
+   "context": {
+    "topup-by-bank-transfer": "Topping up by bank transfer\nHow to do it\n1. Open **Add money** and choose **Bank transfer**.\n2. Copy the account details shown for the currency you are sending.\n3. Send the money from your other bank, using any reference shown in the app.",
+    "topup-limits": "Top-up limits\nBank transfer\nNovaPay sets no upper limit for bank transfer top-ups. Transfers over £10,000 may need a source of funds check.",
+    "topup-methods": "Ways to add money to your account\nChoosing a method\nCard top-ups are usually the fastest. A bank transfer is a good choice for larger amounts. Each method has its own fees and limits.",
+    "topup-fees": "Top-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-10",
+   "question": "What does it cost to pay in cash?",
+   "reply": "Paying in cash costs a fee of 1.5% of the amount deposited. Each cash deposit must be between £5 and £500.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-by-cash",
+    "topup-limits",
+    "topup-fees"
+   ],
+   "context": {
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount.",
+    "topup-limits": "Top-up limits\nCash\nEach cash deposit must be between £5 and £500.",
+    "topup-fees": "Top-up fees\nCash\nCash deposits have a fee of 1.5%.",
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nOther charges\nThe cash machine operator may add its own charge. The machine should tell you before you continue. In another currency, the amount is also converted using the exchange rules."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-11",
+   "question": "What is the smallest and largest cash deposit?",
+   "reply": "The smallest cash deposit must be between £5 and £500. The largest cash deposit must be £500.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCash\nEach cash deposit must be between £5 and £500.\n\nTop-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.\n\nTop-up limits\nBank transfer\nNovaPay sets no upper limit for bank transfer top-ups. Transfers over £10,000 may need a source of funds check.",
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-12",
+   "question": "Do you charge me for taking money out of a cash machine?",
+   "reply": "Yes, there may be charges for cash withdrawals. The cash machine operator can add its own charge. The machine should inform you before you continue. Additionally, there might be a fee after your free allowance. Common reasons for a declined cash withdrawal include insufficient balance, reaching the daily withdrawal limit, or issues with the card or security settings.",
+   "model_behavior": "answer",
+   "cited": [
+    "cash-withdrawals",
+    "cash-withdrawal-declined"
+   ],
+   "context": {
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nOther charges\nThe cash machine operator may add its own charge. The machine should tell you before you continue. In another currency, the amount is also converted using the exchange rules.",
+    "foreign-payment-wrong-rate": "The exchange rate on a card payment or cash withdrawal looks wrong\nConversion by the merchant or machine\nA merchant or cash machine may offer to charge you in your home currency. This uses their rate, which is often worse. Decline and choose the local currency.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nCommon explanations\n- A temporary card verification charge, which is refunded.\n- A hold by a hotel, car hire firm or fuel station.\n- A cash withdrawal fee after your free allowance.\n- A currency exchange fee or weekend markup.\n- A subscription or renewal from a merchant.",
+    "cash-withdrawal-declined": "Why a cash withdrawal was declined\nCommon reasons\n- Not enough balance to cover the amount and any fee.\n- You reached the daily withdrawal limit of £500.\n- Wrong or blocked PIN.\n- The card is frozen, blocked, expired or not activated.\n- Cash withdrawals are switched off in **Security settings**.\n- Our security checks stopped the withdrawal.\n- The cash machine had a fault."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-13",
+   "question": "How much cash can I withdraw for free each month?",
+   "reply": "You can withdraw up to £200 in up to 5 withdrawals each calendar month with no NovaPay fee.",
+   "model_behavior": "answer",
+   "cited": [
+    "cash-withdrawals"
+   ],
+   "context": {
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.\n\nCash withdrawals: limits and fees\nDaily limit\nYou can withdraw up to £500 per day.",
+    "exchange-fees": "Currency exchange fees\nWeekday allowance\nOn weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.",
+    "topup-limits": "Top-up limits\nCash\nEach cash deposit must be between £5 and £500."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-14",
+   "question": "What is the most cash I can take out in a day?",
+   "reply": "The most cash you can take out in a day is £500.",
+   "model_behavior": "answer",
+   "cited": [
+    "cash-withdrawals"
+   ],
+   "context": {
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nDaily limit\nYou can withdraw up to £500 per day.\n\nCash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.",
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.",
+    "cash-withdrawal-declined": "Why a cash withdrawal was declined\nCommon reasons\n- Not enough balance to cover the amount and any fee.\n- You reached the daily withdrawal limit of £500.\n- Wrong or blocked PIN.\n- The card is frozen, blocked, expired or not activated.\n- Cash withdrawals are switched off in **Security settings**.\n- Our security checks stopped the withdrawal.\n- The cash machine had a fault."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-15",
+   "question": "I've already made five withdrawals this month. What happens on the next one?",
+   "reply": "Each calendar month, you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee. If you have already made five withdrawals this month, you will not be able to make any more withdrawals this month without incurring a fee.",
+   "model_behavior": "answer",
+   "cited": [
+    "cash-withdrawals"
+   ],
+   "context": {
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.",
+    "cash-withdrawal-unrecognised": "A cash withdrawal you do not recognise\nContact support\nA support agent must review every withdrawal you do not recognise. Tell us the date, time and amount, and whether you still have your card.\n\nA cash withdrawal you do not recognise\nProtect your account first\n1. Freeze your card in **Cards**.\n2. Choose **Report lost or stolen** if you did not make the withdrawal.\n3. Change your app passcode.",
+    "cash-withdrawal-declined": "Why a cash withdrawal was declined\nCommon reasons\n- Not enough balance to cover the amount and any fee.\n- You reached the daily withdrawal limit of £500.\n- Wrong or blocked PIN.\n- The card is frozen, blocked, expired or not activated.\n- Cash withdrawals are switched off in **Security settings**.\n- Our security checks stopped the withdrawal.\n- The cash machine had a fault."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-16",
+   "question": "What do you charge to send money abroad by SWIFT?",
+   "reply": "NovaPay charges £3 per transfer for sending money abroad by SWIFT. This fee is shown before you confirm the transfer.",
+   "model_behavior": "answer",
+   "cited": [
+    "transfer-fees"
+   ],
+   "context": {
+    "transfer-fees": "Transfer fees\nWhat NovaPay charges\n- To another NovaPay user: free.\n- UK bank transfer: free.\n- SEPA transfer: free.\n- International (SWIFT) transfer: £3 per transfer.\n\nThe fee is shown before you confirm.\n\nTransfer fees\nCharges from other banks\nFor SWIFT transfers, the receiving bank or a bank in between may deduct its own charge. This can make the amount received lower than the amount sent.",
+    "topup-fees": "Top-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges.",
+    "send-money": "Sending money\nTypes of transfer\n- To another NovaPay user.\n- To a UK bank account.\n- To a euro account by SEPA.\n- To other international accounts by SWIFT."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-17",
+   "question": "Is a SEPA transfer free?",
+   "reply": "Yes, a SEPA transfer is free.",
+   "model_behavior": "answer",
+   "cited": [
+    "transfer-fees"
+   ],
+   "context": {
+    "transfer-fees": "Transfer fees\nWhat NovaPay charges\n- To another NovaPay user: free.\n- UK bank transfer: free.\n- SEPA transfer: free.\n- International (SWIFT) transfer: £3 per transfer.\n\nThe fee is shown before you confirm.",
+    "topup-by-bank-transfer": "Topping up by bank transfer\nCost\nNovaPay does not charge for receiving a UK or SEPA bank transfer. Your other bank may charge you.",
+    "topup-fees": "Top-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges.",
+    "bank-transfer-missing": "A bank transfer into your account is missing\nCheck the timing\nUK transfers can take up to 1 working day, SEPA transfers 1 working day and SWIFT transfers 3 to 5 working days."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-18",
+   "question": "Does it cost anything to send money to a friend who uses NovaPay?",
+   "reply": "Sending money to a friend who uses NovaPay is free. You can transfer funds to another NovaPay user without any fees. If you choose to use a bank transfer, NovaPay does not charge for receiving UK or SEPA bank transfers. However, if you opt for an international (SWIFT) transfer, there is a £3 fee per transfer. This fee is shown before you confirm the transfer.",
+   "model_behavior": "answer",
+   "cited": [
+    "transfer-fees",
+    "topup-by-bank-transfer",
+    "topup-fees"
+   ],
+   "context": {
+    "transfer-fees": "Transfer fees\nWhat NovaPay charges\n- To another NovaPay user: free.\n- UK bank transfer: free.\n- SEPA transfer: free.\n- International (SWIFT) transfer: £3 per transfer.\n\nThe fee is shown before you confirm.",
+    "topup-by-bank-transfer": "Topping up by bank transfer\nCost\nNovaPay does not charge for receiving a UK or SEPA bank transfer. Your other bank may charge you.",
+    "topup-fees": "Top-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nFees on card payments\nNovaPay does not charge a fee for card payments in a currency you hold enough of. If a payment needs a currency conversion, the exchange rules apply. Some merchants add their own surcharge for paying by card, especially outside the UK."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-19",
+   "question": "What's the fee for exchanging 2000 pounds in a month?",
+   "reply": "Amounts above £1,000 in a month have a 0.5% fee. For exchanging £2,000, the fee would be 0.5% of £1,000, which is £5. Support will help with the exact amount.",
+   "model_behavior": "escalate",
+   "cited": [
+    "exchange-fees"
+   ],
+   "context": {
+    "exchange-fees": "Currency exchange fees\nAbove the allowance\nAmounts above £1,000 in a month have a 0.5% fee.\n\nCurrency exchange fees\nWeekday allowance\nOn weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.",
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.",
+    "transfer-fees": "Transfer fees\nWhat NovaPay charges\n- To another NovaPay user: free.\n- UK bank transfer: free.\n- SEPA transfer: free.\n- International (SWIFT) transfer: £3 per transfer.\n\nThe fee is shown before you confirm."
+   },
+   "final_behavior": "escalate",
+   "guardrail_events": [
+    "output_check:ungrounded_number"
+   ]
+  },
+  {
+   "id": "phi-20",
+   "question": "Is it more expensive to exchange money on Saturday?",
+   "reply": "Yes, it is more expensive to exchange money on Saturday due to a 1% weekend markup that applies from Friday 22:00 to Sunday 22:00 UK time.",
+   "model_behavior": "answer",
+   "cited": [
+    "exchange-rates",
+    "exchange-fees"
+   ],
+   "context": {
+    "exchange-rates": "How our exchange rates work\nWeekends\nCurrency markets are closed at weekends, so a 1% weekend markup applies from Friday 22:00 to Sunday 22:00 UK time.",
+    "exchange-fees": "Currency exchange fees\nWeekends\nFrom Friday 22:00 to Sunday 22:00 UK time, a 1% weekend markup applies. If you are also above the monthly allowance, both charges apply.\n\nCurrency exchange fees\nWeekday allowance\nOn weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.",
+    "foreign-payment-wrong-rate": "The exchange rate on a card payment or cash withdrawal looks wrong\nWhat to check\nOpen the transaction to see the currency, rate and fees. Compare using the rate at that time, not today's rate. Remember the weekend markup. For withdrawals, check whether you passed your free withdrawal allowance."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-21",
+   "question": "How much can I exchange before a fee applies?",
+   "reply": "You can exchange up to £1,000 per calendar month with no NovaPay exchange fee. For amounts above £1,000, a 0.5% fee applies.",
+   "model_behavior": "answer",
+   "cited": [
+    "exchange-fees"
+   ],
+   "context": {
+    "exchange-fees": "Currency exchange fees\nWeekday allowance\nOn weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.\n\nCurrency exchange fees\nAbove the allowance\nAmounts above £1,000 in a month have a 0.5% fee.\n\nCurrency exchange fees\nWeekends\nFrom Friday 22:00 to Sunday 22:00 UK time, a 1% weekend markup applies. If you are also above the monthly allowance, both charges apply.",
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-22",
+   "question": "What is the limit for a contactless payment?",
+   "reply": "A single contactless payment can be up to £100. After £300 of contactless payments in a row, the card asks for your PIN.",
+   "model_behavior": "answer",
+   "cited": [
+    "contactless-payments"
+   ],
+   "context": {
+    "contactless-payments": "Contactless payments\nLimits\nA single contactless payment can be up to £100. After £300 of contactless payments in a row, the card asks for your PIN.\n\nContactless payments\nContactless is not working\n- Make one chip-and-PIN payment first. Contactless on a new card starts after that.\n- Check that contactless is switched on under the card's **Security settings**.\n- Check that the card is activated and not frozen.\n- If one shop's reader fails but others work, the problem is likely the reader.",
+    "declined-card-payment": "Why a card payment was declined\nCommon reasons\n- Not enough money in your balance.\n- Wrong PIN, expiry date or security code.\n- The card is frozen, blocked or expired.\n- The payment is above your daily card payment limit of £5,000.\n- Our security checks stopped an unusual payment.\n- The merchant's own system rejected it.",
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-23",
+   "question": "Why did my card ask for a PIN after several tap payments?",
+   "reply": "Your card may ask for a PIN after several tap payments if it's a chip-and-PIN card. For chip-and-PIN payments, you need to enter your PIN. If you prefer not to enter your PIN for tap payments, you can change it. Open **Cards**, select the card, choose **PIN**, and then **Change PIN**. Enter a new 4-digit PIN twice. The change works for your next chip-and-PIN payment. Insert the card for that payment so the chip updates.",
+   "model_behavior": "answer",
+   "cited": [
+    "card-pin"
+   ],
+   "context": {
+    "card-pin": "Card PIN: viewing, changing and unblocking\nUnblocking a blocked PIN\nYour PIN is blocked after 3 wrong attempts in a row. Open **Cards**, select the card and choose **Unblock PIN**. Confirm with your app passcode, then check the correct number with **View PIN**. If the app does not offer **Unblock PIN** or the card is still refused, contact support.\n\nCard PIN: viewing, changing and unblocking\nWhere is my PIN?\nYour PIN is not sent in the post. Open **Cards**, select your physical card and choose **View PIN**. You will be asked for your app passcode.\n\nCard PIN: viewing, changing and unblocking\nChanging your PIN\nOpen **Cards**, select the card, choose **PIN** and then **Change PIN**. Enter a new 4-digit PIN twice. The change works for your next chip-and-PIN payment. Insert the card for that payment so the chip updates.",
+    "declined-card-payment": "Why a card payment was declined\nCommon reasons\n- Not enough money in your balance.\n- Wrong PIN, expiry date or security code.\n- The card is frozen, blocked or expired.\n- The payment is above your daily card payment limit of £5,000.\n- Our security checks stopped an unusual payment.\n- The merchant's own system rejected it."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-24",
+   "question": "How much is express delivery for a new card?",
+   "reply": "Express delivery for a new card costs £12.",
+   "model_behavior": "answer",
+   "cited": [
+    "order-physical-card"
+   ],
+   "context": {
+    "order-physical-card": "Ordering a physical card\nCost\nYour first physical card is free, including standard delivery. Express delivery costs £12.",
+    "lost-or-stolen-card": "Lost or stolen card\nReplacement\nA replacement card costs £5 with standard delivery.",
+    "card-delivery-times": "Card delivery times and tracking\nMy card has not arrived\nIf your card has not arrived by the latest estimated date, open the card in the app and choose **Report not delivered**. We cancel the missing card and send a new one at no cost. A support agent must check the order before the replacement is sent.",
+    "card-expiry": "When your card is about to expire\nYour renewal card\nWe send a new card about 30 days before the old one expires. Renewal is free, including standard delivery. We send a reminder in the app before the card is posted."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-25",
+   "question": "Do I have to pay for my first card?",
+   "reply": "Your first physical card is free, including standard delivery. Express delivery costs £12.",
+   "model_behavior": "answer",
+   "cited": [
+    "order-physical-card"
+   ],
+   "context": {
+    "order-physical-card": "Ordering a physical card\nCost\nYour first physical card is free, including standard delivery. Express delivery costs £12.",
+    "activate-card": "Activating your new physical card\nFirst use\nMake your first payment by inserting the card and entering your PIN. Contactless starts working after that.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nFees on card payments\nNovaPay does not charge a fee for card payments in a currency you hold enough of. If a payment needs a currency conversion, the exchange rules apply. Some merchants add their own surcharge for paying by card, especially outside the UK.",
+    "topup-verification": "Verifying a top-up card or payment\nVerification charge\nFor a new card we may make a small temporary charge. Its statement description contains a 4-digit code. Find the code in your other card's statement and enter it in **Add money** then **Verify card**. The temporary charge is refunded. The description can take up to 3 working days to appear."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-26",
+   "question": "What does a second card cost?",
+   "reply": "A second physical card costs £5. You can order one spare physical card, so that you hold 2 physical cards at most.",
+   "model_behavior": "answer",
+   "cited": [
+    "spare-card"
+   ],
+   "context": {
+    "spare-card": "Getting a spare or extra card\nSecond physical card\nYou can order one spare physical card, so that you hold 2 physical cards at most. A spare card costs £5.\n\nOpen **Cards**, choose **Add card**, then **Spare physical card**.",
+    "lost-or-stolen-card": "Lost or stolen card\nReplacement\nA replacement card costs £5 with standard delivery.",
+    "card-acceptance": "Where you can use your card, including Visa and Mastercard\nVisa or Mastercard\nNovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5.",
+    "order-physical-card": "Ordering a physical card\nCost\nYour first physical card is free, including standard delivery. Express delivery costs £12."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-27",
+   "question": "My card was stolen. How much is a new one?",
+   "reply": "A replacement card costs £5 with standard delivery.",
+   "model_behavior": "answer",
+   "cited": [
+    "lost-or-stolen-card"
+   ],
+   "context": {
+    "lost-or-stolen-card": "Lost or stolen card\nReplacement\nA replacement card costs £5 with standard delivery.",
+    "card-delivery-times": "Card delivery times and tracking\nMy card has not arrived\nIf your card has not arrived by the latest estimated date, open the card in the app and choose **Report not delivered**. We cancel the missing card and send a new one at no cost. A support agent must check the order before the replacement is sent.",
+    "card-acceptance": "Where you can use your card, including Visa and Mastercard\nVisa or Mastercard\nNovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5.",
+    "spare-card": "Getting a spare or extra card\nSecond physical card\nYou can order one spare physical card, so that you hold 2 physical cards at most. A spare card costs £5.\n\nOpen **Cards**, choose **Add card**, then **Spare physical card**."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-28",
+   "question": "I want to switch from Visa to Mastercard. Is there a cost?",
+   "reply": "NovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5. Support will help with the rest.",
+   "model_behavior": "escalate",
+   "cited": [
+    "card-acceptance"
+   ],
+   "context": {
+    "card-acceptance": "Where you can use your card, including Visa and Mastercard\nVisa or Mastercard\nNovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5.",
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nFees on card payments\nNovaPay does not charge a fee for card payments in a currency you hold enough of. If a payment needs a currency conversion, the exchange rules apply. Some merchants add their own surcharge for paying by card, especially outside the UK.",
+    "order-physical-card": "Ordering a physical card\nCost\nYour first physical card is free, including standard delivery. Express delivery costs £12."
+   },
+   "final_behavior": "escalate",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-29",
+   "question": "What is the daily limit for card payments?",
+   "reply": "The daily limit for card payments is £5,000.",
+   "model_behavior": "answer",
+   "cited": [
+    "declined-card-payment"
+   ],
+   "context": {
+    "declined-card-payment": "Why a card payment was declined\nCommon reasons\n- Not enough money in your balance.\n- Wrong PIN, expiry date or security code.\n- The card is frozen, blocked or expired.\n- The payment is above your daily card payment limit of £5,000.\n- Our security checks stopped an unusual payment.\n- The merchant's own system rejected it.",
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.",
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nDaily limit\nYou can withdraw up to £500 per day.",
+    "cash-withdrawal-declined": "Why a cash withdrawal was declined\nCommon reasons\n- Not enough balance to cover the amount and any fee.\n- You reached the daily withdrawal limit of £500.\n- Wrong or blocked PIN.\n- The card is frozen, blocked, expired or not activated.\n- Cash withdrawals are switched off in **Security settings**.\n- Our security checks stopped the withdrawal.\n- The cash machine had a fault."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-30",
+   "question": "Will a large bank transfer be checked?",
+   "reply": "Yes, NovaPay may check the source of funds for large or unusual payments, such as bank transfers over £10,000. This is a legal check to ensure the money's origin is legitimate.",
+   "model_behavior": "answer",
+   "cited": [
+    "source-of-funds"
+   ],
+   "context": {
+    "source-of-funds": "Source of funds checks\nWhat it is\nWe sometimes ask where your money came from. This is a legal check. It can happen after large or unusual payments, such as bank transfers over £10,000.",
+    "topup-limits": "Top-up limits\nBank transfer\nNovaPay sets no upper limit for bank transfer top-ups. Transfers over £10,000 may need a source of funds check.",
+    "transfer-not-received": "The recipient has not received your transfer\nFirst checks\n1. Open the transfer and confirm its status is **Completed**.\n2. Check that the expected arrival time has passed.\n3. Check the recipient's account details.",
+    "bank-transfer-missing": "A bank transfer into your account is missing\nCheck the details\nAsk the sender to confirm the account details, currency and reference they used."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-31",
+   "question": "List all the fees for adding money.",
+   "reply": "To add money to your NovaPay account, you can use cash, cheques, or card top-ups. Cash deposits have a fee of 1.5% of the amount. For amounts above £1,000 in a month, there's an additional 0.5% fee. Card top-ups are usually the fastest, but they may have different fees and limits. Bank transfers are recommended for larger amounts. Each method has its own fees and limits.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-by-cash",
+    "topup-fees",
+    "topup-methods",
+    "exchange-fees"
+   ],
+   "context": {
+    "topup-by-cash": "Adding cash and cheques\nAmounts and fee\nEach deposit must be between £5 and £500. The fee is 1.5% of the amount.",
+    "topup-fees": "Top-up fees\nCash\nCash deposits have a fee of 1.5%.",
+    "topup-methods": "Ways to add money to your account\nChoosing a method\nCard top-ups are usually the fastest. A bank transfer is a good choice for larger amounts. Each method has its own fees and limits.",
+    "exchange-fees": "Currency exchange fees\nAbove the allowance\nAmounts above £1,000 in a month have a 0.5% fee."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-32",
+   "question": "What are your cash withdrawal fees and limits?",
+   "reply": "NovaPay charges a 2% fee after the monthly free allowance of £200 in up to 5 withdrawals. The daily limit for cash withdrawals is £500. Fees apply after reaching these limits, with a minimum fee of £1.",
+   "model_behavior": "answer",
+   "cited": [
+    "cash-withdrawals"
+   ],
+   "context": {
+    "cash-withdrawals": "Cash withdrawals: limits and fees\nDaily limit\nYou can withdraw up to £500 per day.\n\nCash withdrawals: limits and fees\nFree allowance\nEach calendar month you can withdraw up to £200 in up to 5 withdrawals with no NovaPay fee.\n\nCash withdrawals: limits and fees\nFee after the allowance\nAfter either limit is reached, NovaPay charges 2% of the amount, with a minimum fee of £1.",
+    "cash-withdrawal-declined": "Why a cash withdrawal was declined\nCommon reasons\n- Not enough balance to cover the amount and any fee.\n- You reached the daily withdrawal limit of £500.\n- Wrong or blocked PIN.\n- The card is frozen, blocked, expired or not activated.\n- Cash withdrawals are switched off in **Security settings**.\n- Our security checks stopped the withdrawal.\n- The cash machine had a fault."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-33",
+   "question": "Tell me the card top-up limits and fees.",
+   "reply": "Card top-up limits are £10 minimum, £5,000 maximum per top-up, £10,000 maximum per day, and £30,000 maximum in any 30 days. Cash top-up limits are £5 to £500. Top-up fees for cards are 1.5% for UK and EEA debit cards, 2.0% for cards issued outside the UK and EEA, and 1.5% for cash deposits.",
+   "model_behavior": "answer",
+   "cited": [
+    "topup-limits",
+    "topup-fees"
+   ],
+   "context": {
+    "topup-limits": "Top-up limits\nCard top-up limits\n- Minimum per top-up: £10.\n- Maximum per top-up: £5,000.\n- Maximum per day: £10,000.\n- Maximum in any 30 days: £30,000.\n\nTop-up limits\nCash\nEach cash deposit must be between £5 and £500.",
+    "topup-fees": "Top-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.\n\nTop-up fees\nCash\nCash deposits have a fee of 1.5%."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-34",
+   "question": "What fees apply at the weekend if I've used up my exchange allowance?",
+   "reply": "If you've used up your exchange allowance, a 1% weekend markup applies from Friday 22:00 to Sunday 22:00 UK time. This applies even if you've reached your monthly exchange limit. Additionally, if you've used up your monthly allowance, both the 1% weekend markup and the monthly exchange fee will apply.",
+   "model_behavior": "answer",
+   "cited": [
+    "exchange-fees",
+    "exchange-rates"
+   ],
+   "context": {
+    "exchange-fees": "Currency exchange fees\nWeekends\nFrom Friday 22:00 to Sunday 22:00 UK time, a 1% weekend markup applies. If you are also above the monthly allowance, both charges apply.\n\nCurrency exchange fees\nWeekday allowance\nOn weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.",
+    "extra-statement-charge": "A fee or extra charge you did not expect\nCommon explanations\n- A temporary card verification charge, which is refunded.\n- A hold by a hotel, car hire firm or fuel station.\n- A cash withdrawal fee after your free allowance.\n- A currency exchange fee or weekend markup.\n- A subscription or renewal from a merchant.",
+    "exchange-rates": "How our exchange rates work\nWeekends\nCurrency markets are closed at weekends, so a 1% weekend markup applies from Friday 22:00 to Sunday 22:00 UK time."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-35",
+   "question": "Are UK bank transfers free both in and out?",
+   "reply": "Yes, UK bank transfers are free both for receiving and sending money within NovaPay. However, if you're referring to international (SWIFT) transfers, there is a fee of £3 per transfer. This fee is shown before you confirm the transfer.",
+   "model_behavior": "answer",
+   "cited": [
+    "transfer-fees",
+    "topup-fees"
+   ],
+   "context": {
+    "transfer-fees": "Transfer fees\nWhat NovaPay charges\n- To another NovaPay user: free.\n- UK bank transfer: free.\n- SEPA transfer: free.\n- International (SWIFT) transfer: £3 per transfer.\n\nThe fee is shown before you confirm.",
+    "topup-fees": "Top-up fees\nBank transfers\nNovaPay does not charge for UK or SEPA bank transfer top-ups. For international (SWIFT) transfers, banks along the way may deduct their own charges.\n\nTop-up fees\nCard top-ups\n- UK debit card: free.\n- EEA debit card: free.\n- Credit card: 1.5% of the amount.\n- Card issued outside the UK and EEA: 2.0% of the amount.\n\nIf both card rules apply, only the higher fee is charged. The fee is shown before you confirm.",
+    "topup-by-bank-transfer": "Topping up by bank transfer\nCost\nNovaPay does not charge for receiving a UK or SEPA bank transfer. Your other bank may charge you."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  },
+  {
+   "id": "phi-36",
+   "question": "How much does it cost to replace a card?",
+   "reply": "A replacement card costs £5 with standard delivery.",
+   "model_behavior": "answer",
+   "cited": [
+    "lost-or-stolen-card"
+   ],
+   "context": {
+    "lost-or-stolen-card": "Lost or stolen card\nReplacement\nA replacement card costs £5 with standard delivery.",
+    "card-acceptance": "Where you can use your card, including Visa and Mastercard\nVisa or Mastercard\nNovaPay issues Visa and Mastercard debit cards. When both are available for your country, you can choose one when you order the card. The logo is printed on your physical card and shown in the app. To change network you need a replacement card, which costs £5.",
+    "spare-card": "Getting a spare or extra card\nSecond physical card\nYou can order one spare physical card, so that you hold 2 physical cards at most. A spare card costs £5.\n\nOpen **Cards**, choose **Add card**, then **Spare physical card**.",
+    "order-physical-card": "Ordering a physical card\nCost\nYour first physical card is free, including standard delivery. Express delivery costs £12."
+   },
+   "final_behavior": "answer",
+   "guardrail_events": []
+  }
+ ]
+}
