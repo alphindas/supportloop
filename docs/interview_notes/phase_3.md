@@ -74,7 +74,7 @@ All decisions in this table are Claude Code's, not reviewed by a human.
 - The online label is crude: intent-based "answer" or "hand off". It does not check answer quality.
 - The traffic is simulated.
 
-**Shipping.** CI has not run on GitHub. The Compose Ollama profile was not tested. No authentication, one process, no alerts.
+**Shipping.** CI has passed on GitHub, but it uses fake models. The Compose Ollama profile was not tested. No authentication, one process, no alerts.
 
 With more time: validate the judge with two people who have not seen its output; have a person review the Phase 3 labels and articles; test the fee check on replies and claims written by someone else; run the next prompt experiment with one change and fresh messages; run a second data loop cycle aimed at model errors.
 
@@ -102,7 +102,7 @@ The decision was don't ship. Offline on `gpt-oss-20b` the pass rate change was u
 Both tests used here treat each result as independent. Several messages from one user tend to succeed or fail together, which makes the intervals too narrow and the p-value too small. With real conversations one would randomise by user and analyse by user, or use a method that allows for the grouping.
 
 **Q8. What does your CI prove?**
-That the code passes lint, the tests pass with a fake model, embedder and reranker, and the eval runner works end to end on a few tasks, with no API keys. It says nothing about answer quality: that needs the real models and the eval reports. Its steps passed in a clean local container, but it has not run on GitHub yet.
+That the code passes lint, the tests pass with a fake model, embedder and reranker, and the eval runner works end to end on a few tasks, with no API keys. It says nothing about answer quality: that needs the real models and the eval reports. Its first run on GitHub passed (commit `7041a5d`, 2026-11-27).
 
 ## 5. Three files to read
 

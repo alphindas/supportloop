@@ -79,7 +79,10 @@ only on Groq quota or usage limit (update this file first) or at the end. **Do n
 - README, DESIGN section 12.1 and `docs/interview_notes/phase_3.md` written and committed.
 - **Phase 3 is complete apart from push**, and from 3.4.
 - 3.4 intent routing: skipped (optional). The adapter was not opened.
-- Nothing pushed since the round 3 commits. **Push only when Alphin says "push".**
+- **Pushed 2026-11-27** after Alphin said "push" (`e8eaca3..7041a5d`, 24 commits). First CI run on
+  GitHub passed (run 45962939023). This supersedes the "never run on GitHub" note above. It warned
+  that two actions target the deprecated Node.js 20. Later commits need a new "push".
+- Phase 3 quiz: 3 questions asked, no answers yet.
 
 ## Still open for Alphin
 - Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.

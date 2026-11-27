@@ -43,7 +43,7 @@ SUPPORTLOOP_LLM_PROVIDER=ollama docker compose --profile ollama up --build -d
 docker compose exec ollama ollama pull phi4-mini
 ```
 
-The compose file was checked on one machine (WSL Ubuntu) with the Groq provider: both services started, one real chat answered with a citation, and Prometheus scraped without errors. The Ollama profile was not tested in Docker. The [CI workflow](.github/workflows/ci.yml) runs lint, tests with fake models and a small eval smoke test; its steps passed in a clean local container, but **it has not run on GitHub yet**.
+The compose file was checked on one machine (WSL Ubuntu) with the Groq provider: both services started, one real chat answered with a citation, and Prometheus scraped without errors. The Ollama profile was not tested in Docker. The [CI workflow](.github/workflows/ci.yml) runs lint, tests with fake models and a small eval smoke test; its [first run on GitHub](https://github.com/alphindas/supportloop/actions/runs/45962939023) passed on 2026-11-27 (commit `7041a5d`: lint, 356 tests, 4 smoke tests). This checks wiring, not answer quality.
 
 ## Run it for development (WSL Ubuntu)
 
@@ -250,7 +250,7 @@ Prompt v1 stays the default. Prompt v2 changed two things, so the test cannot sa
 3. **Fee accuracy:** try checking each claim against its source sentence with a second model, and measure on new replies written by someone else.
 4. **Next prompt experiment:** change one thing at a time, in a new version with a new experiment file and fresh messages.
 5. Fix the failures new articles did not target (model errors, needless hand-offs), then run data loop cycle 2.
-6. Push and confirm CI passes on GitHub. Optional: intent routing (skipped in Phase 3).
+6. Move the CI actions off the deprecated Node.js 20 versions. Optional: intent routing (skipped in Phase 3).
 
 ## Data credit
 

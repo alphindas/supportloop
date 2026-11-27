@@ -316,4 +316,4 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 | Eval set v2 | Frozen after cycle 1 | A new file; v1 is unchanged. |
 | A/B, prompt v1 against v2 | Done: **don't ship**, v1 stays default ([report](reports/ab_prompt_v2.md)) | Rule and sample size in `experiments/prompt_v2.yaml` before any v2 result. Compared with section 10, the file also requires that a ship decision does not rest on the judge-based metric alone. |
 | Intent routing | **Not built** | Optional; skipped. |
-| Docker, compose, CI | Built | Compose checked locally with Groq; Ollama profile not tested in Docker. CI not yet run on GitHub. |
+| Docker, compose, CI | Built | Compose checked locally with Groq; Ollama profile not tested in Docker. CI passed its first run on GitHub (2026-11-27, commit `7041a5d`). |
