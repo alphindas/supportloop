@@ -1,41 +1,61 @@
 # SupportLoop
 
-A customer-support chatbot for **NovaPay**, a **fictional** card and payments app. It answers from help articles with citations, hands off to a human when unsure, and is being built to measure and improve itself.
+A support chatbot for **NovaPay**, a **fictional** card and payments app: it answers from help articles with citations and hands off to a human when unsure.
+Around it: monitoring, evaluation, a data loop that turns logged failures into new articles, and A/B testing. Built with Claude Code.
 
-**Status: Phases 1 (chatbot) and 2 (monitoring and evaluation) of 3 are built.** **The LLM judge is not validated.** One person, the project owner, has checked 30 of its verdicts (kappa -0.06); two earlier comparisons were with a second AI (ChatGPT). The data loop, A/B testing, Docker and CI (Phase 3) are not built yet.
+> **Who checked what.** **The LLM judge is not validated** (one human round: kappa -0.06). Articles, tasks and labels are AI-drafted. In Phase 3, the data loop labels, the new articles, most fee-test labels and the remaining design decisions were made by **Claude Code and not reviewed by a human**.
 
-## How a message is handled
+## Architecture
 
 ```mermaid
 flowchart TD
-    M[POST /chat] --> PII[Redact personal data]
+    C[Client or traffic simulator] -->|POST /chat| PII[Redact personal data]
     PII --> INJ{Prompt injection?}
     INJ -->|yes| REF[Fixed refusal, no LLM call]
     INJ -->|no| S[Dense search in ChromaDB]
     S --> RR[Reranker keeps 4 chunks]
-    RR --> LLM[LLM returns JSON]
-    LLM --> CHK[Code checks: citations, numbers, score threshold, escalation rules]
+    RR --> LLM[LLM returns JSON: Groq or Ollama<br/>prompt picked by A/B assignment if an experiment is on]
+    LLM --> CHK[Code checks: citations, numbers, fee claims, score threshold, escalation rules]
     CHK --> OUT[Answer, citations, confidence, escalate]
+    REF --> OUT
+    OUT --> DB[(SQLite, traces, Prometheus metrics)]
+    DB --> MINE[Data loop: mine, review, promote]
+    MINE --> KB[New help articles] --> S
+    MINE --> EV[New eval set version] --> EVAL[Eval and A/B reports]
 ```
 
 Design and reasons: [DESIGN.md](DESIGN.md).
 
-## Run it (WSL Ubuntu)
+## Run it in 3 commands (Docker, no GPU needed)
 
-Needs [uv](https://docs.astral.sh/uv/), an NVIDIA GPU (4 GB is enough) and a free [Groq API key](https://console.groq.com/keys).
+Needs Docker with Compose and a free [Groq API key](https://console.groq.com/keys).
 
 ```bash
-cp -n .env.example .env     # then put your key after GROQ_API_KEY=
+cp -n .env.example .env          # then put your key after GROQ_API_KEY=
+docker compose up --build --wait # API on :8000 (docs at /docs), Prometheus on :9090
+curl -s http://127.0.0.1:8000/chat -H 'content-type: application/json' -d '{"user_id":"u1","conversation_id":"c1","message":"How can I unlock my PIN?"}'
+```
+
+The first start downloads the search models, so it takes several minutes. Both ports listen on this machine only: the API has no authentication. For a local model:
+
+```bash
+SUPPORTLOOP_LLM_PROVIDER=ollama docker compose --profile ollama up --build -d
+docker compose exec ollama ollama pull phi4-mini
+```
+
+The compose file was checked on one machine (WSL Ubuntu) with the Groq provider: both services started, one real chat answered with a citation, and Prometheus scraped without errors. The Ollama profile was not tested in Docker. The [CI workflow](.github/workflows/ci.yml) runs lint, tests with fake models and a small eval smoke test; its steps passed in a clean local container, but **it has not run on GitHub yet**.
+
+## Run it for development (WSL Ubuntu)
+
+Needs [uv](https://docs.astral.sh/uv/), an NVIDIA GPU (4 GB is enough) and a Groq API key.
+
+```bash
+cp -n .env.example .env
 make setup data ingest      # install, download Banking77, build the search index
-make run                    # API on http://127.0.0.1:8000  (docs at /docs)
+make run                    # API on http://127.0.0.1:8000
 ```
 
-The first run downloads the embedding model and reranker from Hugging Face. Once they are cached, `export HF_HUB_OFFLINE=1` skips the online check (useful if a download request stalls).
-
-```bash
-curl -s http://127.0.0.1:8000/chat -H 'content-type: application/json' \
-  -d '{"user_id":"u1","conversation_id":"c1","message":"How can I unlock my PIN?"}'
-```
+The first run downloads the embedding model and reranker from Hugging Face. Once they are cached, `export HF_HUB_OFFLINE=1` skips the online check.
 
 **Local model instead of Groq** (retrieval must move to the CPU, so it is slower):
 
@@ -59,6 +79,10 @@ SUPPORTLOOP_LLM_PROVIDER=ollama SUPPORTLOOP_RETRIEVAL_DEVICE=cpu make run
 | `make human-review` | Review tool for judge decisions, for a person only (round 3 by default); rebuilds the eval report. [Rounds 1 and 2 were done by a second AI](evals/human_review/README.md) | a finished eval run |
 | `make simulate` | Replay 200 real customer messages through the API | `make run` |
 | `make judge-live` | Judge faithfulness on a sample of stored replies | stored turns, Groq key |
+| `make fee-check` | Old number check against the claim check | saved replies |
+| `make loop-mine`, `loop-review`, `loop-promote` | Data loop: queue, labelling (for a person), next eval set | stored turns |
+| `make loop-before`, `loop-holdout`, `loop-report` | Data loop before and after | Groq key (not for the report) |
+| `make ab-analyze` | A/B report and decision | finished runs |
 | `make traffic-report` | Summarise stored production signals | stored turns |
 | `make benchmark-retrieval` | Compare embedders and rerankers | GPU |
 | `make benchmark-llm` | Compare local LLMs, with a hosted reference | Ollama with the three models, Groq key |
@@ -158,23 +182,72 @@ Do not compare 0.950 with 0.778: they use different questions.
 
 **Guardrail rules on 3,080 real customer messages** ([report](reports/guardrails_v1.md)): the injection rules wrongly flagged 0. How many real attacks they catch has not been measured.
 
+### Fee claim check
+
+[Report](reports/fee_check_v1.md). The old check asks whether each amount appears in a cited article. The new one also reads the words around it: fee, minimum or limit, product, period, card type.
+
+| Test | Wrong claims caught, old → new | Correct ones wrongly blocked, old → new |
+|---|---|---|
+| 42 frozen claims (written by the same author as the check) | 3/21 → 17/21 [0.60, 0.92] | 0/21 → 1/21 |
+| Saved eval v1 replies, `gpt-oss-20b` (26 replies) | 0/1 → 0/1 | 0/25 → 1/25 |
+| Fresh `phi4-mini` replies (34) | 0/4 → 1/4 | 1/30 → 3/30 |
+
+**The gain on test claims mostly did not carry over to real replies. Fee accuracy is not solved.** Of the 42 frozen claims, 32 were labelled by Claude Code and not human-reviewed; the owner marked the other 10, 7 of them after seeing the label and reason. Reply labels are Claude Code's. Keeping the check on was Claude Code's decision.
+
+### Data loop, cycle 1
+
+[Report](reports/data_loop_cycle_1.md). 200 stored turns gave 49 queue items; 29 were labelled as real failures; 8 new articles fill 9 of 10 planted gaps. **All labels, articles and reference answers are Claude Code's, not human-reviewed.**
+
+| Tasks | Measure | Before → after new articles |
+|---|---|---|
+| Never mined, filled topics (54) | answered and judged faithful | 5/54 → 43/54 (+0.704 [+0.574, +0.815]) |
+| Never mined, other topics (30) | answered and judged faithful | 25/30 → 26/30 |
+| Mined failures (29) | pass | 9/29 → 17/29 (expected: the articles were written for them) |
+| Other eval v1 tasks (133) | pass | 89/133 → 85/133 (**4 lost**, none gained) |
+| All of eval v2 (179) | pass | 98/179 → 117/179 |
+
+The never-mined topics were chosen by their intent label, and "faithful" does not mean the answer solved the problem. Only 7 of the 10 planted gaps were flagged by mining, and the labeller had read the gap list.
+
+### A/B test: prompt v1 against prompt v2
+
+[Report](reports/ab_prompt_v2.md). Prompt v2 hands off instead of refusing money questions and has stricter fee rules. The [experiment file](experiments/prompt_v2.yaml) was committed before any v2 result. Decisions are Claude Code's, not human-reviewed.
+
+<!-- AB-START -->
+**Offline arm not finished (Groq quota); no overall decision yet.**
+
+Online: 600 simulated one-message users on local `phi4-mini`.
+
+| Metric | v1 (285) | v2 (315) |
+|---|---|---|
+| Behaviour accuracy (primary) | 0.642 [0.585, 0.696] | 0.460 [0.406, 0.516] |
+| Escalation rate | 0.358 | 0.552 |
+| Mean tokens per message | 656 | 819 |
+<!-- AB-END -->
+
 ## Known limitations
 
-- **AI-drafted data.** The articles, many questions, all labels and all reference answers were written by AI and are marked `ai_drafted`. No row has been human-reviewed yet.
-- **The judge is not validated.** Faithfulness and correctness come from one language model. One person, the project owner, checked 30 verdicts: agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06. Comparisons with another AI (ChatGPT) gave kappa -0.01 and 0.47 on other tasks.
-- **Wrong claims can get through**, as shown above. Code checks cannot tell that a real number is attached to the wrong thing.
-- **Monitoring** is for one process: metric counters reset on restart, there is no database migration tool, retention policy or alerting, and no Prometheus server yet (Phase 3).
-- **Retrieval misses** happen, including on two-part questions. See the miss list in the retrieval report and sample 3 in [sample conversations](reports/sample_conversations.md).
-- **Refuse versus hand-off:** the model sometimes refuses a banking question that should go to a human (sample 10: savings interest; 4 of 30 unanswerable eval tasks). The score threshold does not catch this, because it does not override a refusal.
-- **Near-miss topics:** questions close to an existing article often get an answer instead of a hand-off. The score threshold mostly misses these.
-- **Local model is a safety override.** The pre-set rule picked `llama3.2:3b`. The app uses `phi4-mini` instead, chosen after seeing the results: in the benchmark it never answered when it should have handed off or refused (`llama3.2:3b` did 3 times), but it handed off more answerable questions.
-- **The override does not fix wrong fees.** On [two wrong-fee cases](reports/local_model_fee_cases.md), `phi4-mini` still gave a wrong card fee on one ([details](DESIGN.md)).
-- **Confidence** is the reranker's top score. It is not a probability, and correct answers can score low.
-- **Number check** cannot catch numbers written as words, or a real number used for the wrong thing. Nothing checks non-numeric claims yet.
+- **The judge is not validated.** Faithfulness and correctness come from one language model. One person, the project owner, checked 30 verdicts: agreement 20/30 (67%), 69% expected by chance, Cohen's kappa -0.06. Comparisons with another AI (ChatGPT) gave kappa -0.01 and 0.47 on other tasks. Every "pass rate" here depends on it.
+- **AI-drafted data.** Articles, many questions, labels and reference answers were written by AI. Labels in the eval and retrieval sets say per row whether anyone reviewed them; almost none were.
+- **Phase 3 labels and decisions are Claude Code's**, not reviewed by a human. The same author wrote the data loop labels, the new articles and their reference answers, so those results are partly circular.
+- **Fee accuracy is not solved.** The claim check misses missing conditions, wrong scope and claims that name the product in words it does not know, and it blocks some correct replies.
+- **Everything online is simulated.** Real Banking77 messages, invented users, no reactions. The A/B online label comes from the message's intent and does not check whether an answer is right.
+- **Local model is a safety override.** The pre-set rule picked `llama3.2:3b`. The app uses `phi4-mini` for local runs, chosen after seeing the results. On [two wrong-fee cases](reports/local_model_fee_cases.md) it still gave a wrong fee on one.
+- **Knowing when it cannot answer is weak.** It sometimes answers near-miss topics, and sometimes refuses a banking question that should go to a human.
+- **Retrieval** is not measurably better than dense search alone, and misses happen, including on two-part questions.
+- **Small samples.** About 150 to 180 eval tasks can only detect large differences, and the real-reply fee test had 5 wrong replies in total.
+- **Invented company.** The 68 articles are made-up policy. One planted gap (`automatic_top_up`) is still open.
 - **PII:** names and addresses are not detected. A mistyped card number that fails the Luhn check is not treated as a card.
-- **Injection rules** are simple patterns and can be rephrased around.
-- **No authentication** on the API. Conversation memory is in-process and lost on restart. One retrieval runs at a time.
-- **Small knowledge base** of 60 articles, with 10 topics deliberately missing ([COVERAGE.md](data/kb/COVERAGE.md)).
+- **Injection rules** are simple patterns and can be rephrased around. 0 false positives on [3,080 real messages](reports/guardrails_v1.md) says nothing about how many attacks they catch.
+- **Not production ready:** no authentication, one process, conversation memory lost on restart, metric counters reset on restart, no database migrations, retention rule or alerts. One retrieval runs at a time.
+
+## Next steps
+
+1. **Validate the judge:** two people who have not seen its output label unused tasks; measure their agreement with each other first. Check the 10 round 3 disagreements (not done).
+2. **Human review** of the Phase 3 labels, the 8 new articles and the AI-drafted eval labels.
+3. **Fee accuracy:** try checking each claim against its source sentence with a second model, and measure on new replies written by someone else.
+4. **Next prompt experiment:** change one thing at a time, in a new version with a new experiment file and fresh messages.
+5. Fix the failures new articles did not target (model errors, needless hand-offs), then run data loop cycle 2.
+6. Push and confirm CI passes on GitHub. Optional: intent routing (skipped in Phase 3).
 
 ## Data credit
 

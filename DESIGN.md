@@ -296,7 +296,7 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 | PII rules miss things | Rules cover cards, IBANs, emails and phones. **Not names or addresses.** |
 | Injection rules are easy to get around | Also: no tools or secrets for the LLM to misuse, plus output checks. A model-based detector is a possible later comparison. |
 | Rules or judge fail on text inside KB or user input | Treat both as data in the prompt; include injection tasks in the eval set. |
-| Docker image with GPU libraries is very large | Decide in Phase 3; likely a CPU-only image. |
+| Docker image with GPU libraries is very large | Done in Phase 3: CPU-only PyTorch image (2.11 GB when built locally). |
 | No authentication on the API | Local demo only. Stated as a limitation. |
 
 ## 12. Phases
@@ -304,3 +304,16 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 1. **Chatbot:** repo setup, KB, retrieval with model comparison, chat API with guardrails.
 2. **Measure:** storage, feedback, metrics, traffic simulator, eval set v1, graders, judge review tool (one human round done; the judge is not validated).
 3. **Improve and ship:** data loop, A/B test, optional intent routing, Docker, CI, README.
+
+### 12.1 Phase 3: what was built
+
+**The decisions in this subsection were made by Claude Code and not reviewed by a human**, except that the project owner approved the freeze of the fee test set.
+
+| Part | Status | Decision and reason |
+|---|---|---|
+| Fee claim check | Built, on | Rules over a facts file; a block becomes a hand-off. Kept on although the gain on real replies was small and it wrongly blocks more ([report](reports/fee_check_v1.md)). Rejected: a second model call per reply (latency, quota). |
+| Data loop | One cycle done | Mining reads only the database. Planted gaps are scored afterwards. New articles contain no money amounts, so no new fee facts are invented ([report](reports/data_loop_cycle_1.md)). |
+| Eval set v2 | Frozen after cycle 1 | A new file; v1 is unchanged. |
+| A/B, prompt v1 against v2 | See [report](reports/ab_prompt_v2.md) | Rule and sample size in `experiments/prompt_v2.yaml` before any v2 result. Compared with section 10, the file also requires that a ship decision does not rest on the judge-based metric alone. |
+| Intent routing | **Not built** | Optional; skipped. |
+| Docker, compose, CI | Built | Compose checked locally with Groq; Ollama profile not tested in Docker. CI not yet run on GitHub. |
