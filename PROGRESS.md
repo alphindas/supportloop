@@ -62,7 +62,9 @@ reviewed". Keep Groq caching on and long runs resumable.
 **Checkpoint 1, waiting:** 42 claims drafted. Alphin marks only 10 hard ones (picked by
 Claude Code: fee-01, 05, 06, 07, 09, 18, 20, 22, 35, 36). The other 32 are "labelled by Claude
 Code, not human-reviewed". `reports/fee_check_v1.md` must report the two groups separately and
-say that the 10 were not a random sample. Not frozen; freeze only after Alphin approves.
+say that the 10 were not a random sample. First marks matched Claude Code's labels on 3,
+differed on 3, and 4 were unsure. After seeing the labels and reasons, Alphin's final marks on
+those 7 matched them (not independent). **Not frozen:** waiting for the words "approve freeze".
 
 ## Still open for Alphin
 - Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.

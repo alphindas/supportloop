@@ -1,0 +1,6 @@
+# The project owner's final marks on the 7 claims where the first mark differed from
+# Claude Code's label or was "unsure". Given AFTER seeing Claude Code's labels and reasons,
+# so they are not independent of them. First marks: fee_claims_v1.first_marks.yaml.
+marked_on: "2026-11-27"
+marks: {fee-01: wrong, fee-05: wrong, fee-18: wrong, fee-09: correct, fee-20: wrong,
+        fee-35: correct, fee-36: wrong}

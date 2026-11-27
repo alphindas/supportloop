@@ -7,7 +7,7 @@ cases:
   claim: A credit card issued outside the UK and EEA is charged 1.5% to top up.
   expected: wrong
   reason: Both rules apply; the higher fee, 2.0%, is charged.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-02
   article_id: topup-fees
   claim: NovaPay does not charge for SEPA bank transfer top-ups.
@@ -31,19 +31,19 @@ cases:
   claim: A credit card issued outside the UK and EEA is charged both the 1.5% credit card fee and the 2.0% fee.
   expected: wrong
   reason: Only the higher fee is charged.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-06
   article_id: topup-fees
   claim: Topping up with an EEA debit card costs 1.5% of the amount.
   expected: wrong
   reason: EEA debit is free; 1.5% is the credit card fee.
-  review_status: awaiting human mark
+  review_status: human-marked without seeing Claude Code's label
 - id: fee-07
   article_id: topup-fees
   claim: A debit card issued outside the UK and EEA has a 2.0% top-up fee.
   expected: correct
   reason: The outside UK and EEA rule applies.
-  review_status: awaiting human mark
+  review_status: human-marked without seeing Claude Code's label
 - id: fee-08
   article_id: topup-fees
   claim: Cash deposits have a fee of 2.0%.
@@ -55,7 +55,7 @@ cases:
   claim: For a credit card issued outside the UK and EEA, the top-up fee is 2.0%, because only the higher fee is charged.
   expected: correct
   reason: Matches the combined rule.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-10
   article_id: topup-fees
   claim: Cash deposits have a 1.5% fee.
@@ -109,7 +109,7 @@ cases:
   claim: There is a minimum fee of £10 for topping up by card.
   expected: wrong
   reason: £10 is the minimum top-up amount, not a fee.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-19
   article_id: topup-limits
   claim: The card top-up limit is £30,000 per day.
@@ -121,7 +121,7 @@ cases:
   claim: Adding cash costs a fee of £5.
   expected: wrong
   reason: £5 is the minimum deposit; the fee is 1.5%.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-21
   article_id: cash-withdrawals
   claim: The 2% fee starts only after you have passed both the £200 limit and the 5-withdrawal limit.
@@ -133,7 +133,7 @@ cases:
   claim: After 5 withdrawals in a month, the NovaPay fee applies to further ones, even if you have taken out less than £200.
   expected: correct
   reason: Either limit is enough.
-  review_status: awaiting human mark
+  review_status: human-marked without seeing Claude Code's label
 - id: fee-23
   article_id: cash-withdrawals
   claim: Each calendar month you can withdraw up to £200, in up to 5 withdrawals, with no NovaPay fee.
@@ -211,13 +211,13 @@ cases:
   claim: At the weekend, if you are above your monthly allowance, you pay both the 0.5% fee and the 1% weekend markup.
   expected: correct
   reason: Both charges apply.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-36
   article_id: exchange-fees
   claim: At the weekend, if you are above your monthly allowance, only the higher charge, the 1% markup, applies.
   expected: wrong
   reason: Both apply; 'higher fee only' is a top-up card rule.
-  review_status: awaiting human mark
+  review_status: human-marked after seeing Claude Code's label and reason
 - id: fee-37
   article_id: contactless-payments
   claim: A single contactless payment can be up to £300.
