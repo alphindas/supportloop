@@ -1,0 +1,5 @@
+# The project owner's first marks on the 10 hard claims, as sent, before seeing Claude Code's
+# labels or reasons. Do not edit. Later decisions are recorded separately.
+marked_on: "2026-11-27"
+marks: {fee-01: correct, fee-05: correct, fee-06: wrong, fee-07: correct, fee-09: unsure,
+        fee-18: correct, fee-20: unsure, fee-22: correct, fee-35: unsure, fee-36: unsure}
