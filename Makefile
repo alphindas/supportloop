@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases
+.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases fee-check
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -45,6 +45,9 @@ eval: eval-answers    ## the full answer evaluation
 
 samples:              ## send 10 sample conversations to the running API (make run first)
 	uv run python -m scripts.sample_conversations
+
+fee-check:            ## old number check against the claim check (no LLM calls)
+	uv run python -m evals.fee_check
 
 guardrail-check:      ## false-positive check of guardrail rules on real messages
 	uv run python -m evals.guardrail_check
