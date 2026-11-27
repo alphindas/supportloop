@@ -1,4 +1,4 @@
-.PHONY: loop-mine loop-review loop-promote loop-before ab-analyze setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases fee-check
+.PHONY: loop-holdout loop-report loop-mine loop-review loop-promote loop-before ab-analyze setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases fee-check
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -75,6 +75,13 @@ loop-review:          ## data loop: label the queue (for a person)
 
 loop-promote:         ## data loop: build the next eval set from the labels
 	uv run python -m loop.promote
+
+loop-holdout:         ## never-mined messages, before and after cycle 1 (uses Groq quota)
+	uv run python -m loop.holdout --kb before
+	uv run python -m loop.holdout --kb after
+
+loop-report:          ## data loop report (no LLM calls)
+	uv run python -m loop.report
 
 KB_BEFORE = SUPPORTLOOP_KB_DIR=data/cache/kb_before SUPPORTLOOP_INDEX_DIR=data/cache/index_before
 

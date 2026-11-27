@@ -1,0 +1,35 @@
+{
+  "planted": 10,
+  "planted_in_mined_traffic": [
+    "age_limit",
+    "apple_pay_or_google_pay",
+    "atm_support",
+    "automatic_top_up",
+    "card_swallowed",
+    "disposable_card_limits",
+    "edit_personal_details",
+    "get_disposable_virtual_card",
+    "lost_or_stolen_phone",
+    "terminate_account"
+  ],
+  "planted_in_queue": [
+    "age_limit",
+    "apple_pay_or_google_pay",
+    "atm_support",
+    "card_swallowed",
+    "edit_personal_details",
+    "lost_or_stolen_phone",
+    "terminate_account"
+  ],
+  "planted_labelled_new_article": [
+    "age_limit",
+    "apple_pay_or_google_pay",
+    "atm_support",
+    "card_swallowed",
+    "edit_personal_details",
+    "lost_or_stolen_phone",
+    "terminate_account"
+  ],
+  "new_article_items": 11,
+  "new_article_items_not_planted": 1
+}

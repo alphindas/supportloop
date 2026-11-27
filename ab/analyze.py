@@ -255,7 +255,7 @@ def offline_section(
             lines.append(
                 f"| {name} | {len(chosen)} | {sum(va) / len(va):.3f} | {sum(vb) / len(vb):.3f} "
                 f"| {difference:+.3f} [{low:+.3f}, {high:+.3f}] | {only_a} | {only_b} "
-                f"| {p_value:.3f} |"
+                f"| {p_value:.4f} |"
             )
             if label == "All":
                 results[metric] = (difference, p_value)

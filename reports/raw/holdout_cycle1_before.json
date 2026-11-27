@@ -1,0 +1,858 @@
+[
+ {
+  "id": "b77-test-1131",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1133",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "receiving-money"
+  ],
+  "answer": "To change your account details, open the **Account** section in the app, then tap **Account details**. From there you can view and update the information you share with senders, such as sort code, account number, or IBAN.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1136",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1139",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "receiving-money"
+  ],
+  "answer": "To change your account details, open the **Account** section, tap **Account details**, and update the information you wish to modify. If you need to share new details for receiving money, you can view the updated sort code, account number, or IBAN there.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1144",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1154",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1371",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1372",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1375",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1377",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1387",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "You can have up to 3 active virtual cards at a time.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1389",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "A disposable virtual card can be used for online payments, but it cannot be inserted into or tapped on a card reader. It must not be frozen, online payments must be enabled, and you need sufficient balance. If it doesn’t work, check those settings and contact support if it still fails.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1446",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-acceptance"
+  ],
+  "answer": "Your card works at any ATM that accepts Visa or Mastercard, which includes most ATMs in the UK and abroad.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1451",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-acceptance"
+  ],
+  "answer": "You can use your card at any ATM that accepts Visa or Mastercard debit cards. This includes most ATMs in the UK and abroad that support those networks.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1457",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [
+   "card-acceptance"
+  ],
+  "answer": "Your card can be used at any ATM that accepts Visa or Mastercard, which is most ATMs in the UK and abroad. If you encounter any issues, our support team can help you find a suitable ATM or troubleshoot further.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1458",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-acceptance"
+  ],
+  "answer": "You can use your NovaPay card at any ATM that accepts Visa or Mastercard.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-1462",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1464",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1647",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": true,
+  "cited": [
+   "lost-or-stolen-card"
+  ],
+  "answer": "If you think your phone is lost or stolen, you should report your card as lost or stolen. Open the NovaPay app, go to **Cards**, select **Report lost or stolen**. This will block the card permanently so it can’t be used again.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1660",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1671",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": true,
+  "cited": [
+   "compromised-card"
+  ],
+  "answer": "If your phone has been stolen, immediately freeze your card in the Cards section, then choose Report lost or stolen to block it permanently. After that, contact support so an agent can review recent activity and help you further.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1672",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": true,
+  "cited": [
+   "lost-or-stolen-card",
+   "compromised-card"
+  ],
+  "answer": "If you think your card has been stolen, immediately freeze it in the Cards section, then choose Report lost or stolen to block it permanently. After that, contact support so an agent can review recent activity and help further.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1673",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "compromised-card",
+   "passcode-reset"
+  ],
+  "answer": "First, freeze your card in the Cards section of the app. Then choose Report lost or stolen to block it permanently. Finally, reset your app passcode by selecting Forgot passcode on the sign‑in screen and following the steps to set a new one.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1678",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1887",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1888",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1899",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1902",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1908",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1913",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1923",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1925",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [
+   "lost-or-stolen-card"
+  ],
+  "answer": "If your card was taken by an ATM, first freeze it in the app to stop any further use. Then contact NovaPay support for help retrieving it or getting a replacement.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1930",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1933",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1941",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1952",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2605",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2613",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "A disposable virtual card is as secure as any other NovaPay card. It can be used for online payments and is automatically deleted after each transaction, so it cannot be reused or accessed again. This helps protect your account from fraud. For more details, see the virtual card help article.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-2620",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "To create a virtual card, open the Cards section, tap Add card, then select Virtual card. It’s free and ready immediately after identity verification. If you need a disposable virtual card, please contact support for further assistance.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2623",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "To get a disposable virtual card, open the Cards section in the app, tap Add card, and select Virtual card. The card is free and ready immediately after you have passed identity verification. You can use the card number, expiry date and security code shown in the app to pay online. You can have up to three active virtual cards at a time.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2632",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "You can create a virtual card in the app by opening **Cards**, selecting **Add card**, then choosing **Virtual card**. This will give you a virtual card you can use for online payments. If you need a disposable virtual card, please contact support for further assistance.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2639",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "To get a disposable virtual card, open the Cards section in the app, tap Add card, and select Virtual card. The card is free and ready immediately after you have passed identity verification.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2960",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2971",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2980",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2982",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2991",
+  "group": "filled",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "topup-failed"
+  ],
+  "answer": "The top‑up is failing because the card type is not supported. American Express cards are not supported for top‑ups via Apple Pay.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-2999",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [
+   "topup-by-card"
+  ],
+  "answer": "You can top up by card using the Add money feature. Open Add money, choose Card, enter the amount and card details, then approve the payment with your card provider’s security check.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-480",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-491",
+  "group": "filled",
+  "behavior": "refuse",
+  "escalate": false,
+  "cited": [],
+  "answer": "Sorry, I can only help with questions about NovaPay cards, payments and your account.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-493",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-507",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-513",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-514",
+  "group": "filled",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-817",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "extra-statement-charge"
+  ],
+  "answer": "NovaPay does not charge a fee for card payments in a currency you hold enough of. If a payment needs a currency conversion, the exchange rules apply. Some merchants add their own surcharge for paying by card, especially outside the UK.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1317",
+  "group": "other",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-289",
+  "group": "other",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-1405",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": true,
+  "cited": [
+   "account-security-tips"
+  ],
+  "answer": "If you think your account has been compromised, you should freeze your card immediately. Open the **Cards** section, select the card and choose **Freeze**. This stops new payments right away. If you need further help, contact support so they can review recent activity.\n\nI'm also flagging this for a member of our support team.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-535",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-pin"
+  ],
+  "answer": "Your PIN is blocked after 3 wrong attempts. Open **Cards**, select the card and choose **Unblock PIN**. Confirm with your app passcode, then check the correct number with **View PIN**.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-136",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "foreign-payment-wrong-rate"
+  ],
+  "answer": "If the rate shown does not match our rules, contact support with the receipt. The exchange rate on a card payment or cash withdrawal looks wrong – a merchant or cash machine may offer to charge you in your home currency, which often uses a worse rate. Decline and choose the local currency. Check the transaction details for currency, rate and fees, compare with the rate at that time, and remember the weekend markup. If it still looks wrong, contact support with the receipt.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2407",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "order-physical-card",
+   "spare-card"
+  ],
+  "answer": "Yes, you can have a second physical card. You can hold up to two physical cards on one account. A spare card costs £5 and can be ordered through the app.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2213",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "extra-statement-charge"
+  ],
+  "answer": "The fees you’re seeing are likely due to currency conversion or merchant surcharges. NovaPay doesn’t charge for card payments in a currency you hold enough of, but if a payment requires conversion, exchange rules apply. Some merchants, especially outside the UK, may add their own surcharge for card payments.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1784",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "refund-not-showing"
+  ],
+  "answer": "Refunds usually take 5 to 10 working days to appear. If it’s been longer, check your transaction list for a separate incoming entry. If you still don’t see it after 10 working days, ask the merchant for proof of the refund, including the date, amount and reference.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-399",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-not-working"
+  ],
+  "answer": "Yes, if you have deactivated your card it will not work. Make sure the card is activated, not frozen or reported lost, and that it hasn’t expired. If you need to reactivate it, follow the steps in the app or contact support if activation fails.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-86",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "exchange-rates"
+  ],
+  "answer": "Our exchange rates change throughout the day. You can view the current rate by opening the Exchange section and selecting the two currencies you want to compare before confirming the transaction.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-876",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-payment-pending"
+  ],
+  "answer": "A card payment shows as pending. Most pending payments complete or are released within 7 days. Hotels and car hire firms can take up to 30 days.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2141",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-pin"
+  ],
+  "answer": "Open the NovaPay app, go to **Cards**, select your physical card, tap **PIN** and then **Change PIN**. Enter a new 4‑digit PIN twice. The new PIN will be active for your next chip‑and‑PIN payment – just insert the card for that transaction so the chip updates.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-1730",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "declined-card-payment"
+  ],
+  "answer": "It looks like your card was declined because of one of the common reasons listed in the help article. Check the app for the specific reason shown and try again. If the same payment is declined again or no reason is shown, please contact support for further assistance.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-281",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-delivery-times"
+  ],
+  "answer": "If your card hasn’t arrived by the latest estimated date, open the card in the app and choose **Report not delivered**. We’ll cancel the missing card and send a new one at no cost. A support agent will check the order before the replacement is sent.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-255",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "exchange-currency"
+  ],
+  "answer": "Open the **Exchange** section in the app, select the currency you currently have and choose EUR as the currency you want to receive. Enter the amount, review the rate and fee, then confirm the exchange.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2211",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "transfer-fees"
+  ],
+  "answer": "NovaPay charges a fee of £3 for each international (SWIFT) transfer. The fee is shown before you confirm the transfer. Transfers to another NovaPay user, UK bank transfers, and SEPA transfers are free.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-419",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "exchange-currency",
+   "supported-cards-currencies"
+  ],
+  "answer": "You can hold and exchange AUD in the app. The supported currencies are GBP, EUR, USD, CHF, PLN, SEK, NOK, DKK, AUD, CAD, JPY and NZD.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-947",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "You can create a virtual card in the app by opening **Cards**, selecting **Add card**, and choosing **Virtual card**. It’s free and ready immediately once you’ve passed identity verification.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2274",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "supported-cards-currencies"
+  ],
+  "answer": "Yes, you can transfer your salary in a different currency. NovaPay will convert the amount from your balance when you pay, and you can top up in any currency you can hold. If your other card uses a different currency, your card provider may convert it and may charge you.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2801",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "topup-fees"
+  ],
+  "answer": "Yes. If you add money with a card issued outside the UK and EEA, NovaPay charges a 2.0% fee of the top‑up amount.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-404",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "exchange-currency"
+  ],
+  "answer": "Yes, the app lets you exchange currencies. You can swap between GBP, EUR, USD, CHF, PLN, SEK, NOK, DKK, AUD, CAD, JPY and NZD using the Exchange feature.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2200",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "transfer-fees"
+  ],
+  "answer": "The fee you saw is the standard charge for an international (SWIFT) transfer, which is £3 per transfer. The fee is shown before you confirm the transfer.",
+  "faithful": false
+ },
+ {
+  "id": "b77-test-2359",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "topup-methods",
+   "topup-by-bank-transfer"
+  ],
+  "answer": "Yes, you can use a bank transfer to add money to your NovaPay account. Open the app, go to **Add money**, select **Bank transfer**, copy the account details shown for the currency you want to send, and then send the money from your other bank using any reference shown in the app.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-3077",
+  "group": "other",
+  "behavior": "escalate",
+  "escalate": true,
+  "cited": [],
+  "answer": "I don't have enough information to answer that reliably, so I'm passing this to a member of our support team.",
+  "faithful": null
+ },
+ {
+  "id": "b77-test-2555",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "virtual-card"
+  ],
+  "answer": "If your virtual disposable card isn’t working, first check that the card isn’t frozen, that online payments are enabled in Security settings, that you have enough balance, and that you copied the current card details correctly. If a new virtual card also fails, contact support with the merchant name and the time of the attempt.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-687",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "card-payment-reversed",
+   "topup-reverted"
+  ],
+  "answer": "If you want to revert a transaction, you can’t do it manually. A card payment is only reversed automatically if the merchant cancels it or doesn’t collect the money in time. A top‑up is reversed automatically if it was cancelled after it first appeared. In either case the money is returned to your balance or to the original source. If you need more help, our support team can look into it for you.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-2463",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "topup-by-cash"
+  ],
+  "answer": "To top up with cash, open the Add money screen, select Cash, find a partner shop on the map, and show your deposit barcode at the till.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-176",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "extra-statement-charge"
+  ],
+  "answer": "The €1 fee could be a temporary card verification charge, a hold by a merchant, a cash withdrawal fee, a currency exchange fee, or a subscription renewal. Open the charge in your transaction list to see its type, date and linked payment for more details.",
+  "faithful": true
+ },
+ {
+  "id": "b77-test-3021",
+  "group": "other",
+  "behavior": "answer",
+  "escalate": false,
+  "cited": [
+   "verify-identity"
+  ],
+  "answer": "You need one of the following valid documents in your own name: a passport, a driving licence, or a national identity card. You also need to record a short selfie video.",
+  "faithful": true
+ }
+]
