@@ -59,6 +59,11 @@ reviewed". Keep Groq caching on and long runs resumable.
 - 3.6 `docs/interview_notes/phase_3.md`, 3-4 resume bullets, final summary with unpushed
   commits, 3 quiz questions.
 
+**Checkpoint 1, waiting:** 42 claims drafted. Alphin marks only 10 hard ones (picked by
+Claude Code: fee-01, 05, 06, 07, 09, 18, 20, 22, 35, 36). The other 32 are "labelled by Claude
+Code, not human-reviewed". `reports/fee_check_v1.md` must report the two groups separately and
+say that the 10 were not a random sample. Not frozen; freeze only after Alphin approves.
+
 ## Still open for Alphin
 - Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.
 - Phase 1 and Phase 2 quiz answers (correct them when sent).

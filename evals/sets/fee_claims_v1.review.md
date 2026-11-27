@@ -2,6 +2,9 @@
 
 Claims drafted by Claude Code, not reviewed. Expected labels are left out on purpose.
 
+**Scope (2026-11-27):** the project owner will mark only these 10 hard cases, picked by Claude
+Code: fee-01, fee-05, fee-06, fee-07, fee-09, fee-18, fee-20, fee-22, fee-35, fee-36. The other 32 are labelled by Claude Code, not human-reviewed.
+
 Mark each claim against the article shown above it:
 - **correct**: everything in the claim is supported by the article.
 - **wrong**: some part contradicts the article or is not in it.

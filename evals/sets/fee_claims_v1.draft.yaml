@@ -1,213 +1,256 @@
-# Draft: drafted by Claude Code, not reviewed. NOT frozen.
-# Holds the expected labels: do not open before marking the review sheet.
+# Claims and labels drafted by Claude Code. NOT frozen.
+# review_status says which cases a person is asked to mark (10 hard ones, picked by Claude Code).
+# Holds the expected labels: do not open before marking those 10.
 cases:
 - id: fee-01
   article_id: topup-fees
   claim: A credit card issued outside the UK and EEA is charged 1.5% to top up.
   expected: wrong
   reason: Both rules apply; the higher fee, 2.0%, is charged.
+  review_status: awaiting human mark
 - id: fee-02
   article_id: topup-fees
   claim: NovaPay does not charge for SEPA bank transfer top-ups.
   expected: correct
   reason: Stated in the Bank transfers section.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-03
   article_id: topup-fees
   claim: Topping up with a debit card issued outside the UK and EEA is free.
   expected: wrong
   reason: Cards issued outside the UK and EEA cost 2.0%.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-04
   article_id: topup-fees
   claim: A credit card issued in the UK has a 1.5% top-up fee.
   expected: correct
   reason: Only the credit card rule applies.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-05
   article_id: topup-fees
   claim: A credit card issued outside the UK and EEA is charged both the 1.5% credit card fee and the 2.0% fee.
   expected: wrong
   reason: Only the higher fee is charged.
+  review_status: awaiting human mark
 - id: fee-06
   article_id: topup-fees
   claim: Topping up with an EEA debit card costs 1.5% of the amount.
   expected: wrong
   reason: EEA debit is free; 1.5% is the credit card fee.
+  review_status: awaiting human mark
 - id: fee-07
   article_id: topup-fees
   claim: A debit card issued outside the UK and EEA has a 2.0% top-up fee.
   expected: correct
   reason: The outside UK and EEA rule applies.
+  review_status: awaiting human mark
 - id: fee-08
   article_id: topup-fees
   claim: Cash deposits have a fee of 2.0%.
   expected: wrong
   reason: Cash is 1.5%; 2.0% is for cards issued outside the UK and EEA.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-09
   article_id: topup-fees
   claim: For a credit card issued outside the UK and EEA, the top-up fee is 2.0%, because only the higher fee is charged.
   expected: correct
   reason: Matches the combined rule.
+  review_status: awaiting human mark
 - id: fee-10
   article_id: topup-fees
   claim: Cash deposits have a 1.5% fee.
   expected: correct
   reason: Stated in the Cash section.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-11
   article_id: topup-fees
   claim: Topping up with a UK debit card is free.
   expected: correct
   reason: Listed as free.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-12
   article_id: topup-limits
   claim: Card top-ups are capped at £30,000 in any 30 days.
   expected: correct
   reason: Maximum in any 30 days.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-13
   article_id: topup-limits
   claim: The most you can add by card in a single top-up is £10,000.
   expected: wrong
   reason: Single maximum is £5,000; £10,000 is per day.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-14
   article_id: topup-limits
   claim: Each cash deposit has to be at least £5 and no more than £500.
   expected: correct
   reason: Stated in the Cash section.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-15
   article_id: topup-limits
   claim: Bank transfer top-ups are limited to £10,000.
   expected: wrong
   reason: No upper limit; over £10,000 may need a funds check.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-16
   article_id: topup-limits
   claim: You can add up to £10,000 by card in one day.
   expected: correct
   reason: Maximum per day.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-17
   article_id: topup-limits
   claim: The smallest card top-up you can make is £10.
   expected: correct
   reason: Minimum per top-up.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-18
   article_id: topup-limits
   claim: There is a minimum fee of £10 for topping up by card.
   expected: wrong
   reason: £10 is the minimum top-up amount, not a fee.
+  review_status: awaiting human mark
 - id: fee-19
   article_id: topup-limits
   claim: The card top-up limit is £30,000 per day.
   expected: wrong
   reason: £30,000 is for any 30 days.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-20
   article_id: topup-by-cash
   claim: Adding cash costs a fee of £5.
   expected: wrong
   reason: £5 is the minimum deposit; the fee is 1.5%.
+  review_status: awaiting human mark
 - id: fee-21
   article_id: cash-withdrawals
   claim: The 2% fee starts only after you have passed both the £200 limit and the 5-withdrawal limit.
   expected: wrong
   reason: Either limit is enough.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-22
   article_id: cash-withdrawals
   claim: After 5 withdrawals in a month, the NovaPay fee applies to further ones, even if you have taken out less than £200.
   expected: correct
   reason: Either limit is enough.
+  review_status: awaiting human mark
 - id: fee-23
   article_id: cash-withdrawals
   claim: Each calendar month you can withdraw up to £200, in up to 5 withdrawals, with no NovaPay fee.
   expected: correct
   reason: Free allowance.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-24
   article_id: cash-withdrawals
   claim: After the free allowance, each cash withdrawal costs a flat £1.
   expected: wrong
   reason: £1 is only the minimum; the fee is 2%.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-25
   article_id: cash-withdrawals
   claim: You can withdraw up to £500 a month with no NovaPay fee.
   expected: wrong
   reason: Free allowance is £200; £500 is the daily limit.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-26
   article_id: cash-withdrawals
   claim: The daily cash withdrawal limit is £200.
   expected: wrong
   reason: £200 is the monthly free allowance.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-27
   article_id: cash-withdrawals
   claim: The daily cash withdrawal limit is £500.
   expected: correct
   reason: Daily limit.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-28
   article_id: cash-withdrawals
   claim: After the free allowance, a cash withdrawal costs 2% of the amount, and at least £1.
   expected: correct
   reason: Fee and minimum fee match.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-29
   article_id: transfer-fees
   claim: Sending money to another NovaPay user is free.
   expected: correct
   reason: Listed as free.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-30
   article_id: transfer-fees
   claim: A SWIFT transfer has a fee of 3% of the amount.
   expected: wrong
   reason: The fee is a flat £3.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-31
   article_id: transfer-fees
   claim: A SEPA transfer costs £3.
   expected: wrong
   reason: SEPA is free; £3 is SWIFT.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-32
   article_id: transfer-fees
   claim: An international (SWIFT) transfer costs £3.
   expected: correct
   reason: £3 per transfer.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-33
   article_id: exchange-fees
   claim: If you exchange more than £1,000 in a month, the 0.5% fee applies to everything you exchanged that month.
   expected: wrong
   reason: Only amounts above £1,000 have the fee.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-34
   article_id: exchange-fees
   claim: On weekdays you can exchange up to £1,000 per calendar month with no NovaPay exchange fee.
   expected: correct
   reason: Weekday allowance.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-35
   article_id: exchange-fees
   claim: At the weekend, if you are above your monthly allowance, you pay both the 0.5% fee and the 1% weekend markup.
   expected: correct
   reason: Both charges apply.
+  review_status: awaiting human mark
 - id: fee-36
   article_id: exchange-fees
   claim: At the weekend, if you are above your monthly allowance, only the higher charge, the 1% markup, applies.
   expected: wrong
   reason: Both apply; 'higher fee only' is a top-up card rule.
+  review_status: awaiting human mark
 - id: fee-37
   article_id: contactless-payments
   claim: A single contactless payment can be up to £300.
   expected: wrong
   reason: £300 is the running total before a PIN is asked.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-38
   article_id: contactless-payments
   claim: A single contactless payment can be up to £100.
   expected: correct
   reason: Single payment limit.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-39
   article_id: order-physical-card
   claim: Your first physical card is free with standard delivery, and express delivery costs £12.
   expected: correct
   reason: Cost section.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-40
   article_id: order-physical-card
   claim: Your first physical card costs £5.
   expected: wrong
   reason: The first card is free.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-41
   article_id: spare-card
   claim: A spare card costs £12.
   expected: wrong
   reason: Spare card is £5; £12 is express delivery.
+  review_status: labelled by Claude Code, not human-reviewed
 - id: fee-42
   article_id: lost-or-stolen-card
   claim: A replacement for a lost or stolen card costs £5 with standard delivery.
   expected: correct
   reason: Replacement section.
+  review_status: labelled by Claude Code, not human-reviewed
