@@ -1,0 +1,43 @@
+# `docker compose up` starts the API and Prometheus. For a local model:
+#   SUPPORTLOOP_LLM_PROVIDER=ollama docker compose --profile ollama up
+#   docker compose exec ollama ollama pull phi4-mini
+services:
+  api:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]   # local only: the API has no authentication
+    env_file:
+      - path: .env                     # GROQ_API_KEY; optional, never copied into the image
+        required: false
+    environment:
+      SUPPORTLOOP_LLM_PROVIDER: ${SUPPORTLOOP_LLM_PROVIDER:-groq}
+      SUPPORTLOOP_OLLAMA_BASE_URL: http://ollama:11434
+      SUPPORTLOOP_DATABASE_PATH: data/runtime/supportloop.db
+    volumes:
+      - models:/models
+      - appdata:/app/data/runtime
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 900s
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports: ["127.0.0.1:9090:9090"]
+    volumes:
+      - ./docker/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      api:
+        condition: service_healthy
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: [ollama]
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  models:
+  appdata:
+  ollama:

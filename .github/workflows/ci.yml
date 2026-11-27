@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      # No API keys, no GPU and no model downloads: tests use a fake LLM, embedder and
+      # reranker. This checks wiring, not answer quality.
+      - name: Install locked dependencies (CPU PyTorch)
+        run: |
+          uv venv .venv
+          scripts/install_cpu.sh .venv/bin/python --dev
+      - name: Lint
+        run: .venv/bin/ruff check . && .venv/bin/ruff format --check .
+      - name: Tests
+        run: .venv/bin/pytest
+      - name: Eval smoke test (7 tasks, fake models)
+        run: .venv/bin/pytest tests/test_run_eval.py -v

@@ -1,0 +1,14 @@
+# Only what the Dockerfile copies is sent. Secrets and local data never enter the image.
+*
+!pyproject.toml
+!uv.lock
+!app
+!ab
+!evals
+!scripts
+!config
+!experiments
+!data/kb
+**/__pycache__
+**/*.pyc
+**/.env*
