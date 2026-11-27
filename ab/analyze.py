@@ -198,7 +198,7 @@ def online_section(experiment: dict, rows: list[dict], boot: dict) -> tuple[list
     lines += [
         "",
         f"- Behaviour accuracy, v2 minus v1: {difference:+.3f} [{low:+.3f}, {high:+.3f}], "
-        f"two-proportion p = {p_value:.3f}.",
+        f"two-proportion p {'< 0.001' if p_value < 0.001 else f'= {p_value:.3f}'}.",
         f"- Guardrails broken: {', '.join(breaches) or 'none'}.",
     ]
     if not ratio_ok:

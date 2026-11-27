@@ -22,3 +22,21 @@ both arms together (600 replies: 323 answered, 273 handed off, 4 refused).
 - **Prompt v2 was written knowing the main weakness** found in earlier runs (refusing where
   a hand-off was needed, and wrong fee claims). Eval set v2 contains the eval v1 tasks, so
   its offline result is not a test on unseen weaknesses.
+
+## Added after seeing the online result (exploratory, not pre-registered)
+
+Written by Claude Code, **not reviewed by a human**. These counts come from the stored turns
+in the local database, which is not in git.
+
+- The extra hand-offs in the treatment arm were mostly the model's own choice: reason
+  `model_chose_escalate` on 171 of 315 treatment replies and 86 of 285 control replies. A
+  reply can have more than one reason.
+- Code checks blocked few replies in either arm. Number check: 6 control, 1 treatment. Claim
+  check: 1 control, 0 treatment. These checks only see replies the model chose to send.
+- Mean tokens rose mainly on the input side (about 559 to 718), as expected from a longer
+  prompt. Output stayed near 100.
+- A likely cause is the new line "If you are unsure between escalate and refuse, choose
+  escalate", with `phi4-mini` applying it to answers as well. **This has not been tested.**
+  Prompt v2 changed two things at once, so this experiment cannot say which one did it.
+- Do not edit prompt v2 and rerun on the same traffic to get a better number. A new prompt
+  needs a new version, a new experiment file and fresh messages.
