@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from app.chat.history import ConversationStore, Turn
 from app.config import Settings
+from app.guardrails.claims import Fact
 from app.guardrails.output import BotAnswer, bot_answer_schema, check_answer, parse_bot_answer
 from app.guardrails.pii import redact
 from app.guardrails.rules import RuleSet
@@ -126,7 +127,9 @@ class ChatService:
         escalation_rules: RuleSet,
         titles: dict[str, str],
         tracer: otel.Tracer | None = None,
+        money_facts: dict[str, list[Fact]] | None = None,
     ) -> None:
+        self.money_facts = money_facts  # None switches the claim check off
         self.tracer = tracer or otel.NoOpTracer()
         self.settings = settings
         self.retriever = retriever
@@ -319,7 +322,9 @@ class ChatService:
         rule_reasons = [f"rule:{name}" for name in rule_hits]
         reply: BotAnswer | None = parse_bot_answer(response.text)
         problems = (
-            ["invalid_json"] if reply is None else check_answer(reply, article_texts, question)
+            ["invalid_json"]
+            if reply is None
+            else check_answer(reply, article_texts, question, self.money_facts)
         )
         if reply is None or problems:
             events += [f"output_check:{p}" for p in problems]

@@ -4,6 +4,8 @@ import re
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from app.guardrails.claims import Fact, claim_problems
+
 NUMBER = re.compile(r"\d+(?:[.,:]\d+)*")
 LIST_MARKER = re.compile(r"^\s*\d+[.)]\s+", re.MULTILINE)
 CURRENCY_SIGNS = {"£", "$", "€"}
@@ -78,7 +80,10 @@ def ungrounded_numbers(answer: str, articles: list[str], customer_message: str =
 
 
 def check_answer(
-    reply: BotAnswer, article_texts: dict[str, str], customer_message: str
+    reply: BotAnswer,
+    article_texts: dict[str, str],
+    customer_message: str,
+    facts: dict[str, list[Fact]] | None = None,
 ) -> list[str]:
     """Return the names of failed checks. An empty list means the reply passed.
 
@@ -97,4 +102,7 @@ def check_answer(
     cited = [article_texts[a] for a in reply.cited_article_ids if a in article_texts]
     if ungrounded_numbers(reply.answer, cited, customer_message):
         problems.append("ungrounded_number")
+    cited_ids = [a for a in reply.cited_article_ids if a in article_texts]
+    if facts and claim_problems(reply.answer, cited_ids, facts):
+        problems.append("fee_claim_mismatch")
     return problems

@@ -70,6 +70,8 @@ class Settings(BaseSettings):
     history_turns: int = Field(ge=0)
     max_conversations: int = Field(gt=0)
     guardrails_path: Path
+    fee_check_enabled: bool
+    money_facts_path: Path
 
     database_path: Path
     variant_name: str = Field(pattern=r"^[A-Za-z0-9_.-]{1,40}$")

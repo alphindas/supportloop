@@ -51,6 +51,8 @@ max_message_chars: 2000
 history_turns: 3
 max_conversations: 1000                  # conversations kept in memory
 guardrails_path: config/guardrails.yaml
+fee_check_enabled: true                  # claim check on money amounts (reports/fee_check_v1.md)
+money_facts_path: config/money_facts.yaml
 
 # --- Storage and observability ---------------------------------------------------
 database_path: data/supportloop.db       # ignored by git

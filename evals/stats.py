@@ -75,3 +75,14 @@ def cohens_kappa(first: Sequence[bool], second: Sequence[bool]) -> float | None:
     if by_chance == 1:
         return None
     return (observed - by_chance) / (1 - by_chance)
+
+
+def wilson_interval(successes: int, total: int, z: float = 1.959964) -> tuple[float, float]:
+    """95% interval for a share. Unlike the bootstrap, it keeps a width at 0 and 1."""
+    if total <= 0 or not 0 <= successes <= total:
+        raise ValueError("Need 0 <= successes <= total, with total above 0")
+    share = successes / total
+    spread = z**2 / total
+    centre = (share + spread / 2) / (1 + spread)
+    half = z * ((share * (1 - share) + spread / 4) / total) ** 0.5 / (1 + spread)
+    return max(0.0, centre - half), min(1.0, centre + half)

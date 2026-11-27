@@ -7,6 +7,7 @@ from opentelemetry import trace as otel
 
 from app.chat.pipeline import ChatService
 from app.config import Settings
+from app.guardrails.claims import load_facts
 from app.guardrails.rules import load_guardrails
 from app.llm.base import LLMProvider
 from app.llm.factory import build_provider
@@ -63,4 +64,7 @@ def build_chat_service(
         escalation,
         titles,
         tracer,
+        load_facts(settings.resolve(settings.money_facts_path))
+        if settings.fee_check_enabled
+        else None,
     )

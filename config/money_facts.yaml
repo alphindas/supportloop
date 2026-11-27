@@ -1,0 +1,53 @@
+# What each money amount in the help articles is. Used by the claim check
+# (app/guardrails/claims.py). Drafted by Claude Code from the articles, not reviewed by a
+# human. A test fails if an article has an amount with no fact here, or the reverse.
+#
+# role: fee | min | max | min_fee | allowance | threshold
+# topics: what the amount is about. period: single | day | month | 30days
+# card: the card rule a top-up percentage belongs to.
+topup-fees:
+  - {value: "1.5%", role: fee, topics: [card_topup], card: credit}
+  - {value: "2.0%", role: fee, topics: [card_topup], card: outside_uk_eea}
+  - {value: "1.5%", role: fee, topics: [cash]}
+topup-limits:
+  - {value: "£10", role: min, topics: [card_topup], period: single}
+  - {value: "£5,000", role: max, topics: [card_topup], period: single}
+  - {value: "£10,000", role: max, topics: [card_topup], period: day}
+  - {value: "£30,000", role: max, topics: [card_topup], period: 30days}
+  - {value: "£10,000", role: threshold, topics: [bank_transfer, source_check]}
+  - {value: "£5", role: min, topics: [cash], period: single}
+  - {value: "£500", role: max, topics: [cash], period: single}
+topup-by-cash:
+  - {value: "£5", role: min, topics: [cash], period: single}
+  - {value: "£500", role: max, topics: [cash], period: single}
+  - {value: "1.5%", role: fee, topics: [cash]}
+cash-withdrawals:
+  - {value: "£200", role: allowance, topics: [withdrawal], period: month}
+  - {value: "2%", role: fee, topics: [withdrawal]}
+  - {value: "£1", role: min_fee, topics: [withdrawal]}
+  - {value: "£500", role: max, topics: [withdrawal], period: day}
+cash-withdrawal-declined:
+  - {value: "£500", role: max, topics: [withdrawal], period: day}
+transfer-fees:
+  - {value: "£3", role: fee, topics: [swift]}
+exchange-fees:
+  - {value: "£1,000", role: allowance, topics: [exchange], period: month}
+  - {value: "0.5%", role: fee, topics: [exchange]}
+  - {value: "1%", role: fee, topics: [weekend, exchange]}
+exchange-rates:
+  - {value: "1%", role: fee, topics: [weekend, exchange]}
+contactless-payments:
+  - {value: "£100", role: max, topics: [contactless], period: single}
+  - {value: "£300", role: threshold, topics: [contactless]}
+order-physical-card:
+  - {value: "£12", role: fee, topics: [express]}
+spare-card:
+  - {value: "£5", role: fee, topics: [spare]}
+lost-or-stolen-card:
+  - {value: "£5", role: fee, topics: [replacement]}
+card-acceptance:
+  - {value: "£5", role: fee, topics: [replacement, network_change]}
+declined-card-payment:
+  - {value: "£5,000", role: max, topics: [card_payment], period: day}
+source-of-funds:
+  - {value: "£10,000", role: threshold, topics: [bank_transfer, source_check]}
