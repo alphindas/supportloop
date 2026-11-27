@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Generated | 2026-11-27 |
-| Git commit | b5a6665+uncommitted |
+| Git commit | 2c7f015 |
 | Config | config/settings.yaml |
 | Prompt version | v1 |
 | Eval set | evals/sets/fee_claims_v1.yaml, saved eval v1 replies, fresh replies |

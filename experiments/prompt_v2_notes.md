@@ -40,3 +40,18 @@ in the local database, which is not in git.
   Prompt v2 changed two things at once, so this experiment cannot say which one did it.
 - Do not edit prompt v2 and rerun on the same traffic to get a better number. A new prompt
   needs a new version, a new experiment file and fresh messages.
+
+## Added after the offline run finished
+
+Written by Claude Code, **not reviewed by a human**.
+
+- The offline token guardrail was broken only just: 1002.8 / 834.9 = 1.201 against a limit of
+  1.20. The decision does not depend on it: online, the primary metric was significantly
+  worse and two guardrails were broken.
+- Offline, the pass rate difference is too small to tell apart from zero (+0.028, interval
+  -0.028 to +0.084). This does not show that the two prompts are equally good: the set can
+  only detect large differences.
+- Offline with `gpt-oss-20b`, escalation rose less (0.101 to 0.168, inside the limit) than
+  online with `phi4-mini` (0.358 to 0.552). The two arms differ in model and in messages, so
+  the reason for the gap is not established.
+- Both offline runs got the same retrieved text on all 179 tasks.

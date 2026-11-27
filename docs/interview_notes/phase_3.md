@@ -65,8 +65,10 @@ All decisions in this table are Claude Code's, not reviewed by a human.
 **A/B test.** See `reports/ab_prompt_v2.md`.
 
 <!-- AB-WEAK -->
+- **Decision: don't ship** prompt v2. Prompt v1 stays the default.
+- Offline (179 paired tasks, `gpt-oss-20b`): pass rate 0.654 → 0.682, +0.028 [-0.028, +0.084], McNemar p = 0.44: unclear. Tokens ×1.201 against a limit of 1.20.
 - Online (600 users, `phi4-mini`): behaviour accuracy 0.642 → 0.460 with prompt v2; hand-offs 0.358 → 0.552; two guardrails broken.
-- Offline: not finished.
+- The two arms disagree in size: offline hand-offs rose only 0.101 → 0.168. Model and messages both differ, so the reason is not established.
 <!-- /AB-WEAK -->
 - Two changes were made in one prompt, so the test cannot say which caused the drop.
 - The online label is crude: intent-based "answer" or "hand off". It does not check answer quality.
@@ -93,8 +95,8 @@ Less than it looks. The "before" run is scored against new labels that expect an
 **Q5. What does pre-registration protect you from?**
 From picking the metric, the cut-off or the stopping point after seeing results. The experiment file fixes the primary metric, guardrails, sample size and decision rule, and the report records the file's hash. The analysis code gives no result before the sample is complete. It does not protect against a bad metric: the online label here is crude.
 
-**Q6. Prompt v2 was meant to help. What happened online?**
-It did much worse on the online metric: 0.642 → 0.460, a difference of -0.182 [-0.260, -0.103]. Hand-offs rose from 0.358 to 0.552, mostly chosen by the model itself, and tokens rose past the limit. A likely cause is the line telling the model to hand off when unsure, but that is a guess: the prompt changed two things at once. The lesson is to change one thing per experiment.
+**Q6. Prompt v2 was meant to help. What happened?**
+The decision was don't ship. Offline on `gpt-oss-20b` the pass rate change was unclear (+0.028 [-0.028, +0.084]). Online on `phi4-mini` it did much worse: 0.642 → 0.460, a difference of -0.182 [-0.260, -0.103]. Hand-offs rose from 0.358 to 0.552, mostly chosen by the model itself, and tokens rose past the limit. A likely cause is the line telling the model to hand off when unsure, but that is a guess: the prompt changed two things at once. The lessons are to change one thing per experiment and to test on the model that will serve: the offline result alone would not have shown the drop.
 
 **Q7. Why one message per user?**
 Both tests used here treat each result as independent. Several messages from one user tend to succeed or fail together, which makes the intervals too narrow and the p-value too small. With real conversations one would randomise by user and analyse by user, or use a method that allows for the grouping.

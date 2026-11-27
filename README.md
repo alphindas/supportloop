@@ -213,15 +213,18 @@ The never-mined topics were chosen by their intent label, and "faithful" does no
 [Report](reports/ab_prompt_v2.md). Prompt v2 hands off instead of refusing money questions and has stricter fee rules. The [experiment file](experiments/prompt_v2.yaml) was committed before any v2 result. Decisions are Claude Code's, not human-reviewed.
 
 <!-- AB-START -->
-**Offline arm not finished (Groq quota); no overall decision yet.**
+**Decision: don't ship** (applied by code from the pre-set rule).
 
-Online: 600 simulated one-message users on local `phi4-mini`.
+| Metric | v1 → v2 |
+|---|---|
+| Offline pass rate, 179 paired tasks, `gpt-oss-20b` (primary) | 0.654 → 0.682, +0.028 [-0.028, +0.084], McNemar p = 0.44: unclear |
+| Offline behaviour accuracy | 0.911 → 0.922 |
+| Offline mean tokens (limit ×1.20) | 835 → 1003, ×1.201: **broken, only just** |
+| Online behaviour accuracy, 600 users, `phi4-mini` (primary) | 0.642 → 0.460, -0.182 [-0.260, -0.103], p < 0.001: **worse** |
+| Online escalation rate (limit +0.10) | 0.358 → 0.552: **broken** |
+| Online mean tokens | 656 → 819: **broken** |
 
-| Metric | v1 (285) | v2 (315) |
-|---|---|---|
-| Behaviour accuracy (primary) | 0.642 [0.585, 0.696] | 0.460 [0.406, 0.516] |
-| Escalation rate | 0.358 | 0.552 |
-| Mean tokens per message | 656 | 819 |
+Prompt v1 stays the default. Prompt v2 changed two things, so the test cannot say which one caused the drop.
 <!-- AB-END -->
 
 ## Known limitations

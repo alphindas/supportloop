@@ -314,6 +314,6 @@ So an eval set of about 150 tasks can only reliably detect **large** differences
 | Fee claim check | Built, on | Rules over a facts file; a block becomes a hand-off. Kept on although the gain on real replies was small and it wrongly blocks more ([report](reports/fee_check_v1.md)). Rejected: a second model call per reply (latency, quota). |
 | Data loop | One cycle done | Mining reads only the database. Planted gaps are scored afterwards. New articles contain no money amounts, so no new fee facts are invented ([report](reports/data_loop_cycle_1.md)). |
 | Eval set v2 | Frozen after cycle 1 | A new file; v1 is unchanged. |
-| A/B, prompt v1 against v2 | See [report](reports/ab_prompt_v2.md) | Rule and sample size in `experiments/prompt_v2.yaml` before any v2 result. Compared with section 10, the file also requires that a ship decision does not rest on the judge-based metric alone. |
+| A/B, prompt v1 against v2 | Done: **don't ship**, v1 stays default ([report](reports/ab_prompt_v2.md)) | Rule and sample size in `experiments/prompt_v2.yaml` before any v2 result. Compared with section 10, the file also requires that a ship decision does not rest on the judge-based metric alone. |
 | Intent routing | **Not built** | Optional; skipped. |
 | Docker, compose, CI | Built | Compose checked locally with Groq; Ollama profile not tested in Docker. CI not yet run on GitHub. |

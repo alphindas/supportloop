@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | Generated | 2026-11-27 |
-| Git commit | 6226cc3 |
+| Git commit | 2c7f015 |
 | Config | config/settings.yaml |
 | Prompt version | v1 |
 | Eval set | evals/sets/v2.jsonl and the Banking77 A/B pool |
@@ -13,9 +13,13 @@
 | Judge model | qwen/qwen3.8-27b (used in this report) |
 
 
-## Decision: **no decision yet**
+## Decision: **don't ship**
 
-- Offline and online results are both needed.
+- offline primary metric: unclear
+- offline guardrail broken: mean_total_tokens
+- online primary metric: worse
+- online guardrail broken: escalation_rate
+- online guardrail broken: mean_total_tokens
 
 Decision rule applied by code (`ab/analyze.py`). Decisions and notes are by Claude Code, **not reviewed by a human**. The offline pass rate depends on a judge that is not validated.
 
@@ -62,9 +66,35 @@ in the local database, which is not in git.
 - Do not edit prompt v2 and rerun on the same traffic to get a better number. A new prompt
   needs a new version, a new experiment file and fresh messages.
 
+## Added after the offline run finished
+
+Written by Claude Code, **not reviewed by a human**.
+
+- The offline token guardrail was broken only just: 1002.8 / 834.9 = 1.201 against a limit of
+  1.20. The decision does not depend on it: online, the primary metric was significantly
+  worse and two guardrails were broken.
+- Offline, the pass rate difference is too small to tell apart from zero (+0.028, interval
+  -0.028 to +0.084). This does not show that the two prompts are equally good: the set can
+  only detect large differences.
+- Offline with `gpt-oss-20b`, escalation rose less (0.101 to 0.168, inside the limit) than
+  online with `phi4-mini` (0.358 to 0.552). The two arms differ in model and in messages, so
+  the reason for the gap is not established.
+- Both offline runs got the same retrieved text on all 179 tasks.
+
 ## Offline: paired comparison on eval set v2 (Groq)
 
-**Not complete: 121/179 tasks graded under both prompts.**
+| Tasks | n | Pass rate v1 | Pass rate v2 | v2 minus v1 [95% paired bootstrap] | Only v1 passed | Only v2 passed | McNemar p |
+|---|---|---|---|---|---|---|---|
+| All | 179 | 0.654 | 0.682 | +0.028 [-0.028, +0.084] | 11 | 16 | 0.4421 |
+| All, behaviour accuracy instead | 179 | 0.911 | 0.922 | +0.011 [-0.028, +0.050] | 6 | 8 | 0.7905 |
+| From eval v1 | 150 | 0.667 | 0.707 | +0.040 [-0.027, +0.107] | 9 | 15 | 0.3075 |
+| Mined | 29 | 0.586 | 0.552 | -0.034 [-0.138, +0.069] | 2 | 1 | 1.0000 |
+
+- Escalation rate: v1 0.101, v2 0.168.
+
+- Mean tokens: v1 834.901, v2 1002.808.
+
+- Guardrails broken: mean_total_tokens.
 
 ## Online: simulated traffic through the live API (phi4-mini)
 

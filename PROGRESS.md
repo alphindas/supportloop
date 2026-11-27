@@ -74,16 +74,10 @@ only on Groq quota or usage limit (update this file first) or at the end. **Do n
   labels, 8 articles, eval set v2, `reports/data_loop_cycle_1.md`; 3.3 pre-registration,
   routing and analysis code; 3.5 Docker, compose (checked locally), CI file (steps rehearsed
   in a clean container; **never run on GitHub**).
-- Online A/B done (600 messages, phi4-mini): v2 worse (behaviour accuracy 0.642 to 0.460, two
-  guardrails broken). `reports/ab_prompt_v2.md` says **no decision yet** until offline is done.
+- A/B done: **don't ship** prompt v2 (`reports/ab_prompt_v2.md`). Offline pass rate unclear;
+  online behaviour accuracy 0.642 to 0.460; guardrails broken. Prompt v1 stays the default.
 - README, DESIGN section 12.1 and `docs/interview_notes/phase_3.md` written and committed.
-- **Waiting on Groq:** offline prompt v2 run, 122/179 graded when this was written. The partial
-  result was not read. A retry script was running in the Claude Code session. If it is not
-  running any more, repeat this until it no longer says STOPPED EARLY:
-  `uv run python -m evals.run_eval --eval-set evals/sets/v2.jsonl --prompt-version v2`
-  (do not change the knowledge base, prompts or retrieval settings first). Then:
-  `make ab-analyze`; fill the A/B parts of `README.md` (between the AB-START and AB-END
-  comments), `docs/interview_notes/phase_3.md` (AB-WEAK) and DESIGN 12.1; commit the reports.
+- **Phase 3 is complete apart from push**, and from 3.4.
 - 3.4 intent routing: skipped (optional). The adapter was not opened.
 - Nothing pushed since the round 3 commits. **Push only when Alphin says "push".**
 
