@@ -4,7 +4,9 @@ Maps all 77 Banking77 intents to the article meant to answer them. **GAP** means
 
 This file is documentation. It is **not** ingested, and the data-loop mining step must **not** read it. It is only used afterwards to score how many planted gaps mining found.
 
-Covered intents: 67. Planted gaps: 10. Articles: 60.
+Covered intents: 76. Remaining gaps: 1 (`automatic_top_up`). Articles: 68.
+
+**Data loop cycle 1** (2026-11-27) added 8 articles, drafted by Claude Code and not reviewed by a human; they fill 9 of the 10 planted gaps. The table of planted gaps below shows the original plan.
 
 Mapping drafted by AI; not yet reviewed by a human. It says which article is *intended* to answer an intent, not that every message of that intent can be answered from it.
 
@@ -28,9 +30,9 @@ Mapping drafted by AI; not yet reviewed by a human. It says which article is *in
 | Intent | Article |
 |---|---|
 | `activate_my_card` | `activate-card` |
-| `age_limit` | **GAP** |
-| `apple_pay_or_google_pay` | **GAP** |
-| `atm_support` | **GAP** |
+| `age_limit` | `minimum-age` |
+| `apple_pay_or_google_pay` | `phone-wallets` |
+| `atm_support` | `which-cash-machines` |
 | `automatic_top_up` | **GAP** |
 | `balance_not_updated_after_bank_transfer` | `bank-transfer-missing` |
 | `balance_not_updated_after_cheque_or_cash_deposit` | `cash-deposit-missing` |
@@ -45,7 +47,7 @@ Mapping drafted by AI; not yet reviewed by a human. It says which article is *in
 | `card_payment_fee_charged` | `extra-statement-charge` |
 | `card_payment_not_recognised` | `unrecognised-card-payment` |
 | `card_payment_wrong_exchange_rate` | `foreign-payment-wrong-rate` |
-| `card_swallowed` | **GAP** |
+| `card_swallowed` | `card-kept-by-cash-machine` |
 | `cash_withdrawal_charge` | `cash-withdrawals` |
 | `cash_withdrawal_not_recognised` | `cash-withdrawal-unrecognised` |
 | `change_pin` | `card-pin` |
@@ -56,20 +58,20 @@ Mapping drafted by AI; not yet reviewed by a human. It says which article is *in
 | `declined_cash_withdrawal` | `cash-withdrawal-declined` |
 | `declined_transfer` | `transfer-failed` |
 | `direct_debit_payment_not_recognised` | `direct-debit-unrecognised` |
-| `disposable_card_limits` | **GAP** |
-| `edit_personal_details` | **GAP** |
+| `disposable_card_limits` | `disposable-virtual-cards` |
+| `edit_personal_details` | `change-personal-details` |
 | `exchange_charge` | `exchange-fees` |
 | `exchange_rate` | `exchange-rates` |
 | `exchange_via_app` | `exchange-currency` |
 | `extra_charge_on_statement` | `extra-statement-charge` |
 | `failed_transfer` | `transfer-failed` |
 | `fiat_currency_support` | `supported-cards-currencies` |
-| `get_disposable_virtual_card` | **GAP** |
+| `get_disposable_virtual_card` | `disposable-virtual-cards` |
 | `get_physical_card` | `card-pin` |
 | `getting_spare_card` | `spare-card` |
 | `getting_virtual_card` | `virtual-card` |
 | `lost_or_stolen_card` | `lost-or-stolen-card` |
-| `lost_or_stolen_phone` | **GAP** |
+| `lost_or_stolen_phone` | `lost-or-stolen-phone` |
 | `order_physical_card` | `order-physical-card` |
 | `passcode_forgotten` | `passcode-reset` |
 | `pending_card_payment` | `card-payment-pending` |
@@ -82,7 +84,7 @@ Mapping drafted by AI; not yet reviewed by a human. It says which article is *in
 | `request_refund` | `request-refund` |
 | `reverted_card_payment?` | `card-payment-reversed` |
 | `supported_cards_and_currencies` | `supported-cards-currencies` |
-| `terminate_account` | **GAP** |
+| `terminate_account` | `close-account` |
 | `top_up_by_bank_transfer_charge` | `topup-fees` |
 | `top_up_by_card_charge` | `topup-fees` |
 | `top_up_by_cash_or_cheque` | `topup-by-cash` |

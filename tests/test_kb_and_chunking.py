@@ -41,11 +41,9 @@ def test_coverage_file_matches_the_articles() -> None:
 
 def test_planted_gap_topics_do_not_appear_in_articles() -> None:
     """A rough keyword net. It cannot prove that a gap is not answered some other way."""
-    leaks = re.compile(
-        r"apple ?pay|google ?pay|mobile wallet|disposable|swallow|auto(matic)?[- ]?top|"
-        r"(lost|stolen) phone|clos(e|ing) (your )?account|age limit|years old|under 18",
-        re.IGNORECASE,
-    )
+    """Data loop cycle 1 filled the other gaps. Automatic top-up was not mined, so it
+    stays a gap."""
+    leaks = re.compile(r"auto(matic)?[- ]?top", re.IGNORECASE)
     for article in load_articles(KB_DIR):
         assert not leaks.search(article.title + "\n" + article.body), article.id
 

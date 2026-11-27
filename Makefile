@@ -1,4 +1,4 @@
-.PHONY: setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases fee-check
+.PHONY: loop-mine loop-review loop-promote loop-before ab-analyze setup test lint format check data ingest run retrieval-eval benchmark-retrieval benchmark-llm eval review-pairs samples guardrail-check simulate eval-answers human-review judge-live traffic-report fee-cases fee-check
 
 setup:                ## install everything from uv.lock and enable git hooks
 	uv sync
@@ -66,3 +66,22 @@ judge-live:           ## judge faithfulness on a sample of stored replies (uses 
 
 traffic-report:       ## summarise the production signals stored in the database
 	uv run python -m evals.traffic_report --source simulation
+
+loop-mine:            ## data loop: write the review queue from stored turns
+	uv run python -m loop.mine
+
+loop-review:          ## data loop: label the queue (for a person)
+	uv run python -m loop.review
+
+loop-promote:         ## data loop: build the next eval set from the labels
+	uv run python -m loop.promote
+
+KB_BEFORE = SUPPORTLOOP_KB_DIR=data/cache/kb_before SUPPORTLOOP_INDEX_DIR=data/cache/index_before
+
+loop-before:          ## eval v2 on the knowledge base as it was before cycle 1 (uses Groq quota)
+	uv run python -m loop.kb_before
+	$(KB_BEFORE) uv run python -m scripts.ingest
+	$(KB_BEFORE) uv run python -m evals.run_eval --eval-set evals/sets/v2.jsonl --tag kb-before
+
+ab-analyze:           ## A/B report and decision for prompt v2 (no LLM calls)
+	uv run python -m ab.analyze

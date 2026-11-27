@@ -321,9 +321,13 @@ def main() -> None:
     parser.add_argument("--eval-set", default="evals/sets/v1.jsonl")
     parser.add_argument("--limit", type=int, help="at most this many new LLM calls")
     parser.add_argument("--report-only", action="store_true")
+    parser.add_argument("--tag", help="added to the output file names, e.g. kb-before")
+    parser.add_argument("--prompt-version", help="overrides the configured prompt")
     args = parser.parse_args()
 
     settings = get_settings()
+    if args.prompt_version:
+        settings = settings.model_copy(update={"prompt_version": args.prompt_version})
     eval_set = PROJECT_ROOT / args.eval_set
     if settings.llm_provider == "fake":
         raise SystemExit("The fake provider is for tests. Set llm_provider to groq or ollama.")
@@ -331,7 +335,10 @@ def main() -> None:
         settings.groq_generator_model if settings.llm_provider == "groq" else settings.ollama_model
     )
     name = config_name(settings.llm_provider, model, settings.prompt_version)
-    stem = f"eval_{eval_set.stem}_{name}"
+    stem = f"eval_{eval_set.stem}_{name}" + (f"_{args.tag}" if args.tag else "")
+    if eval_set.stem != "v1" or args.tag:
+        # A separate name, so reviews of eval v1 outputs are never shown beside other runs.
+        name = stem.removeprefix("eval_")
     paths = {
         "name": name,
         "eval_set": eval_set,

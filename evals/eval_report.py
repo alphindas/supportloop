@@ -439,7 +439,17 @@ def write_report(
     lines += ["", *failure_summary(rows)]
     if meta.get("retrieval_check"):
         lines += ["", *meta["retrieval_check"]]
-    lines += ["", *human_section(meta["config_name"], rows, human_sample_size)]
+    # Later sets and tagged runs have run-prefixed names, e.g. 'v2_groq-..._kb-before'.
+    if not meta["config_name"].startswith(("v1_", "v2_")):
+        lines += ["", *human_section(meta["config_name"], rows, human_sample_size)]
+    else:
+        lines += [
+            "",
+            "## Judge review",
+            "",
+            "**The judge is not validated.** Its verdicts on this run have not been reviewed. "
+            "The only reviews are of eval v1 replies (see the eval v1 report).",
+        ]
     lines += [
         "",
         "## How to read this",

@@ -1,0 +1,53 @@
+# Reference answers for promoted items and for eval v1 tasks whose gap now has an article.
+# Written by Claude Code, NOT reviewed by a human.
+mined:
+  c1-005:
+    expected_behavior: escalate
+    why: >-
+      Changed from the label's "answer": the message says the machine "stole" the card, and
+      the app's rule deliberately hands theft wording to a person.
+  c1-007: {reference: "After £200 or 5 withdrawals in a calendar month, NovaPay charges 2% of the amount, minimum £1. The cash machine operator may add its own charge."}
+  c1-008: {reference: "Check the card is not frozen, online payments are switched on, the balance covers the payment and the card details are current. If a new virtual card also fails, contact support."}
+  c1-009: {reference: "A disposable card works for one completed online payment, then its number changes. Check the number has not been used, online payments are on and the balance covers it; contact support if it still fails."}
+  c1-010: {reference: "Retake the photos in good light with all corners visible and record the selfie video without hats or sunglasses. If it keeps failing, contact support."}
+  c1-012: {reference: "Check the reason in the app. Causes include low balance, the £500 daily limit, a wrong or blocked PIN, card status, withdrawals switched off, security checks or a machine fault. Contact support if it keeps happening."}
+  c1-014: {reference: "UK standard delivery takes 5 to 7 working days and express 2 to 3; supported countries outside the UK take 7 to 14. The app shows the estimated arrival date."}
+  c1-015: {reference: "UK standard delivery takes 5 to 7 working days and express 2 to 3; supported countries outside the UK take 7 to 14. The app shows the estimated arrival date."}
+  c1-016: {reference: "For international (SWIFT) transfers, the receiving bank or a bank in between may deduct its own charge, so less can arrive than was sent."}
+  c1-017: {reference: "Check the expected arrival time and that the correct account details and reference were used. If it is still missing, contact support with proof of payment."}
+  c1-018: {reference: "UK and EEA debit cards are free, credit cards 1.5%, cards issued outside the UK and EEA 2.0% (only the higher fee if both apply). UK and SEPA bank transfers are free; cash deposits cost 1.5%."}
+  c1-019: {reference: "UK and EEA debit cards are free, credit cards 1.5%, and cards issued outside the UK and EEA 2.0%. If both rules apply only the higher fee is charged."}
+  c1-022: {reference: "Cash machines that show your card network's logo, Visa or Mastercard, in the UK and abroad. The operator may add its own charge."}
+  c1-023: {reference: "You must be at least 18. NovaPay does not offer accounts or cards for children."}
+  c1-024: {reference: "Open Account, Personal details, select the address, enter the new one and confirm with your app passcode."}
+  c1-027: {reference: "No. You cannot add money through Apple Pay. Use a debit or credit card, a bank transfer or cash."}
+  c1-028: {reference: "Yes. Find a partner shop in the app and show your deposit barcode. Each deposit is £5 to £500 with a 1.5% fee."}
+  c1-031: {reference: "Move your money out, wait for pending payments and cancel regular payments, then contact support to close the account. You cannot close it in the app."}
+  c1-034: {reference: "A SWIFT transfer costs £3 and takes 1 to 5 working days. Other banks may deduct their own charges."}
+  c1-035: {reference: "NovaPay charges no fee for card payments in a currency you hold enough of. Exchange rules apply if conversion is needed, and some merchants add their own surcharge."}
+  c1-036: {reference: "An international (SWIFT) transfer takes 1 to 5 working days."}
+  c1-040: {reference: "The app asks for your passcode or biometric unlock. Contact support to sign the account out of the lost phone and block access, and lock or erase the phone."}
+  c1-042: {reference: "You cannot change your name yourself. Contact support with a document that shows the change; an agent must check it."}
+  c1-043: {reference: "Open Exchange, choose AUD as the currency you have and GBP as the one you want, enter an amount, check the rate and fee, and confirm."}
+  c1-044: {reference: "You cannot add money through Google Pay. Use a debit or credit card, a bank transfer or cash."}
+  c1-047: {reference: "Open Account, Personal details, select the address, enter the new one and confirm with your passcode. If a card is already on its way to the old address, contact support."}
+  c1-048: {reference: "Ask the merchant for a refund first. If the merchant will not help, you may be able to dispute the payment."}
+eval_v1_changes:   # tasks that expected a hand-off only because the topic had no article
+  v1-063: {article: phone-wallets, reference: "No. You cannot add money through Apple Pay. Use a debit or credit card, a bank transfer or cash."}
+  v1-064: {article: phone-wallets, reference: "No. You cannot add money through Apple Pay. Use a debit or credit card, a bank transfer or cash."}
+  v1-065: {article: disposable-virtual-cards, reference: "Get one under Cards, Add card, Disposable card. Use it for one online payment; its number then changes."}
+  v1-066: {article: disposable-virtual-cards, reference: "It is a virtual card for one online payment; after a completed payment the number stops working and a new one is made."}
+  v1-067: {article: disposable-virtual-cards, reference: "You can have 1 active disposable card, and its number can change up to 5 times in one day."}
+  v1-068: {article: disposable-virtual-cards, reference: "One-off online payments. Not for subscriptions, deposits, card readers or cash machines."}
+  v1-069: {article: which-cash-machines, reference: "Machines that show your card network's logo, Visa or Mastercard."}
+  v1-070: {article: which-cash-machines, reference: "You can use machines that show your card network's logo, in the UK and abroad. NovaPay has none of its own."}
+  v1-072: {article: card-kept-by-cash-machine, reference: "Freeze the card. If you do not get it back, report it lost or stolen to block it and order a replacement."}
+  v1-075: {article: lost-or-stolen-phone, reference: "Contact support from another device; support can sign the account out of the lost phone and block access."}
+  v1-076: {article: lost-or-stolen-phone, reference: "Contact support from another device so they can sign the account out of the lost phone and block access. Lock or erase the phone."}
+  v1-077: {article: change-personal-details, reference: "You cannot change your name yourself. Contact support with a document showing the change, such as a marriage certificate."}
+  v1-078: {article: change-personal-details, reference: "You cannot change your name yourself. Contact support with a document showing the change, such as a marriage certificate."}
+  v1-079: {article: close-account, reference: "Move your money out and cancel regular payments, then contact support, who must close the account."}
+  v1-080: {article: close-account, reference: "Move your money out and cancel regular payments, then contact support, who must close the account."}
+  v1-081: {article: minimum-age, reference: "You must be at least 18."}
+  v1-082: {article: minimum-age, reference: "NovaPay does not offer accounts for children. You must be at least 18."}
+  # v1-071 ("stole") stays a hand-off: the theft rule escalates it on purpose.

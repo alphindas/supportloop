@@ -1,0 +1,15 @@
+# Written by Claude Code after labelling, NOT reviewed by a human. Used only to score and
+# analyse; mining never reads it.
+new_articles:   # topic from the review labels -> article drafted for it
+  card kept by a cash machine: card-kept-by-cash-machine
+  disposable virtual cards: disposable-virtual-cards
+  which cash machines can be used: which-cash-machines
+  minimum age: minimum-age
+  changing personal details: change-personal-details
+  phone wallets: phone-wallets
+  closing an account: close-account
+  lost or stolen phone: lost-or-stolen-phone
+filled_gaps:    # planted-gap Banking77 intents that now have an article
+  [apple_pay_or_google_pay, get_disposable_virtual_card, disposable_card_limits, atm_support,
+   card_swallowed, lost_or_stolen_phone, edit_personal_details, terminate_account, age_limit]
+still_gaps: [automatic_top_up]
