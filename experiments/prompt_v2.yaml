@@ -1,0 +1,51 @@
+# Pre-registration, written by Claude Code (not reviewed by a human) BEFORE any result
+# with prompt v2 existed and before eval set v2 had been run with either prompt.
+# Do not edit after the first run: the report records this file's hash.
+name: prompt_v2
+registered_on: "2026-11-27"
+variants:
+  control: {prompt_version: v1}
+  treatment: {prompt_version: v2}
+allocation: {control: 0.5, treatment: 0.5}
+buckets: 10000
+
+hypothesis: >-
+  Prompt v2 (hand off instead of refusing any money or account question; say what each
+  amount is and keep its conditions) gets more tasks right than prompt v1 without making
+  hand-offs, latency or token use much worse.
+
+offline:
+  eval_set: evals/sets/v2.jsonl
+  provider: groq
+  design: paired, same tasks and same knowledge base for both prompts
+  primary_metric: pass_rate
+  tests: [exact McNemar on discordant tasks, paired bootstrap 95% CI on the difference]
+  also_report: [v1-derived tasks and mined tasks separately]
+
+online:
+  provider: ollama phi4-mini, retrieval on CPU, claim check on, LLM cache off
+  traffic: Banking77 A/B pool, one message per user, order shuffled with a fixed seed
+  messages_sent: 600          # fixed up front; no result is looked at before all are in
+  min_per_variant: 270        # below this the analysis gives no decision
+  sample_size_basis: >-
+    DESIGN.md section 10: 294 per variant detects 70% to 80% with 80% power. 600 messages
+    give about 300 per variant, so smaller differences will probably be inconclusive.
+  primary_metric: behaviour_accuracy
+  expected_behaviour: >-
+    From the Banking77 intent label: escalate if the topic still has no article after data
+    loop cycle 1, otherwise answer. This is a crude label, the same for both variants.
+  tests: [two-proportion z test, bootstrap 95% CI on the difference]
+  secondary: [refusal_rate (every message is a banking question, so any refusal is wrong)]
+  sample_ratio_check: {max_chi_square: 10.83}   # 1 degree of freedom, p = 0.001
+
+guardrails:   # a breach in the treatment arm means "don't ship"
+  escalation_rate_max_increase: 0.10      # absolute
+  latency_p95_max_ratio: 1.20             # online only
+  mean_total_tokens_max_ratio: 1.20
+
+decision_rule: >-
+  Ship if a primary metric (offline or online) is significantly better (p < 0.05), neither
+  is significantly worse and no guardrail is broken. Don't ship if a primary metric is
+  significantly worse or a guardrail is broken. Otherwise inconclusive. Offline pass rate
+  depends on the LLM judge, which is not validated, so a ship decision also requires that
+  behaviour accuracy offline is not worse.
