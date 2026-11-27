@@ -59,12 +59,15 @@ reviewed". Keep Groq caching on and long runs resumable.
 - 3.6 `docs/interview_notes/phase_3.md`, 3-4 resume bullets, final summary with unpushed
   commits, 3 quiz questions.
 
-**Checkpoint 1, waiting:** 42 claims drafted. Alphin marks only 10 hard ones (picked by
-Claude Code: fee-01, 05, 06, 07, 09, 18, 20, 22, 35, 36). The other 32 are "labelled by Claude
-Code, not human-reviewed". `reports/fee_check_v1.md` must report the two groups separately and
-say that the 10 were not a random sample. First marks matched Claude Code's labels on 3,
-differed on 3, and 4 were unsure. After seeing the labels and reasons, Alphin's final marks on
-those 7 matched them (not independent). **Not frozen:** waiting for the words "approve freeze".
+**Checkpoint 1 done (2026-11-27):** Alphin said "approve freeze". `evals/sets/fee_claims_v1.yaml`
+is frozen (42 claims; hash test). First marks on the 10 hard claims: 3 matched Claude Code's
+labels, 3 differed, 4 unsure. The 7 later matches came after seeing the labels, so are not
+independent. The other 32 are labelled by Claude Code, not human-reviewed.
+
+**New instruction (2026-11-27):** Alphin will answer no more checkpoints. Claude Code labels the
+data loop queue and makes the remaining decisions. Record everywhere that these are by Claude
+Code, **not reviewed by a human**. Write nothing in first person that Alphin did not do. Stop
+only on Groq quota or usage limit (update this file first) or at the end. **Do not push.**
 
 ## Still open for Alphin
 - Check Claude's reading of the replies in `reports/local_model_fee_cases.md`.

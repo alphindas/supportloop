@@ -1,6 +1,7 @@
-# Claims and labels drafted by Claude Code. NOT frozen.
-# review_status says which cases a person is asked to mark (10 hard ones, picked by Claude Code).
-# Holds the expected labels: do not open before marking those 10.
+# Fee claim test set v1. FROZEN 2026-11-27: the project owner approved the freeze.
+# Claims and expected labels drafted by Claude Code. review_status says, case by case, what a
+# person checked: 3 marked without seeing the label, 7 settled after seeing the label and
+# reason, 32 labelled by Claude Code and not human-reviewed. Do not edit: a test pins the hash.
 cases:
 - id: fee-01
   article_id: topup-fees

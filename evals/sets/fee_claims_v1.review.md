@@ -1,5 +1,7 @@
 # Fee test claims: review sheet
 
+**The set was frozen on 2026-11-27 as `fee_claims_v1.yaml`.** This sheet is kept as shown for review.
+
 Claims drafted by Claude Code, not reviewed. Expected labels are left out on purpose.
 
 **Scope (2026-11-27):** the project owner will mark only these 10 hard cases, picked by Claude
