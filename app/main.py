@@ -12,7 +12,8 @@ from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.chat.factory import build_chat_service
+from ab.assign import assign
+from app.chat.factory import build_chat_service, build_variant_services
 from app.chat.pipeline import ChatResult, ChatService
 from app.chat.recorder import TurnRecorder
 from app.config import Settings, get_settings
@@ -65,6 +66,9 @@ def create_app(settings: Settings | None = None, service: ChatService | None = N
             app.state.service = service or build_chat_service(
                 settings, client, tracer=tracing.get_tracer("supportloop")
             )
+            app.state.variants, app.state.experiment = build_variant_services(
+                settings, app.state.service
+            )
             app.state.recorder = TurnRecorder(
                 Repository(engine), metrics, settings.escalation_score_threshold
             )
@@ -99,13 +103,16 @@ def create_app(settings: Settings | None = None, service: ChatService | None = N
         if not body.message.strip():
             raise HTTPException(422, "message is blank")
         chat_service: ChatService = request.app.state.service
+        if request.app.state.experiment:
+            arm = assign(request.app.state.experiment, body.user_id)
+            chat_service = request.app.state.variants[arm]
         try:
             result, trace = await chat_service.handle(
                 body.user_id, body.conversation_id, body.message
             )
         except Exception:
             model = f"{chat_service.provider.name}:{chat_service.provider.model}"
-            metrics.errors.labels(model, settings.variant_name, "unhandled").inc()
+            metrics.errors.labels(model, chat_service.settings.variant_name, "unhandled").inc()
             raise
         await asyncio.to_thread(
             request.app.state.recorder.record,
@@ -156,6 +163,7 @@ def create_app(settings: Settings | None = None, service: ChatService | None = N
             "embedding_model": settings.embedding_model,
             "reranker_model": settings.reranker_model,
             "prompt_version": chat_service.prompt.version,
+            "experiment": (request.app.state.experiment or {}).get("name"),
         }
 
     return app

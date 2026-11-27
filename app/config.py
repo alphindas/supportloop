@@ -72,6 +72,7 @@ class Settings(BaseSettings):
     guardrails_path: Path
     fee_check_enabled: bool
     money_facts_path: Path
+    experiment_path: str  # empty: no experiment
 
     database_path: Path
     variant_name: str = Field(pattern=r"^[A-Za-z0-9_.-]{1,40}$")

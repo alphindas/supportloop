@@ -1,10 +1,12 @@
 """Assemble a ChatService from settings."""
 
 import logging
+from pathlib import Path
 
 import httpx
 from opentelemetry import trace as otel
 
+from ab.assign import load_experiment
 from app.chat.pipeline import ChatService
 from app.config import Settings
 from app.guardrails.claims import load_facts
@@ -68,3 +70,34 @@ def build_chat_service(
         if settings.fee_check_enabled
         else None,
     )
+
+
+def build_variant_services(settings: Settings, base: ChatService) -> tuple[dict, dict | None]:
+    """(variant name -> service, experiment). Without an experiment, both are empty.
+
+    Variants share the search models and their lock. Only the settings an experiment
+    file names for a variant differ (today: the prompt version).
+    """
+    if not settings.experiment_path:
+        return {}, None
+    experiment = load_experiment(settings.resolve(Path(settings.experiment_path)))
+    services = {}
+    for name, changes in experiment["variants"].items():
+        if unknown := set(changes) - {"prompt_version"}:
+            raise ValueError(f"A variant cannot change {sorted(unknown)}")
+        variant = settings.model_copy(update={**changes, "variant_name": name})
+        service = ChatService(
+            variant,
+            base.retriever,
+            base.provider,
+            load_prompt(variant.resolve(variant.prompts_dir), variant.prompt_version),
+            base.messages,
+            base.injection_rules,
+            base.escalation_rules,
+            base.titles,
+            base.tracer,
+            base.money_facts,
+        )
+        service._retrieval_lock = base._retrieval_lock
+        services[name] = service
+    return services, experiment

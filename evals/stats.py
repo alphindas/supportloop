@@ -1,5 +1,6 @@
 """Small statistics helpers."""
 
+import math
 from collections.abc import Sequence
 
 import numpy as np
@@ -86,3 +87,40 @@ def wilson_interval(successes: int, total: int, z: float = 1.959964) -> tuple[fl
     centre = (share + spread / 2) / (1 + spread)
     half = z * ((share * (1 - share) + spread / 4) / total) ** 0.5 / (1 + spread)
     return max(0.0, centre - half), min(1.0, centre + half)
+
+
+def mcnemar_exact(only_first: int, only_second: int) -> float:
+    """Two-sided exact McNemar p-value from the two kinds of disagreement.
+
+    Only tasks where the two systems differ carry information. If neither is better, each
+    such task is a coin flip, so the p-value comes from the binomial distribution.
+    """
+    total = only_first + only_second
+    if total == 0:
+        return 1.0
+    tail = sum(math.comb(total, k) for k in range(min(only_first, only_second) + 1))
+    return min(1.0, 2 * tail / 2**total)
+
+
+def two_proportion_p(first: int, first_total: int, second: int, second_total: int) -> float:
+    """Two-sided p-value of the pooled two-proportion z test (normal approximation)."""
+    if min(first_total, second_total) <= 0:
+        raise ValueError("Both groups need at least one observation")
+    pooled = (first + second) / (first_total + second_total)
+    spread = pooled * (1 - pooled) * (1 / first_total + 1 / second_total)
+    if spread == 0:
+        return 1.0
+    z = (second / second_total - first / first_total) / math.sqrt(spread)
+    return math.erfc(abs(z) / math.sqrt(2))
+
+
+def bootstrap_difference(
+    first: Sequence[float], second: Sequence[float], resamples: int, seed: int
+) -> tuple[float, float, float]:
+    """(difference, low, high) of mean(second) - mean(first) for two separate groups."""
+    a, b = np.asarray(first, dtype=float), np.asarray(second, dtype=float)
+    generator = np.random.default_rng(seed)
+    means_a = a[generator.integers(0, a.size, size=(resamples, a.size))].mean(axis=1)
+    means_b = b[generator.integers(0, b.size, size=(resamples, b.size))].mean(axis=1)
+    low, high = np.quantile(means_b - means_a, [0.025, 0.975])
+    return float(b.mean() - a.mean()), float(low), float(high)
