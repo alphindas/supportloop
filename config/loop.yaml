@@ -1,0 +1,6 @@
+# Data loop settings, written BEFORE the first mining run.
+cycle: 1
+source: simulation          # which stored turns to mine
+# Cosine similarity of the redacted messages (app embedding model).
+duplicate_similarity: 0.97  # at or above this, two messages are the same question
+cluster_similarity: 0.80    # average similarity needed to join two groups

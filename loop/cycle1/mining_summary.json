@@ -1,0 +1,14 @@
+{
+  "turns_mined": 200,
+  "candidates": 49,
+  "queue_items": 49,
+  "clusters": 39,
+  "signals": {
+    "blocked_output": 6,
+    "escalation": 39,
+    "fee_claim": 4,
+    "low_faithfulness": 8,
+    "out_of_scope_refusal": 1,
+    "weak_retrieval": 9
+  }
+}

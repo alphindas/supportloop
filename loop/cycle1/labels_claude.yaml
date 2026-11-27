@@ -1,0 +1,263 @@
+# Labels for review cycle 1 by Claude Code. NOT reviewed by a human.
+c1-001:
+  verdict: not_failure
+  note: 'Fraud report: handing off is right.'
+c1-002:
+  verdict: not_failure
+  note: 'Possible fraud: handing off is right.'
+c1-003:
+  verdict: not_failure
+  note: 'Identity theft: handing off is right.'
+c1-004:
+  verdict: not_failure
+  note: 'Theft: handing off is right.'
+c1-005:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: card kept by a cash machine
+  note: May mean theft or a machine keeping the card. No article covers a machine keeping a card.
+c1-006:
+  verdict: not_failure
+  note: Reply matches the article. The claim check's flag here is a false block.
+c1-007:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - cash-withdrawals
+  note: Gives 1.5%; the article says 2%, minimum £1, after the allowance.
+c1-008:
+  verdict: failure
+  cause: over_escalation
+  expected_behavior: answer
+  expected_article_ids:
+  - virtual-card
+  note: The article covers the question.
+c1-009:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: disposable virtual cards
+  note: No article about disposable cards.
+c1-010:
+  verdict: failure
+  cause: over_escalation
+  expected_behavior: answer
+  expected_article_ids:
+  - verification-problems
+  note: The article covers a failed check.
+c1-011:
+  verdict: not_failure
+  note: 'No article offers another way to prove identity: hand off.'
+c1-012:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - cash-withdrawal-declined
+  note: States one reason as the cause; the article lists several.
+c1-013:
+  verdict: not_failure
+  note: 'A transaction the customer did not make: hand off.'
+c1-014:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - card-delivery-times
+  note: Gives UK times as general and leaves out times outside the UK.
+c1-015:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - card-delivery-times
+  note: Answers about renewal cards.
+c1-016:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - transfer-fees
+  note: Misses that other banks may deduct charges.
+c1-017:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - bank-transfer-missing
+  note: Answers about a cash deposit.
+c1-018:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - topup-fees
+  note: Charges UK and EEA debit cards 1.5%.
+c1-019:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - topup-fees
+  note: Invents a £10 minimum fee.
+c1-020:
+  verdict: not_failure
+  note: 'No rewards information exists: hand off.'
+c1-021:
+  verdict: unclear
+  note: Not clear what was blocked.
+c1-022:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: which cash machines can be used
+  note: ''
+c1-023:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: minimum age
+  note: ''
+c1-024:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: changing personal details
+  note: Reply also invents app steps.
+c1-025:
+  verdict: not_failure
+  note: 'Unknown Direct Debit: hand off.'
+c1-026:
+  verdict: unclear
+  note: Not clear whether money is coming in or going out.
+c1-027:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: phone wallets
+  note: ''
+c1-028:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - topup-by-cash
+  note: Blocked for a missing citation.
+c1-029:
+  verdict: failure
+  cause: model_error
+  expected_behavior: escalate
+  expected_article_ids: []
+  note: No article covers sending money to a credit card; reply reverses the direction.
+c1-030:
+  verdict: not_failure
+  note: 'Too vague: hand off.'
+c1-031:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: closing an account
+  note: ''
+c1-032:
+  verdict: not_failure
+  note: 'Strange withdrawal: hand off is right.'
+c1-033:
+  verdict: unclear
+  note: Meaning of the question is unclear.
+c1-034:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - transfer-timing
+  - transfer-fees
+  note: Blocked for a missing citation.
+c1-035:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - extra-statement-charge
+  note: Gives top-up fees as card payment fees.
+c1-036:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - transfer-timing
+  note: Blocked for a missing citation.
+c1-037:
+  verdict: failure
+  cause: model_error
+  expected_behavior: escalate
+  expected_article_ids: []
+  note: Shows top-up reversal reasons for a cancelled card.
+c1-038:
+  verdict: unclear
+  note: Articles do not say whether a delivery date can be chosen.
+c1-039:
+  verdict: not_failure
+  note: 'Repeated declines: hand off is reasonable.'
+c1-040:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: lost or stolen phone
+  note: ''
+c1-041:
+  verdict: not_failure
+  note: 'Possible fraud: hand off is right.'
+c1-042:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: changing personal details
+  note: Wrongly refused.
+c1-043:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - exchange-currency
+  note: Invents a card selection step.
+c1-044:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: phone wallets
+  note: ''
+c1-045:
+  verdict: not_failure
+  note: 'Theft abroad: hand off is right.'
+c1-046:
+  verdict: not_failure
+  note: 'Payment not approved: hand off is right.'
+c1-047:
+  verdict: failure
+  cause: needs_new_article
+  expected_behavior: answer
+  expected_article_ids: []
+  topic: changing personal details
+  note: ''
+c1-048:
+  verdict: failure
+  cause: model_error
+  expected_behavior: answer
+  expected_article_ids:
+  - request-refund
+  note: Blocked for a missing citation.
+c1-049:
+  verdict: not_failure
+  note: 'Possible hack: hand off is right.'
