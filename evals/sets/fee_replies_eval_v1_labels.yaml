@@ -1,0 +1,12 @@
+# Does a saved eval v1 reply contain a wrong money statement (amount, fee, "free", limit)?
+# Labelled by Claude Code on 2026-11-27, NOT reviewed by a human. Written before the new
+# claim check was run on these replies. Scope: replies shown to the customer that mention
+# "£", "%", "free", "no fee/charge" or "not charge". Any not listed under wrong is correct.
+labelled_by: Claude Code (not human-reviewed)
+correct: [v1-001, v1-014, v1-023, v1-030, v1-037, v1-044, v1-047, v1-050, v1-061, v1-068,
+          v1-074, v1-101, v1-102, v1-103, v1-104, v1-105, v1-106, v1-108, v1-111, v1-113,
+          v1-116, v1-119, v1-121, v1-128, v1-134]
+wrong:
+  v1-109: >-
+    Says a Saturday exchange incurs "the normal currency exchange fee" plus the markup. The
+    article charges no exchange fee up to the monthly allowance.
